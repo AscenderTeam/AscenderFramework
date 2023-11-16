@@ -1,0 +1,63 @@
+from typing import Any, Callable, Generic, TypeVar
+from tortoise.models import Model
+from pydantic import BaseModel
+
+T = TypeVar("T")
+E = TypeVar("E")
+
+
+def serialize_tortoise_model(pydantic_model: type[T], tortoise_model: E, **custom_fields):
+    # Serialize Tortoise model to dictionary
+    serialized_data = tortoise_model.__dict__
+
+    # Include custom fields in the serialized data
+    for key, value in custom_fields.items():
+        serialized_data[key] = value
+
+    # Convert dictionary to Pydantic instance
+    pydantic_instance = pydantic_model(**serialized_data)
+
+    return pydantic_instance
+
+## This is just function for nothing but for default fallback! Don't touch it!
+def serialize_values_default(a: any):
+    return {}
+
+
+class Serializer(Generic[T, E]):
+    def __init__(self, pd_model: type[T], entity: type[E] | None, **values) -> None:
+        self.pd_model = pd_model
+        self.entity = entity
+        self.values = values
+
+    def ser_tool(self, **custom_fields) -> T:
+        return serialize_tortoise_model(self.pd_model, self.entity, **custom_fields)
+
+    def serialize(self) -> dict | T:
+        return self.entity
+
+    def __call__(self) -> T:
+        _model = self.serialize()
+
+        if isinstance(_model, BaseModel):
+            return _model
+
+        if isinstance(_model, dict):
+            return self.pd_model(**_model, **self.values)
+
+        if _model is None:
+            raise ValueError(
+                "Model method serialize() cannot be 'None'! Expected dict or entity")
+
+        return serialize_tortoise_model(self.pd_model, _model, **self.values)
+
+
+class QuerySetSerializer(Generic[E, T]):
+
+    @staticmethod
+    def serialize_queryset(serializer: Serializer,
+                           pd_model: type[T], entities: E,
+                           func: Callable[[E], dict] = serialize_values_default):
+        for item in entities:
+            ser = serializer(pd_model, item, **func(item))
+            yield ser()
