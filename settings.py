@@ -15,7 +15,7 @@ TORTOISE_ORM = {
     },
     "apps": {
         "models": {
-            "models": ["entities.projects", "entities.dialogue", "entities.users", "aerich.models"],  # Replace with the path to your models module
+            "models": ["aerich.models"],  # Replace with the path to your models module
             "default_connection": "default"
         }
     }

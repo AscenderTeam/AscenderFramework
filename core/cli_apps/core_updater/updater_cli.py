@@ -31,11 +31,11 @@ class UpdaterCLI(GenericCLI):
             total_length_of_files = self.core_constants.length_of_core_files()[0]
             task2 = progress.add_task("[purple]Scanning... [cyan]", total=total_length_of_files + 5, scanning_file="core/")
 
-            progress.update(task1, advance=10)
+            progress.update(task1, advance=10, completed=100)
 
             for i, scan in enumerate(self.core_constants.compare_core_files()):
                 progress.update(task2, description=f"[purple]Scanning[/purple] [cyan]{scan['name']}[/][purple]...[/]", advance=1, completed=i + 1)
-                sleep(0.05)
+                sleep(0.4)
 
             progress.update(task2, description=f"[green]Scanning completed! {total_length_of_files} were scanned", completed=total_length_of_files + 5)
             sleep(1.05)

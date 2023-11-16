@@ -27,11 +27,13 @@ class CoreConstants:
                 scanned_dirs.append({
                     "name": directory.name,
                     "is_dir": True,
+                    "path": directory.path,
                     "children": self.scan_dir_files(directory.path, child_depth + 1)
                 })
                 continue
             scanned_dirs.append({
                 "name": directory.name,
+                "path": directory.path,
                 "is_dir": False,
             })
 
@@ -56,31 +58,50 @@ class CoreConstants:
             current_core_file = next(
                 (item for item in current_core_files if item["name"] == safe_core_file["name"]), None)
 
-            check_name = safe_core_file["name"] == current_core_file["name"]
+            if current_core_file is None:
+                self.checkup_result.append({
+                    "name": safe_core_file["name"],
+                    "is_dir": safe_core_file["is_dir"],
+                    "path": safe_core_file["path"],
+                    "is_healthy": False
+                })
+                yield {
+                    "name": safe_core_file["name"],
+                    "is_dir": safe_core_file["is_dir"],
+                    "path": safe_core_file["path"],
+                    "is_healthy": False
+                }
+                continue
+
+            check_path = safe_core_file["path"] == current_core_file["path"]
             check_is_dir = safe_core_file["is_dir"] == current_core_file["is_dir"]
             if safe_core_file["is_dir"]:
                 self.checkup_result.append({
                     "name": current_core_file["name"],
                     "is_dir": current_core_file["is_dir"],
+                    "path": current_core_file["path"],
                     "children": list(self.compare_files(safe_core_file["children"], current_core_file["children"])),
-                    "is_healthy": bool(check_name and check_is_dir)
+                    "is_healthy": bool(check_path and check_is_dir)
                 })
                 yield {
                     "name": current_core_file["name"],
                     "is_dir": current_core_file["is_dir"],
+                    "path": current_core_file["path"],
                     "children": list(self.compare_files(safe_core_file["children"], current_core_file["children"])),
-                    "is_healthy": bool(check_name and check_is_dir)
+                    "is_healthy": bool(check_path and check_is_dir)
                 }
             else:
                 self.checkup_result.append({
                     "name": current_core_file["name"],
+                    "path": current_core_file["path"],
                     "is_dir": current_core_file["is_dir"],
-                    "is_healthy": bool(check_name and check_is_dir)
+                    "is_healthy": bool(check_path and check_is_dir)
                 })
                 yield {
                     "name": current_core_file["name"],
+                    "path": current_core_file["path"],
                     "is_dir": current_core_file["is_dir"],
-                    "is_healthy": bool(check_name and check_is_dir)
+                    "is_healthy": bool(check_path and check_is_dir)
                 }
 
     def compare_files(self, safe_files: list[dict[str, str | bool]], current_files: list[dict[str, str | bool]]):
@@ -89,30 +110,30 @@ class CoreConstants:
             current_core_file = next(
                 (item for item in current_files if item["name"] == safe_core_file["name"]), None)
 
-            check_name = safe_core_file["name"] == current_core_file["name"]
-            check_is_dir = safe_core_file["is_dir"] == current_core_file["is_dir"]
+            if current_core_file is None:
+                yield {
+                    "name": safe_core_file["name"],
+                    "path": safe_core_file["path"],
+                    "is_dir": safe_core_file["is_dir"],
+                    "is_healthy": False
+                }
+                continue
 
-            if safe_core_file["is_dir"]:
-                self.checkup_result.append({
-                    "name": current_core_file["name"],
-                    "is_dir": current_core_file["is_dir"],
-                    "children": list(self.compare_files(safe_core_file["children"], current_core_file["children"])),
-                    "is_healthy": bool(check_name and check_is_dir)
-                })
+            check_is_dir = safe_core_file["is_dir"] == current_core_file["is_dir"]
+            check_path = safe_core_file["path"] == current_core_file["path"]
+
+            if current_core_file["is_dir"]:
                 yield {
                     "name": current_core_file["name"],
                     "is_dir": current_core_file["is_dir"],
+                    "path": current_core_file["path"],
                     "children": list(self.compare_files(safe_core_file["children"], current_core_file["children"])),
-                    "is_healthy": bool(check_name and check_is_dir)
+                    "is_healthy": bool(check_is_dir and check_path)
                 }
             else:
-                self.checkup_result.append({
-                    "name": current_core_file["name"],
-                    "is_dir": current_core_file["is_dir"],
-                    "is_healthy": bool(check_name and check_is_dir)
-                })
                 yield {
                     "name": current_core_file["name"],
+                    "path": current_core_file["path"],
                     "is_dir": current_core_file["is_dir"],
-                    "is_healthy": bool(check_name and check_is_dir)
+                    "is_healthy": bool(check_is_dir and check_path)
                 }

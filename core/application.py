@@ -16,7 +16,7 @@ class Application:
                 on_server_start: Callable[['Application'], None] | None = None, 
                 on_server_runtime_error: Callable[[Exception], None] | None = None,
                 on_cli_run: Callable[['Application', CLI], None] | None = None) -> None:
-        self.app = FastAPI(title="Research AI Service")
+        self.app = FastAPI(title="Ascender Framework API")
 
         self._on_server_start = on_server_start
         self._on_server_runtime_error = on_server_runtime_error
@@ -59,5 +59,5 @@ class Application:
             
             raise e
     
-    async def run_migration(self):
-        pass
+    def get_version(self) -> str:
+        return "ASCF_V 0.0.1"
