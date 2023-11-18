@@ -46,3 +46,10 @@ class UpdaterCLI(GenericCLI):
             ctx.console_print(tree)
             ctx.console_print(f"[cyan]Scanned {total_length_of_files} files![/cyan]")
             sleep(0.10)
+
+    @console_command
+    def check_updates(self, ctx: ContextApplication):
+        ctx.console_print("[yellow]Checking for updates...[/yellow]")
+        sleep(0.5)
+        ctx.console_print("[green]No updates found![/green]")
+    

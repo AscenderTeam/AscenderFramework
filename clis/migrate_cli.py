@@ -39,7 +39,7 @@ class MigrateCLI(GenericCLI):
         return
     
     @console_command
-    @CoroCLI()
+    @CoroCLI(is_tortoise=True)
     async def migration_migrate(self, ctx: ContextApplication, name: str = "update"):
         ctx.console_print('[info]Migrating database...[/info]')
         

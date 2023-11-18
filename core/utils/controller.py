@@ -7,12 +7,13 @@ from fastapi.params import Depends
 
 
 class Controller:
-    def __init__(self, tags: list[str] = [], prefix: str = "") -> None:
+    def __init__(self, tags: list[str] = [], prefix: str = "", dependencies: Sequence[Depends] = []) -> None:
         self.prefix = prefix
         self.tags = tags
+        self.dependencies = dependencies
 
     def __call__(self, cls: object):
-        router = APIRouter(tags=self.tags, prefix=self.prefix)
+        router = APIRouter(tags=self.tags, prefix=self.prefix, dependencies=self.dependencies)
         
         def wrapper(*args, **kwargs):
             instance = cls(*args, **kwargs)

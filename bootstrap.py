@@ -10,12 +10,11 @@ class Bootstrap:
     def server_boot_up(app: Application):
         app.use_database()
         app.loader_module.register_controller({
-            'name': "Research API",
+            'name': "API Service",
             'base_path': 'controllers',
             'exclude_controllers': [],
             'initialize_all_controllers': True,
         })
-
         # Load all controllers
         app.loader_module.load_all_controllers()
     
