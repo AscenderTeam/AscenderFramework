@@ -10,6 +10,8 @@ from core.cli.application import ContextApplication, ErrorHandler
 from core.cli.async_module import CoroCLI
 from core.errors.base import DeclaredBaseCliIsNotDefined, IncorrectCommandArgument
 from rich import print as cprint
+from rich.columns import Columns
+from rich.panel import Panel
 from inspect import getfullargspec, isfunction, unwrap
 
 if TYPE_CHECKING:
@@ -115,8 +117,11 @@ class CLI:
         raise DeclaredBaseCliIsNotDefined(instance.__class__.__name__)
 
     def run(self):
-        self.load_basecli()
-        self.load_genericcli()
+        try:
+            self.load_basecli()
+            self.load_genericcli()
+        except IndexError:
+            self.handle_index_error()
 
     def load_basecli(self):
         cli_list = self.cli_list
@@ -155,6 +160,16 @@ class CLI:
                     # Check if argument has value, which will mean that it is optional
 
                     if f"--{argument['argument'].lower()}" in argv:
+                        if argument['type'] == bool:
+                            setattr(cli, argument["argument"], True)
+                            continue
+                        
+                        if argument["type"] == list:
+                            cmd_argument = argv[argv.index(
+                                f"--{argument['argument'].lower()}") + 1].split(",")
+                            setattr(cli, argument["argument"], cmd_argument)
+                            continue
+
                         cmd_argument = argv[argv.index(
                             f"--{argument['argument'].lower()}") + 1]
 
@@ -209,6 +224,16 @@ class CLI:
                             # Check if argument has value, which will mean that it is optional
                             if f"--{argument['argument'].lower()}" in argv:
                                 try:
+                                    if argument['type'] == bool:
+                                        args[argument["argument"]] = True
+                                        continue
+                                    
+                                    if argument["type"] == list:
+                                        cmd_argument = argv[argv.index(
+                                            f"--{argument['argument'].lower()}") + 1].split(",")
+                                        args[argument["argument"]] = cmd_argument
+                                        continue
+
                                     cmd_argument = argv[argv.index(
                                         f"--{argument['argument'].lower()}") + 1]
                                 except IndexError:
@@ -227,24 +252,15 @@ class CLI:
 
                                 args[argument["argument"]] = cmd_argument
 
+                            if argument["type"] == bool:
+                                args[argument["argument"]] = False
+                                continue
                             # if getattr(cli, argument["argument"], None) is None:
                             #     raise IncorrectCommandArgument(
                             #         argv[1].lower(), f"--{argument['argument'].lower()}")
                         try:
                             func = getattr(cli, method["name"])
-                            if isinstance(unwrap(func), CoroCLI):
-                                corocli_instance: CoroCLI = unwrap(func)
-                                print(corocli_instance)
-                                loop = asyncio.get_event_loop()
-                                loop.run_until_complete(func(ctx=ContextApplication(application=self.application), **args))
-
-                                if corocli_instance.is_tortoise:
-                                    loop.run_until_complete(Tortoise.close_connections())
-                                loop.stop()
-                                loop.close()
-                            
-                            else:
-                                func(ctx=ContextApplication(application=self.application), **args)
+                            func(ctx=ContextApplication(application=self.application), **args)
 
                         except TypeError as ex:
                             _req_attr = ex.args[0].split(' ')[-1].lower().replace("'", "")
@@ -255,7 +271,6 @@ class CLI:
                     raise ex
 
                 except Exception as ex:
-                    print("test")
                     self.load_handlers(ex)
                     raise ex
                     # raise ex
@@ -263,3 +278,52 @@ class CLI:
     def load_handlers(self, exception: Exception):
         error_handler = ErrorHandler()
         error_handler.trigger_handlers(self.handler_list, exception)
+
+    def handle_index_error(self):
+        cprint("""
+[bold red]Ascender Framework CLI[/bold red]
+[bold red]------------------------[/bold red][yellow]
+   ___   _________  _______   ____
+  / _ | / __/ ___/ / ___/ /  /  _/
+ / __ |_\ \/ /__  / /__/ /___/ /  
+/_/ |_/___/\___/  \___/____/___/  [/yellow]
+
+[bold red]Usage:[/bold red]
+    [bold green]start.py[/bold green] [bold blue]<command>[/bold blue] [bold yellow]<args>[/bold yellow]
+""")
+        cols = Columns()
+
+        commands_output = "[bold red]Available commands[/bold red]\n"
+        arguments_output = "[bold red]Available arguments[/bold red]\n"
+
+        for cli in self.cli_list:
+            commands_output += f"    [bold green]{cli.__class__.__name__.lower()}[/bold green] "
+            commands = cli.get_arguments()
+            for name, arg_type in self.process_arguments(commands):
+                if getattr(cli, name, None) is not None:
+                    arguments_output += f"--[bold yellow]{name}[/bold yellow] [OPTIONAL {arg_type}] "
+                    continue
+                arguments_output += f"--[bold yellow]{name}[/bold yellow] [{arg_type}] "
+            
+            commands_output += "\n"
+            arguments_output += "\n"
+        
+        for cli in self.generic_cli_list:
+            commands = cli.get_methods()
+            for command in commands:
+                commands_output += f"    [bold green]{command['name'].replace('_', ' ')}[/bold green] "
+                for name, arg_type in self.process_arguments(command["args"]):
+                    arguments_output += f"--[bold yellow]{name}[/bold yellow] [{arg_type}] "
+                
+                commands_output += "\n"
+                arguments_output += "\n"
+        
+        cols.add_renderable(commands_output)
+        cols.add_renderable(arguments_output)
+        cprint(cols)
+
+    def process_arguments(self, arguments: list[dict[str, type]]):
+        for argument in arguments:
+            if argument["argument"] == "ctx" or argument["argument"] == "self":
+                continue
+            yield argument["argument"], argument["type"].__name__.upper()

@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "research-react-agents"
-version = "0.1.0"
-description = ""
-authors = ["Zahgrom34 <65083166+Zahgrom34@users.noreply.github.com>"]
+name = "ascender-framework"
+version = "0.0.1"
+description = "The Ascender Framework is a sophisticated and structured FastAPI-based framework, inspired by the principles of NestJS. It stands out for its modular and organized architecture, offering developers a streamlined and efficient way to build web applications"
+authors = ["AscenderTeam"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -14,6 +14,7 @@ uvicorn = {extras = ["standard"], version = "^0.24.0.post1"}
 rich = "^13.6.0"
 readchar = "^4.0.5"
 aerich = "^0.7.2"
+bcrypt = "^4.0.1"
 
 
 [build-system]

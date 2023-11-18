@@ -1,3 +1,5 @@
+from core.cli_apps.users_cli import UsersCLI
+from core.extensions.authentication import AscenderAuthenticationFramework
 from importlib import import_module
 from fastapi import FastAPI
 from typing import Callable, List
@@ -6,6 +8,7 @@ import uvicorn
 from core.cli.main import CLI
 from core.cli_apps.core_updater.updater_cli import UpdaterCLI
 from core.cli_apps.serve_cli import Serve
+from core.extensions.authentication.custom.provider import AuthenticationProvider
 from core.loader import Loader
 
 from core.types import Controller
@@ -25,13 +28,17 @@ class Application:
         self.loader_module = Loader(self.app, controllers)
         
         # Initialize CLI module
-        self.__cli = CLI(self, "PyCLI", "CLI for Python")
+        self.__cli = CLI(self, "AscCLI", "CLI for Python")
     
     def use_database(self):
-        print("Database initialized")
         module = import_module("core.database")
 
         module.run_database(self.app)
+    
+    async def use_database_cli(self):
+        module = import_module("core.database")
+
+        await module.run_database_cli()
 
     def add_middleware(self, middleware: type, **options) -> None:
         self.app.add_middleware(middleware, **options)
@@ -44,6 +51,7 @@ class Application:
         self.__cli.register_command(Serve())
         
         self.__cli.register_generic_command(UpdaterCLI())
+        self.__cli.register_generic_command(UsersCLI())
         self.__cli.run()
     
     def run_server(self, host: str, port: int) -> Callable | None:
@@ -60,4 +68,10 @@ class Application:
             raise e
     
     def get_version(self) -> str:
-        return "ASCF_V 0.0.1"
+        return "v0.0.1"
+    
+    def use_authentication(self, token_url: str = "/auth/login"):
+        AscenderAuthenticationFramework.run_authentication(self, token_url=token_url)
+    
+    def use_custom_authentication(self, auth_provider: AuthenticationProvider):
+        AscenderAuthenticationFramework.run_custom_authentication(self, auth_provider)
