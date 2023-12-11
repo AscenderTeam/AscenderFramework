@@ -9,6 +9,7 @@ class Bootstrap:
     @staticmethod
     def server_boot_up(app: Application):
         app.use_database()
+        app.use_authentication()
         app.loader_module.register_controller({
             'name': "API Service",
             'base_path': 'controllers',
