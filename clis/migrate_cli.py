@@ -79,7 +79,7 @@ class MigrateCLI(GenericCLI):
         
         if not command_data:
             ctx.console_print('[error]No migration database found[/error]')
-            ctx.console_print('[info]Please run [underline]migrate init[/underline] before running this command[/info]')
+            ctx.console_print('[info]Please run [underline]migration init[/underline] before running this command[/info]')
             return
         
         command = Command(TORTOISE_ORM, **command_data)

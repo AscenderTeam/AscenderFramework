@@ -34,7 +34,7 @@ class BaseAuthentication(AuthenticationProvider[UserEntity, SessionManager]):
         if not session:
             return None
         
-        if session.expires_at and session.expires_at > datetime.now():
+        if session.expires_at and session.expires_at.astimezone(None) < datetime.now().astimezone(None):
             await self.sessions.delete_session(token)
             return None
         

@@ -1,17 +1,13 @@
 from __future__ import annotations
-import asyncio
 
 from sys import argv
 from functools import wraps
 from typing import TYPE_CHECKING, List, Optional
 
-from tortoise import Tortoise
 from core.cli.application import ContextApplication, ErrorHandler
-from core.cli.async_module import CoroCLI
 from core.errors.base import DeclaredBaseCliIsNotDefined, IncorrectCommandArgument
 from rich import print as cprint
 from rich.columns import Columns
-from rich.panel import Panel
 from inspect import getfullargspec, isfunction, unwrap
 
 if TYPE_CHECKING:
