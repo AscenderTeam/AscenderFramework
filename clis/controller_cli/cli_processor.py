@@ -1,35 +1,42 @@
+from rich.prompt import Prompt, Confirm
+
 from clis.controller_cli.controller_creator import ControllerCreator
 from core.cli import GenericCLI
 from core.cli.main import console_command
 from core.cli.application import ContextApplication
 
+
 class ControllerCLI(GenericCLI):
     app_name: str = "ControllerCLI"
-    help: str = "Easily manage controllers with this CLI tool"
+    help: str = "🔧 Easily manage controllers with this CLI tool"
 
     def __init__(self) -> None:
         self._name = "ControllerCLI"
-        self._description = "Easily manage controllers with this CLI tool"
+        self._description = "🔧 Easily manage controllers with this CLI tool"
         self._version = "0.0.1"
 
     @console_command
-    def new_controller(self, ctx: ContextApplication, name: str, cname: str = "controllers"):
-        ctx.console_print(f"[cyan]Creating new controller with name:[/cyan] {name}...")
-        ctx.console_print("[yellow]Warning![/yellow] Avoid passing the controller name with spaces!")
-        controller_creator = ControllerCreator(name, cname)
-        
-        for controller in controller_creator.create_controller():
-            ctx.console_print(f"[green]Created file:[/green] {name}/{controller}")
+    def new_controller(self, ctx: ContextApplication):
+        ctx.console_print("🚀 [bold cyan]Create a new controller[/bold cyan]")
+        controller_name = Prompt.ask("Controller name", default="auto")
+        include_optionals = Confirm.ask("Include optionals", default=True)
+        description_prompt = Prompt.ask("Controller description prompt", default=None)
 
-        ctx.console_print(f"[cyan]Done! You can check it up in: [underline]{controller_creator.controller_constants.controllers_path}/{controller_creator.controller_constants.controller_name.lower()}[/underline][/cyan]")
-    
-    @console_command
-    def add_optionals(self, ctx: ContextApplication, name: str, cname: str = "controllers"):
-        ctx.console_print(f"[cyan]Adding optional files to controller with name:[/cyan] {name}...")
-        ctx.console_print("[yellow]Warning![/yellow] Avoid passing the controller name with spaces!")
-        controller_creator = ControllerCreator(name, cname)
-        
-        for controller in controller_creator.create_optional_files():
-            ctx.console_print(f"[green]Created file:[/green] {name}/{controller}")
+        controller_creator = ControllerCreator(controller_name)
+        if controller_name == 'auto' and description_prompt:  # if user needs a name
+            ctx.console_print(f"[cyan]Creating new controller with name: ", end='', flush=True)
+            controller_name = controller_creator.generate_name(description=description_prompt)
+            ctx.console_print(f'[bold]{controller_name}[/bold]... 🛠')
 
-        ctx.console_print(f"[cyan]Done! You can check it up in: [underline]{controller_creator.controller_constants.controllers_path}/{controller_creator.controller_constants.controller_name.lower()}[/underline][/cyan]")
+        if description_prompt:
+            for controller_file in controller_creator.generate_controller(description_prompt, controller_name):
+                print(controller_file)
+
+        created_files = controller_creator.create_controller()
+        for file in created_files:
+            ctx.console_print(f"[green]✅ Created file:[/green] {controller_name}/{file}")
+        if include_optionals:
+            for controller in controller_creator.create_optional_files():
+                ctx.console_print(f"[green]Created additional file:[/green] {controller_name}/{controller}")
+        ctx.console_print(
+            f"🎉 [cyan]All set! Check your new controller at: [underline]{controller_creator.controller_constants.controllers_path}/{controller_creator.controller_constants.controller_name.lower()}[/underline][/cyan]")

@@ -59,7 +59,7 @@ class {self.service_name}(Service):
 
     def get_repo_file(self) -> str:
         return f"""
-# from entities.[your_entity] import [YourEntity]Entity
+from entities.{self.repo_name} import {self.repo_name.capitalize()}Entity
 from core.extensions.repositories import Repository
 
 
