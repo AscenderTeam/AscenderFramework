@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Any
 from typing import Generator, Iterator
@@ -17,7 +18,7 @@ class ControllerCreator:
         self.controller_path = controller_path
 
     def generate_name(self, description: str) -> str:
-        chain = ControllerNameGenerationChain.from_llm(llm=ChatOpenAI(), verbose=False)
+        chain = ControllerNameGenerationChain.from_llm(llm=ChatOpenAI(model=os.environ['SLOW_MODEL_NAME']), verbose=False)
         new_name = chain.run(stop='\n', description=description)
         self.controller_constants = ControllerConstants(new_name, self.controller_path)
         return new_name
@@ -47,9 +48,9 @@ class ControllerCreator:
         mandatory_files = self.controller_constants.get_mandatory_files() +\
                           self.controller_constants.get_optional_files()
         new_formatted_files = []
-        print(mandatory_files)
+        # print(mandatory_files)
         for mandatory_file in mandatory_files:
-            chain = ControllerFileGenerationChain.from_llm(llm=ChatOpenAI(), verbose=False)
+            chain = ControllerFileGenerationChain.from_llm(llm=ChatOpenAI(model=os.environ['SLOW_MODEL_NAME']), verbose=False)
             parser = MarkdownCodeblockParser()
 
             formatted_blank = """{path}:
@@ -65,7 +66,7 @@ class ControllerCreator:
 
             new_formatted_files.append(formatted_blank)
             self.create_file(mandatory_file["path"], '\n'.join(output))
-            yield mandatory_file['name'], '\n'.join(output)
+            yield mandatory_file['path'], '\n'.join(output)
 
     def create_optional_files(self) -> Generator[str, None, None]:
         path_manager = Path(self.controller_constants.controllers_path,

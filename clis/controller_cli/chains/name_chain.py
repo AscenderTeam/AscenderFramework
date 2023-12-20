@@ -17,6 +17,12 @@ class ControllerNameGenerationChain(LLMChain):
         task
         
         %DESCRIPTION
+        Product managment controller allowing to CRUD them
+        
+        %NAME
+        product
+        
+        %DESCRIPTION
         {description}
         
         %NAME

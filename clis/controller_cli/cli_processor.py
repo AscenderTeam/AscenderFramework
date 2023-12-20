@@ -30,7 +30,14 @@ class ControllerCLI(GenericCLI):
 
         if description_prompt:
             for controller_file in controller_creator.generate_controller(description_prompt, controller_name):
-                print(controller_file)
+                try:
+                    ctx.console_print(f"[bright_black]{controller_file[1][200:400]}...[/bright_black]")
+                except IndexError:
+                    ctx.console_print(f"[bright_black]{controller_file[1][:200]}...[/bright_black]")
+                ctx.console_print(f"[green]✅ Created file:[/green] {controller_name}/{controller_file[0]}")
+            ctx.console_print(
+                f"🎉 [cyan]All set! Check your new controller at: [underline]{controller_creator.controller_constants.controllers_path}/{controller_creator.controller_constants.controller_name.lower()}[/underline][/cyan]")
+            return
 
         created_files = controller_creator.create_controller()
         for file in created_files:
