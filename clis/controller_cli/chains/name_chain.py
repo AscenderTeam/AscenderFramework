@@ -10,6 +10,8 @@ class ControllerNameGenerationChain(LLMChain):
     def from_llm(cls, llm: BaseLanguageModel, verbose: bool = True) -> LLMChain:
         """Get the response parser."""
         name_prompt = """
+        PLEASE GENERATE A NAME FOR A CONTROLLER. No spaces, No Camel Cases, No Numbers.
+        
         %DESCRIPTION
         A controller for handling tasks
         
