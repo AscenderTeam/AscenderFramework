@@ -19,7 +19,6 @@ class Auth:
     @Get()
     async def get_auth_endpoint(self, token: str):
         return await self.auth_provider.get_authenticated_user(token)
-        return self.auth_service.get_hello()
 
 
 
