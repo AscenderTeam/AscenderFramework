@@ -1,7 +1,7 @@
 from clis.controller_cli.cli_processor import ControllerCLI
 from clis.migrate_cli import MigrateCLI
 from core.application import Application
-from core.cli.main import CLI
+from core.cli.processor import CLI
 
 
 class Bootstrap:
@@ -21,5 +21,5 @@ class Bootstrap:
     
     @staticmethod
     def cli_boot_up(_: Application, cli: CLI):
-        cli.register_generic_command(MigrateCLI())
-        cli.register_generic_command(ControllerCLI())
+        cli.register_generic(MigrateCLI())
+        cli.register_generic(ControllerCLI())

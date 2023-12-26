@@ -3,11 +3,12 @@ from core.cli.application import ContextApplication, Table, Panel
 from core.cli.async_module import CoroCLI
 from core.cli.main import GenericCLI, console_command
 from aerich import Command
+from core.cli.models import OptionCMD
 from core.utils.cacher import AscCacher
 from settings import BASE_PATH, TORTOISE_ORM
 
 class MigrateCLI(GenericCLI):
-    app_name: str = "migrate"
+    app_name: str = "migration"
     help: Optional[str] = "Migrate data from one database to another"
     
     def __init__(self):
@@ -18,10 +19,10 @@ class MigrateCLI(GenericCLI):
         self._version = '0.0.1'
         
         self.__cacher = AscCacher()
-    
-    # @console_command
-    # def test(self, ctx: ContextApplication, helo: str):
-    #     ctx.console_print('Hello world ' + helo)
+
+    @console_command
+    def test(self, ctx: ContextApplication, helo: str = OptionCMD(ctype=str, required=True)):
+        ctx.console_print('Hello world ' + helo)
 
     @console_command
     @CoroCLI(is_tortoise=True)

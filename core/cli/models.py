@@ -1,37 +1,45 @@
-from typing import Tuple, TypeVar
-from core.errors.base import IncorrectCommandArgument
+from typing import Optional, TypedDict
+from rich.console import Console
+from rich.markup import escape
+import click
 
 
-class CMDArgumentLine:
-    def __init__(self, name: str, vartype: type, default=None, required: bool = False) -> None:
-        self.name = name
-        self.vartype = vartype
+class OptionCMD:
+    def __init__(self, *names, default: Optional[str] = None, 
+                 ctype: type = str, help: Optional[str] = None, 
+                required: bool = False) -> None:
+        self.default = default
+        self.names = names
+        self.type = ctype
+        self.help = help
         self.required = required
-        self.value = default
-
-    def set_value(self, value):
-        """
-        ## Set Value
-
-        Determine value of variable
-
-        Args:
-            value (any): Value
-        """
-        self.value = value
-
-    def get_value(self):
-        """
-        ## Get value
-
-        Gets value determined on CLI.
-        """
-        if self.required and not self.value:
-            raise IncorrectCommandArgument(self.name, None)
-
-        return self.value
 
 
-T = TypeVar("T", str, int)
+    def __repr__(self) -> str:
+        return f"OptionCMD(default={self.default}, names={self.names}, type={self.type}, help={self.help}, required={self.required})"
 
-ArgumentedCMD = Tuple[str, T]
+
+class ArgumentCMD:
+    def __init__(self, default: Optional[str] = None, *, name: Optional[str] = None, 
+                 ctype: Optional[any] = None, help: Optional[str] = None, 
+                required: bool = False) -> None:
+        self.default = default
+        self.name = name
+        self.type = ctype
+        self.help = help
+        self.required = required
+    
+    def validate(self, value: any) -> bool:
+        # TODO: Make a validator
+
+        return True
+
+    def __repr__(self) -> str:
+        return f"ArgumentCMD(default={self.default}, name={self.name}, type={self.type}, help={self.help}, required={self.required})"
+    
+
+class ArgumentsFormat(TypedDict):
+    argument: str
+    type: type
+    value: list | str | int | float | bool | OptionCMD | ArgumentCMD | None
+    is_ourobj: bool

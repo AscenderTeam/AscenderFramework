@@ -5,8 +5,7 @@ from fastapi import FastAPI
 from typing import Callable, List
 
 import uvicorn
-from core.cli.main import CLI
-from core.cli_apps.core_updater.updater_cli import UpdaterCLI
+from core.cli.processor import CLI
 from core.cli_apps.serve_cli import Serve
 from core.extensions.authentication.custom.provider import AuthenticationProvider
 from core.loader import Loader
@@ -28,8 +27,11 @@ class Application:
         self.loader_module = Loader(self.app, controllers)
         
         # Initialize CLI module
-        self.__cli = CLI(self, "AscCLI", "CLI for Python")
+        self.__cli = CLI(self, app_name="AscCLI")
     
+    def test_callback(self, *args, **kwargs):
+        print(*args, **kwargs)
+
     def use_database(self):
         module = import_module("core.database")
 
@@ -48,10 +50,9 @@ class Application:
         if self._on_cli_run is not None:
             self._on_cli_run(self, self.__cli)
 
-        self.__cli.register_command(Serve())
+        self.__cli.register_base("serve", Serve())
         
-        self.__cli.register_generic_command(UpdaterCLI())
-        self.__cli.register_generic_command(UsersCLI())
+        self.__cli.register_generic(UsersCLI())
         self.__cli.run()
     
     def run_server(self, host: str, port: int) -> Callable | None:

@@ -1,0 +1,69 @@
+from __future__ import annotations
+
+from typing import Callable, Optional, TYPE_CHECKING
+
+import rich_click as click
+from core.cli.application import ContextApplication
+from core.cli.main import BaseCLI
+from core.cli.models import ArgumentCMD
+
+if TYPE_CHECKING:
+    from core.application import Application
+
+
+class LoaderBaseCLI:
+    def __init__(self, cli: BaseCLI, application: Application,
+                 name: str,
+                 callback: Optional[Callable[[ContextApplication], None]] = None) -> None:
+        self.application = application
+        self.callback = callback
+        self.name = name
+        self.cli = cli
+    
+    def get_arguments(self):
+        arguments = self.cli.get_arguments()
+
+        for index, argument in enumerate(arguments):
+            if argument["argument"] == "ctx":
+                del arguments[index]
+            
+            if argument["is_ourobj"]:
+                arguments[index] = {
+                    "argument": argument["value"].name,
+                    "type": argument["value"].type if argument["value"].type is not None else argument["type"],
+                    "value": argument["value"].default if argument["value"].required else None,
+                    "help": argument["value"].help,
+                    "is_arg": argument["type"] == ArgumentCMD,
+                    "is_ourobj": True,
+                }
+
+        return arguments
+    
+    def execute_cli(self, **kwargs):
+        ctx = ContextApplication(self.application)
+        for key, value in kwargs.items():
+            setattr(self.cli, key, value)
+        return self.cli.callback(ctx=ctx)
+
+    def _as_command(self) -> None:
+        arguments = self.get_arguments()
+        command = click.RichCommand(self.name, callback=self.execute_cli)
+        
+        for arg in arguments:
+            if arg["is_ourobj"]:
+                if arg["is_arg"]:
+                    command.params.append(click.Argument([arg["argument"]], type=arg["type"], default=arg["value"], required=(arg["value"] is None)
+                                                 ))
+                else:
+                    command.params.append(click.Option([f"--{arg['argument']}"], type=arg["type"], default=arg["value"], required=(arg["value"] is None)
+                                                 ))
+                    
+            command.params.append(click.Argument([arg["argument"]], type=arg["type"], default=arg["value"], required=(arg["value"] is None)
+                                                 ))
+        
+        return command
+    
+    def run(self) -> click.RichCommand:
+        command = self._as_command()
+
+        return command
