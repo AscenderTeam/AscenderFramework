@@ -21,8 +21,8 @@ class MigrateCLI(GenericCLI):
         self.__cacher = AscCacher()
 
     @console_command
-    def test(self, ctx: ContextApplication, helo: str = OptionCMD(ctype=str, required=True)):
-        ctx.console_print('Hello world ' + helo)
+    def test(self, ctx: ContextApplication, helo: int = OptionCMD(ctype=int, required=False, default=4)):
+        ctx.console_print('[green]Hello[/] [cyan]world[/] [yellow]' + str(helo) + '[/]')
 
     @console_command
     @CoroCLI(is_tortoise=True)

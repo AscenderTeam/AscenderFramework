@@ -29,11 +29,11 @@ class LoaderBaseCLI:
             
             if argument["is_ourobj"]:
                 arguments[index] = {
-                    "argument": argument["value"].name,
+                    "argument": argument["argument"] if not isinstance(argument["value"], ArgumentCMD) or not argument["value"].name else argument["value"].name,
                     "type": argument["value"].type if argument["value"].type is not None else argument["type"],
-                    "value": argument["value"].default if argument["value"].required else None,
+                    "value": argument["value"],
                     "help": argument["value"].help,
-                    "is_arg": argument["type"] == ArgumentCMD,
+                    "is_arg": type(argument["value"]) == ArgumentCMD,
                     "is_ourobj": True,
                 }
 
@@ -52,12 +52,12 @@ class LoaderBaseCLI:
         for arg in arguments:
             if arg["is_ourobj"]:
                 if arg["is_arg"]:
-                    command.params.append(click.Argument([arg["argument"]], type=arg["type"], default=arg["value"], required=(arg["value"] is None)
+                    command.params.append(click.Argument([arg["argument"]], type=arg["type"], default=arg["value"].default, required=arg["value"].required
                                                  ))
                 else:
-                    command.params.append(click.Option([f"--{arg['argument']}"], type=arg["type"], default=arg["value"], required=(arg["value"] is None)
-                                                 ))
-                    
+                    command.params.append(arg["value"].parse(arg["argument"]))
+                continue
+
             command.params.append(click.Argument([arg["argument"]], type=arg["type"], default=arg["value"], required=(arg["value"] is None)
                                                  ))
         

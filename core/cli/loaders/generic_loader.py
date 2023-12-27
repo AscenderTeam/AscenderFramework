@@ -39,9 +39,8 @@ class GenericLoader:
                     command.params.append(click.Argument([arg["argument"]], type=arg["value"].type, default=arg["value"].default, required=(arg["value"].required)
                                                  ))
                 else:
-                    command.params.append(click.Option([f"--{arg['argument']}", arg["argument"]], type=arg["value"].type, default=arg["value"].default, required=(arg["value"].required)
-                                                 ))
-                    print(arg['argument'], arg)
+                    command.params.append(arg["value"].parse(arg["argument"]))
+
                 continue
                     
             command.params.append(click.Argument([arg["argument"]], type=arg["type"], default=arg["value"], required=(arg["value"] is None)

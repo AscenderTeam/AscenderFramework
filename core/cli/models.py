@@ -5,15 +5,24 @@ import click
 
 
 class OptionCMD:
-    def __init__(self, *names, default: Optional[str] = None, 
-                 ctype: type = str, help: Optional[str] = None, 
-                required: bool = False) -> None:
+    def __init__(self, *names: list[str], default: Optional[str] = None, 
+                 ctype: type = str, help: Optional[str] = None,
+                 is_flag: bool = False, flag_value: Optional[str] = None, 
+                 required: bool = True, **kwargs) -> None:
         self.default = default
         self.names = names
         self.type = ctype
+        self.is_flag = is_flag
+        self.flag_value = flag_value
         self.help = help
         self.required = required
+        self.additonal_kwargs = kwargs
 
+        if required and default is not None:
+            raise ValueError("You cannot have a default value and required=True")
+    
+    def parse(self, argument_name: str) -> click.Option:
+        return click.Option([f"--{argument_name}", *self.names], default=self.default, type=self.type, help=self.help, required=self.required, **self.additonal_kwargs)
 
     def __repr__(self) -> str:
         return f"OptionCMD(default={self.default}, names={self.names}, type={self.type}, help={self.help}, required={self.required})"

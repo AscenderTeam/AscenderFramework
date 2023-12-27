@@ -93,19 +93,24 @@ class GenericCLI:
         return self.app_name
 
 
-def console_command(f):
+def console_command(name: Optional[str] = None, help: Optional[str] = None, **kwargs):
     """
     ## Console command.
 
     Command decorator for generic cli
     """
-    @wraps(f)
-    def decorator(*args, **kwargs):
-        # if args:
-        # return f(*args[1:], **kwargs)  # Skip the first argument
-        return f(*args, **kwargs)
-    return decorator
+    def inner_wrapper(f):
+        @wraps(f)
+        def decorator(*args, **kwargs):
+            # if args:
+            # return f(*args[1:], **kwargs)  # Skip the first argument
+            f.alt_name = name
+            f.help = help
+            f.kwargs = kwargs
+            return f(*args, **kwargs)
+        return decorator
 
+    return inner_wrapper
 
 class CLI:
     app_name: str
