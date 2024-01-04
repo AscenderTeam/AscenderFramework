@@ -15,9 +15,9 @@ Ascender Framework is a powerful, FastAPI-based framework designed to streamline
 ## Installation
 
 ```bash
-git clone https://github.com/AscenderTeam/AscenderFramework.git
-cd AscenderFramework
-poetry install
+pip install ascender
+ascender projects new <project-name>
+cd <project-name>
 ```
 
 We recommend using [Poetry](https://python-poetry.org/) for dependency management. 
@@ -42,12 +42,12 @@ pip install -r requirements.txt
 
 - **Create a New Controller**:
   ```bash
-  python3 start.py new controller --name ControllerName
+  python3 start.py controllers new --name <controller-name>
   ```
 
 - **Add Optional Files to a Controller**:
   ```bash
-  python3 start.py add optionals --name ControllerName
+  python3 start.py controllers optionals --name <controller-name>
   ```
 
 - **Initialize Database Migration**:
@@ -64,8 +64,8 @@ pip install -r requirements.txt
 
 - `bootstrap.py`: For server configuration and controller registration.
 - `controllers/`: Contains the controllers with their respective `endpoints.py`, `service.py`, and `repository.py`.
-- `models/`: (Optional) Pydantic models for data structure definition.
-- `serializers/`: (Optional) For converting Tortoise models to Pydantic models.
+- `{controller}/models/` or `models.py`: (Optional) Pydantic models for data structure definition.
+- `{controller}/serializers/` or `serializers.py`: (Optional) For converting Tortoise models to Pydantic models.
 
 ## Contributing
 

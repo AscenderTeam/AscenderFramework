@@ -1,6 +1,5 @@
 
-from typing import List, TypeVar, TypedDict
-from fastapi import APIRouter
+from typing import List, TypedDict
 from tortoise.models import Model as Entity
 
 from core.extensions.repositories import Repository

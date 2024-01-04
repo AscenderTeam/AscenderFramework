@@ -1,14 +1,16 @@
 from __future__ import annotations
+import inspect
 
 from sys import argv
 from functools import wraps
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Callable, List, Optional
 
 from core.cli.application import ContextApplication, ErrorHandler
+from core.cli.models import ArgumentCMD, ArgumentsFormat, OptionCMD
 from core.errors.base import DeclaredBaseCliIsNotDefined, IncorrectCommandArgument
 from rich import print as cprint
 from rich.columns import Columns
-from inspect import getfullargspec, isfunction, unwrap
+from inspect import isfunction, unwrap
 
 if TYPE_CHECKING:
     from core.application import Application
@@ -20,11 +22,16 @@ class BaseCLI:
         pass
 
     def get_arguments(self):
-        result: list[dict[str, type]] = []
+        result: list[ArgumentsFormat] = []
 
+        # Iterate over annotated class variables
         for key, value in self.__class__.__dict__["__annotations__"].items():
-            if value in [list, int, dict, str]:
-                result.append({"argument": key, "type": value})
+            # Check if the variable is public and its type is among the specified types
+            current_value = getattr(self, key, None)
+            if not key.startswith('_') and value in [list, str, int, float, bool]:
+                # Optionally, get the current value of the variable
+                result.append({"argument": key, "type": value,
+                              "value": current_value, "is_ourobj": bool(type(current_value) in [ArgumentCMD, OptionCMD])})
 
         return result
 
@@ -36,45 +43,73 @@ class BaseCLI:
 
 
 class GenericCLI:
-    app_name: str
-    help: Optional[str]
+    app_name: Optional[str] = None
+    help: Optional[str] = None
+    configs: Optional[dict] = None
 
     def __init__(self) -> None:
         pass
 
-    def get_methods(self):
-        result = []
+    def get_method_arguments(self, _method: Callable) -> list[ArgumentsFormat]:
+        result: list[ArgumentsFormat] = []
+        signature = inspect.signature(_method)
+
+        for name, param in signature.parameters.items():
+            # Determine the type of the parameter
+            param_type = param.annotation if param.annotation is not inspect.Parameter.empty else str
+
+            # Determine the default value of the parameter
+            default_value = param.default if param.default is not inspect.Parameter.empty else None
+
+            if name == "self" and default_value is None:
+                continue
+            
+            if name == "ctx":
+                continue
+
+            if param_type == bool:
+                default_value = False
+            result.append(
+                {"argument": name, "type": param_type, "value": default_value, "is_ourobj": bool(type(default_value) in [ArgumentCMD, OptionCMD])})
+
+        return result
+
+    def get_methods(self) -> list[tuple[str, list[ArgumentsFormat]]]:
+        result: list[tuple[str, list[ArgumentsFormat]]] = []
         for method_name, method in self.__class__.__dict__.items():
             if isfunction(method) and method_name != "__init__":
                 # Unwrap the method to get to the original function if it's wrapped by a decorator
                 original_method = unwrap(method)
-                spec = getfullargspec(original_method)
-                args = []
-                for arg in spec.args:
-                    # Default to str if no annotation
-                    arg_type = spec.annotations.get(arg, str)
-                    # Use __name__ to get the name of the type
-                    args.append({"argument": arg, "type": arg_type})
-                result.append({"name": method_name, "args": args})
+                # Get the arguments of the method
+                arguments = self.get_method_arguments(original_method)
+                result.append((method_name, arguments))
+
         return result
+
 
     def __str__(self) -> str:
         return self.app_name
 
 
-def console_command(f):
+def console_command(name: Optional[str] = None, help: Optional[str] = None, **kwargs):
     """
     ## Console command.
 
     Command decorator for generic cli
     """
-    @wraps(f)
-    def decorator(*args, **kwargs):
-        # if args:
-        # return f(*args[1:], **kwargs)  # Skip the first argument
-        return f(*args, **kwargs)
-    return decorator
+    def inner_wrapper(f):
+        f.alt_name = name
+        f.help = help
+        f.kwargs = kwargs
+        @wraps(f)
+        def decorator(*args, **kwargs):
+            # if args:
+            # return f(*args[1:], **kwargs)  # Skip the first argument
+            
+            return f(*args, **kwargs)
+        return decorator
 
+    return inner_wrapper
 
 class CLI:
     app_name: str
@@ -159,7 +194,7 @@ class CLI:
                         if argument['type'] == bool:
                             setattr(cli, argument["argument"], True)
                             continue
-                        
+
                         if argument["type"] == list:
                             cmd_argument = argv[argv.index(
                                 f"--{argument['argument'].lower()}") + 1].split(",")
@@ -223,11 +258,12 @@ class CLI:
                                     if argument['type'] == bool:
                                         args[argument["argument"]] = True
                                         continue
-                                    
+
                                     if argument["type"] == list:
                                         cmd_argument = argv[argv.index(
                                             f"--{argument['argument'].lower()}") + 1].split(",")
-                                        args[argument["argument"]] = cmd_argument
+                                        args[argument["argument"]
+                                             ] = cmd_argument
                                         continue
 
                                     cmd_argument = argv[argv.index(
@@ -256,10 +292,12 @@ class CLI:
                             #         argv[1].lower(), f"--{argument['argument'].lower()}")
                         try:
                             func = getattr(cli, method["name"])
-                            func(ctx=ContextApplication(application=self.application), **args)
+                            func(ctx=ContextApplication(
+                                application=self.application), **args)
 
                         except TypeError as ex:
-                            _req_attr = ex.args[0].split(' ')[-1].lower().replace("'", "")
+                            _req_attr = ex.args[0].split(
+                                ' ')[-1].lower().replace("'", "")
                             raise IncorrectCommandArgument(
                                 argv[1].lower(), f"--{_req_attr}")
 
@@ -300,20 +338,20 @@ class CLI:
                     arguments_output += f"--[bold yellow]{name}[/bold yellow] [OPTIONAL {arg_type}] "
                     continue
                 arguments_output += f"--[bold yellow]{name}[/bold yellow] [{arg_type}] "
-            
+
             commands_output += "\n"
             arguments_output += "\n"
-        
+
         for cli in self.generic_cli_list:
             commands = cli.get_methods()
             for command in commands:
                 commands_output += f"    [bold green]{command['name'].replace('_', ' ')}[/bold green] "
                 for name, arg_type in self.process_arguments(command["args"]):
                     arguments_output += f"--[bold yellow]{name}[/bold yellow] [{arg_type}] "
-                
+
                 commands_output += "\n"
                 arguments_output += "\n"
-        
+
         cols.add_renderable(commands_output)
         cols.add_renderable(arguments_output)
         cprint(cols)

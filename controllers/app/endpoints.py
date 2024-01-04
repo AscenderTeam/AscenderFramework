@@ -13,7 +13,6 @@ class App:
         return self.app_service.get_hello()
 
 
-
 def setup() -> ControllerModule:
     return {
         "controller": App,
