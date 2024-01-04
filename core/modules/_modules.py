@@ -1,0 +1,1 @@
+MODULES_INFO = {}
