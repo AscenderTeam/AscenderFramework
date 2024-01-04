@@ -15,9 +15,9 @@ Ascender Framework is a powerful, FastAPI-based framework designed to streamline
 ## Installation
 
 ```bash
-git clone https://github.com/AscenderTeam/AscenderFramework.git
-cd AscenderFramework
-poetry install
+pip install ascender
+ascender projects new <project-name>
+cd <project-name>
 ```
 
 We recommend using [Poetry](https://python-poetry.org/) for dependency management. 
