@@ -1,10 +1,11 @@
 from fastapi import Depends
 from controllers.auth.repository import AuthRepo
 from controllers.auth.service import AuthService
-from core.guards.authenticator import IsAuthenticated
+from core.guards.authenticator import IsAuthenticatedSocket
 from core.types import ControllerModule
 from core.utils.controller import Controller, Get
 from core.extensions.authentication import AscenderAuthenticationFramework
+from core.utils.sockets import Listen
 
 @Controller()
 class Auth:
@@ -19,8 +20,11 @@ class Auth:
     @Get()
     async def get_auth_endpoint(self, token: str):
         return await self.auth_provider.get_authenticated_user(token)
-        return self.auth_service.get_hello()
 
+    # @Listen("connect", all_namespaces=True)
+    # @IsAuthenticatedSocket()
+    # async def socket_auth_endpoint(self, ctx):
+    #     await ctx.emit("status", "Successfully connected")
 
 
 def setup() -> ControllerModule:

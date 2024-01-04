@@ -1,9 +1,17 @@
+from __future__ import annotations
 import os
-from typing import List
+from typing import TYPE_CHECKING, List
 from fastapi import FastAPI
 from importlib import import_module
+from core.sockets import LoadedEndpoints
+from core.store.distributor import Distributor
+from core.store.storage import BaseStore
 
 from core.types import Controller, ControllerModule
+from core.modules._modules import MODULES_INFO
+
+if TYPE_CHECKING:
+    from core.application import Application
 
 
 
@@ -11,8 +19,9 @@ class Loader:
     
     _active_controllers: list[object] = []
 
-    def __init__(self, app: FastAPI, controllers: List[Controller]) -> None:
+    def __init__(self, app: FastAPI, application: Application, controllers: List[Controller]) -> None:
         self._app = app
+        self._application = application
         self._controllers = controllers
 
     def get_controllers(self, controller: Controller):
@@ -99,12 +108,37 @@ class Loader:
         """
         ## Initialize dependencies
 
-        Runs __mounted__ method to initialize all dependencies
+        Features:
+        - Runs __mounted__ method to initialize all dependencies
+        - Mounts all SocketIO endpoints
         """
         for controller in self._active_controllers:
             if hasattr(controller, 'dependencies'):
                 dependencies = getattr(controller, 'dependencies')
                 dependencies.__mounted__()
+        
+        if not self._application.socketio:
+            return
+        # SocketIO endpoints
+        _endpoints = LoadedEndpoints.endpoints
+        _namespaces = set()
+        _afterload_endpoints = []
+
+        for endpoint in _endpoints:
+            if endpoint['namespace'] == "[ALL]":
+                _afterload_endpoints.append(endpoint)
+                continue
+
+            _namespaces.add(endpoint['namespace'])
+            self._application.socketio.add_event(endpoint['namespace'], endpoint['event'], endpoint['handler'])
+
+        for endpoint in _afterload_endpoints:
+            if endpoint['namespace'] == "[ALL]":
+
+                for namespace in list(_namespaces):
+                    self._application.socketio.add_event(namespace, endpoint['event'], endpoint['handler'])
+                        
+                    continue
     
     def register_controller(self, controller: Controller):
         """
@@ -114,3 +148,35 @@ class Loader:
         """
         self._controllers.append(controller)
     
+    def register_store(self, store: str, instance: BaseStore):
+        """
+        ## Register store
+
+        Registers a new store, after it will be loaded with funciton `load_all_controllers`
+        """
+        Distributor.register_store(self._app, store, instance)
+
+    def use_module(self, module: str, *args, **kwargs):
+        """
+        ## Load module
+
+        Loads a module from `core/modules` directory
+
+        Args:
+            module (str): Name of module to be loaded
+            *args: Required arguments of module
+            **kwargs: Required keyword arguments of module
+        """
+        module_info = MODULES_INFO.get(module, None)
+
+        if not module_info:
+            return None # TODO: Make an exception handler
+
+        module_class = import_module(module_info["class"], module_info['module'])(*args, **kwargs)
+        module_class.app = self._app
+        if module_info.get('on_initialize', None):
+            getattr(module_class, module_info['on_initialize'])()
+        
+        if module_info.get('on_down', None):
+            self._app.add_event_handler("shutdown", getattr(module_class, module_info['on_down']))
+            # TODO: WIP, should fix after testing
