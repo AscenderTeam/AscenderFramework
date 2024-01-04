@@ -24,6 +24,17 @@ class ControllerCLI(GenericCLI):
         ctx.console_print(f"[cyan]Done! You can check it up in: [underline]{controller_creator.controller_constants.controllers_path}/{controller_creator.controller_constants.controller_name.lower()}[/underline][/cyan]")
     
     @console_command()
+    def auth(self, ctx: ContextApplication, name: str = "auth", cname: str = "controllers"):
+        ctx.console_print(f"[cyan]Creating new controller with name:[/cyan] {name}...")
+        ctx.console_print("[yellow]Warning![/yellow] Avoid passing the controller name with spaces!")
+        controller_creator = ControllerCreator(name, cname)
+        
+        for controller in controller_creator.create_authentication_controller():
+            ctx.console_print(f"[green]Created file:[/green] {name}/{controller}")
+
+        ctx.console_print(f"[cyan]Done! You can check it up in: [underline]{controller_creator.controller_constants.controllers_path}/{controller_creator.controller_constants.controller_name.lower()}[/underline][/cyan]")
+
+    @console_command()
     def optionals(self, ctx: ContextApplication, name: str, cname: str = "controllers"):
         ctx.console_print(f"[cyan]Adding optional files to controller with name:[/cyan] {name}...")
         ctx.console_print("[yellow]Warning![/yellow] Avoid passing the controller name with spaces!")

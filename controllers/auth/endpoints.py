@@ -1,26 +1,37 @@
 from fastapi import Depends
+from controllers.auth.models import LoginDTO, UserDTO, UserResponse
 from controllers.auth.repository import AuthRepo
 from controllers.auth.service import AuthService
-from core.guards.authenticator import IsAuthenticatedSocket
+from core.extensions.authentication.entity import UserEntity
+from core.extensions.serializer import Serializer
+from core.guards.authenticator import GetAuthenticatedUser, IsAuthenticated
 from core.types import ControllerModule
-from core.utils.controller import Controller, Get
-from core.extensions.authentication import AscenderAuthenticationFramework
+from core.utils.controller import Controller, Delete, Get, Post
 from core.utils.sockets import Listen
 
 @Controller()
 class Auth:
     def __init__(self, auth_service: AuthService) -> None:
         self.auth_service = auth_service
-        self.auth_provider = AscenderAuthenticationFramework.auth_provider
 
-    @Get("login")
-    async def login(self, login: str, password: str):
-        return await self.auth_provider.authenticate(login, password)
+    @Post("login")
+    async def login(self, user: LoginDTO):
+        return await self.auth_service.auth_provider.authenticate(user.username, user.password.get_secret_value())
 
-    @Get()
-    async def get_auth_endpoint(self, token: str):
-        return await self.auth_provider.get_authenticated_user(token)
+    @Post("register")
+    async def register(self, user: UserDTO):
+        return await self.auth_service.create_user(user)
 
+    @Get("me")
+    async def get_auth_endpoint(self, user: UserEntity = Depends(GetAuthenticatedUser(True))):
+        return Serializer(UserResponse, user)()
+
+    @Delete("{user_id}", dependencies=[Depends(IsAuthenticated(True))])
+    async def delete_user_endpoint(self, user_id: int):
+        return await self.auth_service.delete_user(user_id)
+
+    ## SocketIO authentication support... In case of using SocketIO, uncomment the following code
+    ## To enable SocketIO support, add this piece of code `app.use_sio()` in `bootstrap.py`
     # @Listen("connect", all_namespaces=True)
     # @IsAuthenticatedSocket()
     # async def socket_auth_endpoint(self, ctx):

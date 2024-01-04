@@ -14,8 +14,7 @@ class GetAuthenticatedUser:
 
     async def __call__(self, token: HTTPAuthorizationCredentials = Security(HTTPBearer())) -> Any:
         provider = AscenderAuthenticationFramework.auth_provider
-
-        user = await provider.get_authenticated_user(token)
+        user = await provider.get_authenticated_user(token.credentials)
 
         if self.http_exception and not user:
             raise HTTPException(status_code=401, detail="Unauthorized")
@@ -42,10 +41,10 @@ class IsAuthenticated:
             return False
 
     async def __call__(self, token: HTTPAuthorizationCredentials = Security(HTTPBearer())) -> Any:
-        if await self.has_permission(token):
+        if await self.has_permission(token.credentials):
             return True
         else:
-            raise HTTPException(status_code=404, detail="Not found")
+            raise HTTPException(status_code=403, detail="Permission denied")
 
 
 class IsAuthenticatedSocket:
