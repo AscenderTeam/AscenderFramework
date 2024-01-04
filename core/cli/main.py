@@ -5,14 +5,12 @@ from sys import argv
 from functools import wraps
 from typing import TYPE_CHECKING, Callable, List, Optional
 
-from sqlalchemy import func
-
 from core.cli.application import ContextApplication, ErrorHandler
 from core.cli.models import ArgumentCMD, ArgumentsFormat, OptionCMD
 from core.errors.base import DeclaredBaseCliIsNotDefined, IncorrectCommandArgument
 from rich import print as cprint
 from rich.columns import Columns
-from inspect import getfullargspec, isfunction, unwrap
+from inspect import isfunction, unwrap
 
 if TYPE_CHECKING:
     from core.application import Application
@@ -100,13 +98,14 @@ def console_command(name: Optional[str] = None, help: Optional[str] = None, **kw
     Command decorator for generic cli
     """
     def inner_wrapper(f):
+        f.alt_name = name
+        f.help = help
+        f.kwargs = kwargs
         @wraps(f)
         def decorator(*args, **kwargs):
             # if args:
             # return f(*args[1:], **kwargs)  # Skip the first argument
-            f.alt_name = name
-            f.help = help
-            f.kwargs = kwargs
+            
             return f(*args, **kwargs)
         return decorator
 

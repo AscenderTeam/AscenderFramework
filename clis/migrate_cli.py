@@ -3,7 +3,6 @@ from core.cli.application import ContextApplication, Table, Panel
 from core.cli.async_module import CoroCLI
 from core.cli.main import GenericCLI, console_command
 from aerich import Command
-from core.cli.models import OptionCMD
 from core.utils.cacher import AscCacher
 from settings import BASE_PATH, TORTOISE_ORM
 
@@ -20,13 +19,9 @@ class MigrateCLI(GenericCLI):
         
         self.__cacher = AscCacher()
 
-    @console_command
-    def test(self, ctx: ContextApplication, helo: int = OptionCMD(ctype=int, required=False, default=4)):
-        ctx.console_print('[green]Hello[/] [cyan]world[/] [yellow]' + str(helo) + '[/]')
-
-    @console_command
+    @console_command()
     @CoroCLI(is_tortoise=True)
-    async def migration_init(self, ctx: ContextApplication, app: str = 'models'):
+    async def init(self, ctx: ContextApplication, app: str = 'models'):
         ctx.console_print('[info]Initializing migration database...[/info]')
         
         command = Command(TORTOISE_ORM, app=app, location=f'{BASE_PATH}/migrations')
@@ -39,9 +34,9 @@ class MigrateCLI(GenericCLI):
         ctx.console_print('[bold green]Migration database created successfully[/bold green]')
         return
     
-    @console_command
+    @console_command()
     @CoroCLI(is_tortoise=True)
-    async def migration_migrate(self, ctx: ContextApplication, name: str = "update"):
+    async def migrate(self, ctx: ContextApplication, name: str = "update"):
         ctx.console_print('[info]Migrating database...[/info]')
         
         # Load cache data
@@ -73,9 +68,9 @@ class MigrateCLI(GenericCLI):
         ctx.console_print(table=updated_data)
         return
 
-    @console_command
+    @console_command()
     @CoroCLI()
-    async def migration_history(self, ctx: ContextApplication):
+    async def history(self, ctx: ContextApplication):
         command_data = self.__cacher.load_json_cache("migrate_config", is_binary=True)
         
         if not command_data:

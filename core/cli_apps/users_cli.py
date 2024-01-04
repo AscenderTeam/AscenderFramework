@@ -8,7 +8,7 @@ from core.extensions.authentication import AscenderAuthenticationFramework
 class UsersCLI(GenericCLI):
     app_name: str = "users"
 
-    @console_command
+    @console_command(name="create-user")
     @CoroCLI(is_tortoise=True)
     async def create_user(self, ctx: ContextApplication, username: str = OptionCMD(ctype=str), password: str = OptionCMD(ctype=str)):
         # Initialize authentication framework
@@ -19,7 +19,7 @@ class UsersCLI(GenericCLI):
         await AscenderAuthenticationFramework.auth_provider.create_user(username, password)
         ctx.console_print("[bold green]User created successfully![/bold green]")
     
-    @console_command
+    @console_command(name="create-superuser")
     @CoroCLI(is_tortoise=True)
     async def create_superuser(self, ctx: ContextApplication, username: str, password: str):
         # Initialize authentication framework

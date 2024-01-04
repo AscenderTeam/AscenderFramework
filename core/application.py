@@ -9,6 +9,7 @@ from core.cli.processor import CLI
 from core.cli_apps.serve_cli import Serve
 from core.extensions.authentication.custom.provider import AuthenticationProvider
 from core.loader import Loader
+from core.sockets import SocketIOApp
 
 from core.types import Controller
 
@@ -19,12 +20,13 @@ class Application:
                 on_server_runtime_error: Callable[[Exception], None] | None = None,
                 on_cli_run: Callable[['Application', CLI], None] | None = None) -> None:
         self.app = FastAPI(title="Ascender Framework API")
+        self.socketio: SocketIOApp | None = None
 
         self._on_server_start = on_server_start
         self._on_server_runtime_error = on_server_runtime_error
         self._on_cli_run = on_cli_run
         
-        self.loader_module = Loader(self.app, controllers)
+        self.loader_module = Loader(self.app, self, controllers)
         
         # Initialize CLI module
         self.__cli = CLI(self, app_name="AscCLI")
@@ -59,7 +61,7 @@ class Application:
         try:
             if self._on_server_start is not None:
                 self._on_server_start(self)
-            uvicorn.run(app=self.app, host=host, port=port)
+                uvicorn.run(app=self.app, host=host, port=port)
             
         except Exception as e:
             # Call hooked exception handler if exists
@@ -76,3 +78,16 @@ class Application:
     
     def use_custom_authentication(self, auth_provider: AuthenticationProvider):
         AscenderAuthenticationFramework.run_custom_authentication(self, auth_provider)
+
+    def use_sio(self, **options):
+        """
+        ## Use SocketIO
+
+        Args:
+            use_threading (bool, optional): Determine whether it should launch multiprocessingly or not. Defaults to True.
+        """
+        self.socketio = SocketIOApp(self, **options)
+
+    def add_module(self, module: str, **options) -> None:
+        module.run_module(self.app, **options)
+    

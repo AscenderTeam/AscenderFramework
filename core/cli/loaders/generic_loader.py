@@ -1,4 +1,5 @@
 from __future__ import annotations
+from inspect import unwrap
 from typing import TYPE_CHECKING, Callable, Optional
 
 import rich_click as click
@@ -30,8 +31,8 @@ class GenericLoader:
         
         return call_cli
 
-    def _as_command(self, name: str, arguments: list[ArgumentsFormat]) -> None:
-        command = RichCommand(name, callback=self.execute_cli(name))
+    def _as_command(self, name: str, method_name: str, arguments: list[ArgumentsFormat], **metadata) -> None:
+        command = RichCommand(name, callback=self.execute_cli(method_name), **metadata)
         
         for arg in arguments:
             if arg["is_ourobj"]:
@@ -52,11 +53,15 @@ class GenericLoader:
     def _as_group(self) -> RichGroup:
         methods = self.cli.get_methods()
         group = RichGroup(name=self.name)
-
         for name, arguments in methods:
-            command = self._as_command(name, arguments)
-            group.add_command(command)
-        
+            
+            try:
+                method_meta = getattr(self.cli, name)
+                command = self._as_command(method_meta.alt_name or name, method_name=name, arguments=arguments, help=method_meta.help, **method_meta.kwargs)
+                group.add_command(command)
+
+            except AttributeError:
+                continue
         # Run group
         return group
 
