@@ -1,3 +1,5 @@
+from core.cli_apps.controller_cli.cli_processor import ControllerCLI
+from core.cli_apps.migrate_cli import MigrateCLI
 from core.cli_apps.users_cli import UsersCLI
 from core.extensions.authentication import AscenderAuthenticationFramework
 from importlib import import_module
@@ -55,6 +57,8 @@ class Application:
         self.__cli.register_base("serve", Serve())
         
         self.__cli.register_generic(UsersCLI())
+        self.__cli.register_generic(MigrateCLI())
+        self.__cli.register_generic(ControllerCLI())
         self.__cli.run()
     
     def run_server(self, host: str, port: int) -> Callable | None:

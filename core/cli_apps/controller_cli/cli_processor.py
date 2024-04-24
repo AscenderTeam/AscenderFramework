@@ -1,4 +1,4 @@
-from clis.controller_cli.controller_creator import ControllerCreator
+from core.cli_apps.controller_cli.controller_creator import ControllerCreator
 from core.cli import GenericCLI
 from core.cli.main import console_command
 from core.cli.application import ContextApplication

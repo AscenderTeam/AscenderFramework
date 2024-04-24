@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import Generator
-from clis.controller_cli.constants import AuthorizationConstants, ControllerConstants
+from core.cli_apps.controller_cli.constants import AuthorizationConstants, ControllerConstants
 
 class ControllerCreator:
     def __init__(self, controller_name: str, controller_path: str = "controllers") -> None:

@@ -1,4 +1,5 @@
 from fastapi.security import OAuth2PasswordBearer
+from core.errors.authentication import AlreadyExistsError, IncorrectPasswordError, UserNotFoundError
 from core.extensions.authentication.custom.provider import AuthenticationProvider
 from core.extensions.authentication.entity import UserEntity
 from core.extensions.authentication.password_manager import AuthPassManager
@@ -18,12 +19,10 @@ class BaseAuthentication(AuthenticationProvider[UserEntity, SessionManager]):
 
         user = await self.get_user_by_login(login)
         if not user:
-            # TODO: Add custom exception
-            raise Exception("User not found")
+            raise UserNotFoundError(login)
         
         if not AuthPassManager.check_password(password, user.password):
-            # TODO: Add custom exception
-            raise Exception("Password is incorrect")
+            raise IncorrectPasswordError(login)
         
         session = await self.sessions.create_session(user, timedelta(days=1))
 
@@ -46,8 +45,7 @@ class BaseAuthentication(AuthenticationProvider[UserEntity, SessionManager]):
 
         user = await self.get_user_by_login(login)
         if user:
-            # TODO: Add custom exception
-            raise Exception("User already exists")
+            raise AlreadyExistsError(login)
         
         hashed_password = AuthPassManager.hash_password(password)
         user = await UserEntity.create(username=login, password=hashed_password)
@@ -59,8 +57,7 @@ class BaseAuthentication(AuthenticationProvider[UserEntity, SessionManager]):
 
         user = await self.get_user_by_login(login)
         if user:
-            # TODO: Add custom exception
-            raise Exception("User already exists")
+            raise AlreadyExistsError(login)
         
         hashed_password = AuthPassManager.hash_password(password)
         user = await UserEntity.create(username=login, password=hashed_password, is_superuser=True)
