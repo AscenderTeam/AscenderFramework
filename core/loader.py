@@ -1,4 +1,6 @@
 from __future__ import annotations
+import asyncio
+from inspect import isawaitable
 import os
 from typing import TYPE_CHECKING, List
 from fastapi import FastAPI
@@ -113,10 +115,17 @@ class Loader:
         - Mounts all SocketIO endpoints
         """
         for controller in self._active_controllers:
-            if hasattr(controller, 'dependencies'):
-                dependencies = getattr(controller, 'dependencies')
-                dependencies.__mounted__()
-        
+            if hasattr(controller, 'injectable_services'):
+                for service in getattr(controller, 'injectable_services'):
+                    if hasattr(service, "__mounted__"):
+                        if isawaitable(getattr(service, "__mounted__")):
+                            asyncio.run(getattr(service, "__mounted__")())
+                            continue
+                        
+                        getattr(service, "__mounted__")()
+
+
+
         if not self._application.socketio:
             return
         # SocketIO endpoints

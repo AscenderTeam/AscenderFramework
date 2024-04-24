@@ -1,5 +1,4 @@
-from typing import Any, Callable, Generic, TypeVar
-from tortoise.models import Model
+from typing import Callable, Generic, TypeVar
 from pydantic import BaseModel
 
 T = TypeVar("T")
@@ -55,9 +54,15 @@ class Serializer(Generic[T, E]):
 class QuerySetSerializer(Generic[E, T]):
 
     @staticmethod
-    def serialize_queryset(serializer: Serializer,
-                           pd_model: type[T], entities: E,
+    def base_serialize_queryset(pd_model: type[T], entities: E,
                            func: Callable[[E], dict] = serialize_values_default):
         for item in entities:
-            ser = serializer(pd_model, item, **func(item))
+            ser = Serializer(pd_model, item, **func(item))
+            yield ser()
+
+    @staticmethod
+    def serialize_queryset(serializer: Serializer[T, E], entities: E,
+                           func: Callable[[E], dict] = serialize_values_default):
+        for item in entities:
+            ser = serializer(item, **func(item))
             yield ser()
