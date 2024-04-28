@@ -1,11 +1,9 @@
-from typing import Optional, TypedDict
-from rich.console import Console
-from rich.markup import escape
+from typing import Any, Optional, TypedDict
 import click
 
 
 class OptionCMD:
-    def __init__(self, *names: list[str], default: Optional[str] = None, 
+    def __init__(self, *names: list[str], default: Optional[Any] = None, 
                  ctype: type = str, help: Optional[str] = None,
                  is_flag: bool = False, flag_value: Optional[str] = None, 
                  required: bool = True, **kwargs) -> None:
@@ -22,6 +20,9 @@ class OptionCMD:
             raise ValueError("You cannot have a default value and required=True")
     
     def parse(self, argument_name: str) -> click.Option:
+        if not self.additonal_kwargs.get("exclude_formatting_name", False):
+            argument_name = argument_name.replace("_", "-")
+
         return click.Option([f"--{argument_name}", *self.names], default=self.default, type=self.type, help=self.help, required=self.required, **self.additonal_kwargs)
 
     def __repr__(self) -> str:
@@ -29,14 +30,15 @@ class OptionCMD:
 
 
 class ArgumentCMD:
-    def __init__(self, default: Optional[str] = None, *, name: Optional[str] = None, 
+    def __init__(self, default: Optional[Any] = None, *, name: Optional[str] = None, 
                  ctype: Optional[any] = None, help: Optional[str] = None, 
-                required: bool = False) -> None:
-        self.default = default
+                required: bool = False, **kwargs) -> None:
+        self.default = default if default is not None else CommandNull()
         self.name = name
         self.type = ctype
         self.help = help
         self.required = required
+        self.additional_kwargs = kwargs
     
     def validate(self, value: any) -> bool:
         # TODO: Make a validator
@@ -52,3 +54,7 @@ class ArgumentsFormat(TypedDict):
     type: type
     value: list | str | int | float | bool | OptionCMD | ArgumentCMD | None
     is_ourobj: bool
+
+
+class CommandNull:
+    pass
