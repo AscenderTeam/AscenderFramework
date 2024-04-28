@@ -21,7 +21,7 @@ class UsersCLI(GenericCLI):
     
     @console_command(name="create-superuser")
     @CoroCLI(is_tortoise=True)
-    async def create_superuser(self, ctx: ContextApplication, username: str, password: str):
+    async def create_superuser(self, ctx: ContextApplication, username: str = OptionCMD(ctype=str), password: str = OptionCMD(ctype=str)):
         # Initialize authentication framework
         await ctx.application.use_database_cli()
         ctx.application.use_authentication()
