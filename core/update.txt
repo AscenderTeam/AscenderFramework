@@ -1,7 +1,7 @@
 import os
 
 try:
-    os.remove("[BASE_PATH]/clis/controller_cli")
+    os.rmdir("[BASE_PATH]/clis/controller_cli")
     os.remove("[BASE_PATH]/clis/migrate_cli.py")
 except:
     pass
