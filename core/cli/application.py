@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Optional, Tuple, Union
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
+from rich.prompt import Prompt, Confirm
 from rich import print as cprint
 from readchar import readchar
 import sys
@@ -101,6 +102,40 @@ class ContextApplication:
         key = readchar()
 
         return callback(self, key)
+
+    def console_input(self, msg: Optional[str] = "",
+                      password: bool = False, 
+                      show_default: bool = True, show_choices: bool = True, **kwargs) -> str:
+        """
+        ## Console input
+
+        Get input from user, will prompt user to respond with string
+
+        Args:
+            msg (Optional[str], optional): Message that will be displayed to user before prompting. Defaults to "".
+            password (bool, optional): Defines whether to hide the contents of what user types or not. Defaults to False.
+            show_default (bool, optional): Will be displayed the default value if user ain't going to pass any value. Defaults to True.
+            show_choices (bool, optional): Displays choices (Y/n) showing what type of choice can user select. Defaults to True.
+        """
+        return Prompt.ask(msg, console=self.console, password=password, show_default=show_default, show_choices=show_choices, **kwargs)
+    
+    def console_confirm(self, msg: Optional[str] = "", **kwargs) -> bool:
+        """
+        ## Console confirm
+
+        Ask user to confirm anything from terminal session
+        example:
+        ```bash
+        $ Are you sure you want to delete this file? (Y/n): {user input}
+        ```
+
+        Args:
+            msg (Optional[str], optional): Message that will be displayed to user before confirming. Defaults to "".
+
+        Returns:
+            bool: If user confirms it will return True, otherwise False
+        """
+        return Confirm.ask(msg, console=self.console, **kwargs)
 
 
 class Emoji:
