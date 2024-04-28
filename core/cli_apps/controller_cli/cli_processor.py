@@ -1,4 +1,5 @@
-from clis.controller_cli.controller_creator import ControllerCreator
+from core.cli.models import OptionCMD
+from core.cli_apps.controller_cli.controller_creator import ControllerCreator
 from core.cli import GenericCLI
 from core.cli.main import console_command
 from core.cli.application import ContextApplication
@@ -13,7 +14,7 @@ class ControllerCLI(GenericCLI):
         self._version = "0.0.1"
 
     @console_command()
-    def new(self, ctx: ContextApplication, name: str, cname: str = "controllers"):
+    def new(self, ctx: ContextApplication, name: str = OptionCMD("-n", ctype=str), cname: str = OptionCMD(ctype=str, default="controllers", required=False)):
         ctx.console_print(f"[cyan]Creating new controller with name:[/cyan] {name}...")
         ctx.console_print("[yellow]Warning![/yellow] Avoid passing the controller name with spaces!")
         controller_creator = ControllerCreator(name, cname)
@@ -24,7 +25,7 @@ class ControllerCLI(GenericCLI):
         ctx.console_print(f"[cyan]Done! You can check it up in: [underline]{controller_creator.controller_constants.controllers_path}/{controller_creator.controller_constants.controller_name.lower()}[/underline][/cyan]")
     
     @console_command()
-    def auth(self, ctx: ContextApplication, name: str = "auth", cname: str = "controllers"):
+    def auth(self, ctx: ContextApplication, name: str = OptionCMD("-n", ctype=str, default="auth", required=False), cname: str = OptionCMD(ctype=str, default="controllers", required=False)):
         ctx.console_print(f"[cyan]Creating new controller with name:[/cyan] {name}...")
         ctx.console_print("[yellow]Warning![/yellow] Avoid passing the controller name with spaces!")
         controller_creator = ControllerCreator(name, cname)
@@ -35,7 +36,7 @@ class ControllerCLI(GenericCLI):
         ctx.console_print(f"[cyan]Done! You can check it up in: [underline]{controller_creator.controller_constants.controllers_path}/{controller_creator.controller_constants.controller_name.lower()}[/underline][/cyan]")
 
     @console_command()
-    def optionals(self, ctx: ContextApplication, name: str, cname: str = "controllers"):
+    def optionals(self, ctx: ContextApplication, name: str = OptionCMD("-n", ctype=str), cname: str = OptionCMD(ctype=str, default="controllers", required=False)):
         ctx.console_print(f"[cyan]Adding optional files to controller with name:[/cyan] {name}...")
         ctx.console_print("[yellow]Warning![/yellow] Avoid passing the controller name with spaces!")
         controller_creator = ControllerCreator(name, cname)

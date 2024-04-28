@@ -5,7 +5,7 @@ from typing import Callable, Optional, TYPE_CHECKING
 import rich_click as click
 from core.cli.application import ContextApplication
 from core.cli.main import BaseCLI
-from core.cli.models import ArgumentCMD
+from core.cli.models import ArgumentCMD, CommandNull, OptionCMD
 
 if TYPE_CHECKING:
     from core.application import Application
@@ -36,13 +36,21 @@ class LoaderBaseCLI:
                     "is_arg": type(argument["value"]) == ArgumentCMD,
                     "is_ourobj": True,
                 }
-
+            else:
+                arguments[index] = {
+                    "argument": argument["argument"],
+                    "type": argument["type"],
+                    "value": argument["value"],
+                    "is_arg": type(argument["value"]) == ArgumentCMD,
+                    "is_ourobj": False,
+                }
         return arguments
     
     def execute_cli(self, **kwargs):
         ctx = ContextApplication(self.application)
         for key, value in kwargs.items():
             setattr(self.cli, key, value)
+
         return self.cli.callback(ctx=ctx)
 
     def _as_command(self) -> None:
@@ -56,6 +64,7 @@ class LoaderBaseCLI:
                                                  ))
                 else:
                     command.params.append(arg["value"].parse(arg["argument"]))
+                # Skip the loop without reaching what's written lower
                 continue
 
             command.params.append(click.Argument([arg["argument"]], type=arg["type"], default=arg["value"], required=(arg["value"] is None)

@@ -1,0 +1,25 @@
+import os
+
+try:
+    os.remove("[BASE_PATH]/clis/controller_cli")
+    os.remove("[BASE_PATH]/clis/migrate_cli.py")
+except:
+    pass
+
+with open("[BASE_PATH]/bootstrap.py", "r+") as b:
+    contents = b.read()
+
+    updated_content = contents.replace("from clis.controller_cli.cli_processor import ControllerCLI", 
+                                       "").replace("from clis.migrate_cli import MigrateCLI", 
+                                                   "").replace("cli.register_generic(ControllerCLI())", 
+                                                               "").replace("cli.register_generic(MigrateCLI())", "pass")
+    b.truncate(0)
+    b.seek(0)
+    b.write(updated_content)
+
+with open("[BASE_PATH]/settings.py", "a+") as s:
+    s.seek(0)
+    contents = s.read()
+
+    if contents.find("HEADERS") == -1:
+        s.write("\nHEADERS = None")

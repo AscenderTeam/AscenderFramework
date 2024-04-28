@@ -40,10 +40,10 @@ class CLI:
     
     def register_base(self, name: str, base_cli: BaseCLI) -> None:
         if base_cli in self.base_clis:
-            raise ValueError(f"BaseCLI {base_cli} already registered")
+            raise ValueError(f"BaseCLI Instance `{base_cli.__class__.__name__}` is already registered")
         
         if not isinstance(base_cli, BaseCLI):
-            raise ValueError(f"BaseCLI {base_cli} is not a BaseCLI instance")
+            raise ValueError(f"Instance `{base_cli.__class__.__name__}` is not a BaseCLI instance")
         
         self.base_clis.append((name, base_cli))
 

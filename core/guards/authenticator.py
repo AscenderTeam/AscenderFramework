@@ -1,6 +1,7 @@
 from typing import Any
 from fastapi import HTTPException, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from core.errors.authentication import UninitializedAuthprovider
 from core.extensions.authentication import AscenderAuthenticationFramework
 from core.utils.sockets import ApplicationContext
 
@@ -27,8 +28,7 @@ class IsAuthenticated:
     def __init__(self, is_superuser: bool = False) -> None:
         self.is_superuser = is_superuser
         if AscenderAuthenticationFramework.auth_provider is None:
-            # TODO: Add custom exception
-            raise Exception("Authentication provider is not initialized")
+            raise UninitializedAuthprovider()
 
     async def has_permission(self, token: str) -> bool:
         provider = AscenderAuthenticationFramework.auth_provider
@@ -55,6 +55,8 @@ class IsAuthenticatedSocket:
         This is used to check on @Listen('connect') if the user is authenticated or not.
         """
         self.is_superuser = is_superuser
+        if AscenderAuthenticationFramework.auth_provider is None:
+            raise UninitializedAuthprovider()
 
     async def has_permission(self, token: str) -> bool:
         provider = AscenderAuthenticationFramework.auth_provider

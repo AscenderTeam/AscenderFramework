@@ -1,3 +1,5 @@
+from core.cli_apps.controller_cli.cli_processor import ControllerCLI
+from core.cli_apps.migrate_cli import MigrateCLI
 from core.cli_apps.users_cli import UsersCLI
 from core.extensions.authentication import AscenderAuthenticationFramework
 from importlib import import_module
@@ -6,7 +8,7 @@ from typing import Callable, List
 
 import uvicorn
 from core.cli.processor import CLI
-from core.cli_apps.serve_cli import Serve
+from core.cli_apps.serve_cli import BuildControlCLI, ServerControlCLI
 from core.extensions.authentication.custom.provider import AuthenticationProvider
 from core.loader import Loader
 from core.sockets import SocketIOApp
@@ -52,16 +54,19 @@ class Application:
         if self._on_cli_run is not None:
             self._on_cli_run(self, self.__cli)
 
-        self.__cli.register_base("serve", Serve())
-        
+        self.__cli.register_base("serve", ServerControlCLI())
+        self.__cli.register_base("build", BuildControlCLI())
+
         self.__cli.register_generic(UsersCLI())
+        self.__cli.register_generic(MigrateCLI())
+        self.__cli.register_generic(ControllerCLI())
         self.__cli.run()
     
     def run_server(self, host: str, port: int) -> Callable | None:
         try:
             if self._on_server_start is not None:
                 self._on_server_start(self)
-                uvicorn.run(app=self.app, host=host, port=port)
+                uvicorn.run("start:app.app", host=host, port=port, reload=True)
             
         except Exception as e:
             # Call hooked exception handler if exists
@@ -71,7 +76,7 @@ class Application:
             raise e
     
     def get_version(self) -> str:
-        return "v0.0.2"
+        return "v1.0.2"
     
     def use_authentication(self, token_url: str = "/auth/login"):
         AscenderAuthenticationFramework.run_authentication(self, token_url=token_url)

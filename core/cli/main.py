@@ -28,7 +28,7 @@ class BaseCLI:
         for key, value in self.__class__.__dict__["__annotations__"].items():
             # Check if the variable is public and its type is among the specified types
             current_value = getattr(self, key, None)
-            if not key.startswith('_') and value in [list, str, int, float, bool]:
+            if not key.startswith('_'):
                 # Optionally, get the current value of the variable
                 result.append({"argument": key, "type": value,
                               "value": current_value, "is_ourobj": bool(type(current_value) in [ArgumentCMD, OptionCMD])})

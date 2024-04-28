@@ -1,5 +1,4 @@
-from typing import Any, Callable, Generic, TypeVar
-from tortoise.models import Model
+from typing import Callable, Generic, TypeVar
 from pydantic import BaseModel
 
 T = TypeVar("T")
@@ -8,18 +7,24 @@ E = TypeVar("E")
 
 def serialize_tortoise_model(pydantic_model: type[T], tortoise_model: E, **custom_fields):
     # Serialize Tortoise model to dictionary
-    serialized_data = tortoise_model.__dict__
+    serialized_data = {
+        key: value
+        for key, value in tortoise_model.__dict__.items()
+        if not callable(value) and not key.startswith('_')
+    }
 
     # Include custom fields in the serialized data
     for key, value in custom_fields.items():
-        serialized_data[key] = value
+        if not callable(value):
+            serialized_data[key] = value
 
     # Convert dictionary to Pydantic instance
     pydantic_instance = pydantic_model(**serialized_data)
 
     return pydantic_instance
 
-## This is just function for nothing but for default fallback! Don't touch it!
+
+# This is just function for nothing but for default fallback! Don't touch it!
 def serialize_values_default(a: any):
     return {}
 
@@ -55,9 +60,15 @@ class Serializer(Generic[T, E]):
 class QuerySetSerializer(Generic[E, T]):
 
     @staticmethod
-    def serialize_queryset(serializer: Serializer,
-                           pd_model: type[T], entities: E,
+    def base_serialize_queryset(pd_model: type[T], entities: E,
+                                func: Callable[[E], dict] = serialize_values_default):
+        for item in entities:
+            ser = Serializer(pd_model, item, **func(item))
+            yield ser()
+
+    @staticmethod
+    def serialize_queryset(serializer: Serializer[T, E], entities: E,
                            func: Callable[[E], dict] = serialize_values_default):
         for item in entities:
-            ser = serializer(pd_model, item, **func(item))
+            ser = serializer(item, **func(item))
             yield ser()

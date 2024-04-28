@@ -3,6 +3,7 @@ from core.cli.application import ContextApplication, Table, Panel
 from core.cli.async_module import CoroCLI
 from core.cli.main import GenericCLI, console_command
 from aerich import Command
+from core.cli.models import OptionCMD
 from core.utils.cacher import AscCacher
 from settings import BASE_PATH, TORTOISE_ORM
 
@@ -21,7 +22,7 @@ class MigrateCLI(GenericCLI):
 
     @console_command()
     @CoroCLI(is_tortoise=True)
-    async def init(self, ctx: ContextApplication, app: str = 'models'):
+    async def init(self, ctx: ContextApplication, app: str = OptionCMD("-a", default="models", required=False)):
         ctx.console_print('[info]Initializing migration database...[/info]')
         
         command = Command(TORTOISE_ORM, app=app, location=f'{BASE_PATH}/migrations')
@@ -36,7 +37,7 @@ class MigrateCLI(GenericCLI):
     
     @console_command()
     @CoroCLI(is_tortoise=True)
-    async def migrate(self, ctx: ContextApplication, name: str = "update"):
+    async def migrate(self, ctx: ContextApplication, name: str = OptionCMD("-n", default="update", required=False)):
         ctx.console_print('[info]Migrating database...[/info]')
         
         # Load cache data
