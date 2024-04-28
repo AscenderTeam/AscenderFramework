@@ -16,3 +16,8 @@ class IncorrectPasswordError(BaseUserException):
 class AlreadyExistsError(BaseUserException):
     def __str__(self) -> str:
         return f"Cannot create user with login {self.login}. This user is already exists in system!"
+
+
+class UninitializedAuthprovider(Exception):
+    def __str__(self) -> str:
+        return "Authentication Provider isn't initialized in `bootstrap.py`. Please add `app.use_authentication()` in `Bootstrap.server_boot_up()` method"
