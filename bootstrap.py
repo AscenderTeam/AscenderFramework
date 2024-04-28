@@ -20,3 +20,4 @@ class Bootstrap:
     @staticmethod
     def cli_boot_up(_: Application, cli: CLI):
         pass
+        
