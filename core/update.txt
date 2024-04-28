@@ -3,8 +3,8 @@ import os
 try:
     os.rmdir("[BASE_PATH]/clis/controller_cli")
     os.remove("[BASE_PATH]/clis/migrate_cli.py")
-except:
-    pass
+except Exception as e:
+    print(e)
 
 with open("[BASE_PATH]/bootstrap.py", "r+") as b:
     contents = b.read()
