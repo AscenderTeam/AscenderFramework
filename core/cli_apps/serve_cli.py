@@ -1,7 +1,6 @@
 import socket
 from typing import Literal, Optional
 
-import requests
 from core._builder.manager import BuildManager
 from core.cli.application import ContextApplication
 from core.cli.main import BaseCLI

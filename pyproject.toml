@@ -18,6 +18,8 @@ bcrypt = "^4.0.1"
 click = "^8.1.7"
 rich-click = "^1.7.2"
 python-socketio = "^5.10.0"
+fastapi-socketio = "^0.0.10"
+requests = "^2.31.0"
 
 
 [build-system]

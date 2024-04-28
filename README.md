@@ -23,14 +23,20 @@ cd <project-name>
 We recommend using [Poetry](https://python-poetry.org/) for dependency management. 
 However pip is also can be used for installing dependencies.
 
+Pip:
 ```bash
 pip install -r requirements.txt
+```
+
+Poetry:
+```bash
+poetry install
 ```
 
 ## Getting Started
 
 1. **Initialize the Application**:
-   Use `python3 start.py serve` to start your application.
+   Use `ascender run serve` to start your application.
 
 2. **Database Initialization**:
    Utilize the `use_database()` function for initializing the database.
@@ -42,22 +48,22 @@ pip install -r requirements.txt
 
 - **Create a New Controller**:
   ```bash
-  python3 start.py controllers new --name <controller-name>
+  ascender run controllers new --name <controller-name>
   ```
 
 - **Add Optional Files to a Controller**:
   ```bash
-  python3 start.py controllers optionals --name <controller-name>
+  ascender run controllers optionals --name <controller-name>
   ```
 
 - **Initialize Database Migration**:
   ```bash
-  python3 start.py migration init
+  ascender run migration init
   ```
 
 - **Create a Database Migration**:
   ```bash
-  python3 start.py migration migrate --name MigrationName
+  ascender run migration migrate --name MigrationName
   ```
 
 ## Project Structure
