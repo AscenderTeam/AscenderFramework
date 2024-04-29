@@ -1,4 +1,5 @@
 from fastapi.security import OAuth2PasswordBearer
+from jwt import ExpiredSignatureError, InvalidTokenError
 from core.errors.authentication import AlreadyExistsError, IncorrectPasswordError, UserNotFoundError
 from core.extensions.authentication.custom.provider import AuthenticationProvider
 from core.extensions.authentication.entity import UserEntity
@@ -24,20 +25,23 @@ class BaseAuthentication(AuthenticationProvider[UserEntity, SessionManager]):
         if not AuthPassManager.check_password(password, user.password):
             raise IncorrectPasswordError(login)
         
-        session = await self.sessions.create_session(user, timedelta(days=1))
+        session = self.sessions.create_session(user, timedelta(days=1))
 
-        return session.token
+        return session
     
     async def get_authenticated_user(self, token: str) -> UserEntity | None:
-        session = await self.sessions.get_session(token)
-        if not session:
+        try:
+            session = self.sessions.get_session(token)
+        except ExpiredSignatureError:
             return None
         
-        if session.expires_at and session.expires_at.astimezone(None) < datetime.now().astimezone(None):
-            await self.sessions.delete_session(token)
+        except InvalidTokenError:
+            return None
+        user = await UserEntity.filter(id=session.get("user", 0)).first()
+        if not user:
             return None
         
-        return session.user
+        return user
     
     async def create_user(self, login: str, password: str) -> UserEntity:
         login = login.strip()
