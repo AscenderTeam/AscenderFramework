@@ -4,7 +4,7 @@ from core.cli_apps.users_cli import UsersCLI
 from core.extensions.authentication import AscenderAuthenticationFramework
 from importlib import import_module
 from fastapi import FastAPI
-from typing import Callable, List
+from typing import Any, Callable, List
 
 import uvicorn
 from core.cli.processor import CLI
@@ -64,9 +64,9 @@ class Application:
     
     def run_server(self, host: str, port: int) -> Callable | None:
         try:
-            if self._on_server_start is not None:
-                self._on_server_start(self)
-                uvicorn.run("start:app.app", host=host, port=port, reload=True)
+            # if self._on_server_start is not None:
+                # self._on_server_start(self)
+            uvicorn.run("start:app", host=host, port=port, reload=True)
             
         except Exception as e:
             # Call hooked exception handler if exists
@@ -96,3 +96,8 @@ class Application:
     def add_module(self, module: str, **options) -> None:
         module.run_module(self.app, **options)
     
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        if self._on_server_start is not None:
+            self._on_server_start(self)
+        
+        return self.app

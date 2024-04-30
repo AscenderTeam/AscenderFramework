@@ -20,6 +20,7 @@ rich-click = "^1.7.2"
 python-socketio = "^5.10.0"
 fastapi-socketio = "^0.0.10"
 requests = "^2.31.0"
+pyjwt = "^2.8.0"
 
 
 [build-system]

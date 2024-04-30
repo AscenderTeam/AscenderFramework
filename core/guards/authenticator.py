@@ -39,6 +39,8 @@ class IsAuthenticated:
 
         if self.is_superuser and not user.is_superuser:
             return False
+        
+        return True
 
     async def __call__(self, token: HTTPAuthorizationCredentials = Security(HTTPBearer())) -> Any:
         if await self.has_permission(token.credentials):

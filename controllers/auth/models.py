@@ -1,10 +1,11 @@
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel, SecretStr
 
 class UserResponse(BaseModel):
     id: int
     username: str
-    email: str
+    email: Optional[str] = None
     is_active: bool
     is_superuser: bool
     created_at: datetime
