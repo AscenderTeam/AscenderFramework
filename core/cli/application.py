@@ -67,29 +67,6 @@ class ContextApplication:
 
                 sys.exit(0)
 
-    async def console_pause_async(self, msg: Optional[str] = "Press any key to exit...", key: Optional[str] = None):
-        """
-        ## Console pause.
-
-        After command execution wait until user presses key to exit the cli
-
-        Args:
-            msg (Optional[str], optional): Message which would be displayed for the user. Defaults to "".
-        """
-        cprint(msg)
-        loop = asyncio.get_running_loop()
-
-        if key:
-            k = readchar()
-
-            if k == key:
-                raise asyncio.CancelledError()
-        else:
-            k = readchar()
-
-            if k:
-                raise asyncio.CancelledError()
-
     def console_key(self, callback: FunctionType):
         """
         ## Get console key
