@@ -3,14 +3,16 @@ from controllers.app.service import AppService
 from core.types import ControllerModule
 from core.utils.controller import Controller, Get
 
+
 @Controller()
 class App:
+
     def __init__(self, app_service: AppService) -> None:
         self.app_service = app_service
 
     @Get()
     async def get_app_endpoint(self):
-        return self.app_service.get_hello()
+        return await self.app_service.get_hello()
 
 
 def setup() -> ControllerModule:
@@ -22,5 +24,6 @@ def setup() -> ControllerModule:
         "repository": AppRepo,
         "repository_entities": {
             # Add your entities here...
-        }
+        },
+        "plugin_configs": {}
     }

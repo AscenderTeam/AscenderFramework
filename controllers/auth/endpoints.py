@@ -7,7 +7,6 @@ from core.extensions.serializer import Serializer
 from core.guards.authenticator import GetAuthenticatedUser, IsAuthenticated
 from core.types import ControllerModule
 from core.utils.controller import Controller, Delete, Get, Post
-from core.utils.sockets import Listen
 
 @Controller()
 class Auth:
@@ -47,5 +46,6 @@ def setup() -> ControllerModule:
         "repository": AuthRepo,
         "repository_entities": {
             # Add your entities here...
-        }
+        },
+        "plugin_configs": {}
     }
