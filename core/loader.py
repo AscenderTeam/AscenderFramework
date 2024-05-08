@@ -1,16 +1,16 @@
 from __future__ import annotations
 import asyncio
-from inspect import isawaitable
+from inspect import isawaitable, unwrap
 import os
 from typing import TYPE_CHECKING, List
 from fastapi import FastAPI
 from importlib import import_module
+from core.plugins.plugin_loader import PluginLoader
 from core.sockets import LoadedEndpoints
 from core.store.distributor import Distributor
 from core.store.storage import BaseStore
 
 from core.types import Controller, ControllerModule
-from core.modules._modules import MODULES_INFO
 
 if TYPE_CHECKING:
     from core.application import Application
@@ -21,10 +21,11 @@ class Loader:
     
     _active_controllers: list[object] = []
 
-    def __init__(self, app: FastAPI, application: Application, controllers: List[Controller]) -> None:
+    def __init__(self, app: FastAPI, application: Application, controllers: List[Controller], plugin_loader: PluginLoader) -> None:
         self._app = app
         self._application = application
         self._controllers = controllers
+        self._plugin_loader = plugin_loader
 
     def get_controllers(self, controller: Controller):
         return os.listdir(controller['base_path'])
@@ -69,9 +70,10 @@ class Loader:
                 router_name = " ".join(mvc.capitalize().split("_"))
                 controller_module = self.load_module(module.setup())
                 self._active_controllers.append(controller_module)
-                
                 self._app.include_router(controller_module.router, prefix=prefix, tags=[router_name])
-
+                
+                self._plugin_loader.after_controller_load(controller_module.__class__.__name__, controller_module, module.setup())
+                
                 if recursive:
                     self._check_for_recursive_controllers(f"{controller['base_path']}/{mvc}")
         
@@ -80,6 +82,8 @@ class Loader:
         services = setup.get('services', {})
         repository = setup.get('repository', None)
         repository_entities = setup.get('repository_entities', {})
+        
+        self._plugin_loader.before_controller_load(unwrap(controller).__name__, controller, setup)
 
         if repository is not None:
             repository = repository(**repository_entities)
@@ -123,8 +127,9 @@ class Loader:
                             continue
                         
                         getattr(service, "__mounted__")()
-
-
+        
+        # Initialize dependencies in plugins
+        self._plugin_loader.initialize_dependencies(self._active_controllers)
 
         if not self._application.socketio:
             return
@@ -164,28 +169,3 @@ class Loader:
         Registers a new store, after it will be loaded with funciton `load_all_controllers`
         """
         Distributor.register_store(self._app, store, instance)
-
-    def use_module(self, module: str, *args, **kwargs):
-        """
-        ## Load module
-
-        Loads a module from `core/modules` directory
-
-        Args:
-            module (str): Name of module to be loaded
-            *args: Required arguments of module
-            **kwargs: Required keyword arguments of module
-        """
-        module_info = MODULES_INFO.get(module, None)
-
-        if not module_info:
-            return None # TODO: Make an exception handler
-
-        module_class = import_module(module_info["class"], module_info['module'])(*args, **kwargs)
-        module_class.app = self._app
-        if module_info.get('on_initialize', None):
-            getattr(module_class, module_info['on_initialize'])()
-        
-        if module_info.get('on_down', None):
-            self._app.add_event_handler("shutdown", getattr(module_class, module_info['on_down']))
-            # TODO: WIP, should fix after testing

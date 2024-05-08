@@ -11,28 +11,40 @@ from core.cli.processor import CLI
 from core.cli_apps.serve_cli import BuildControlCLI, ServerControlCLI
 from core.extensions.authentication.custom.provider import AuthenticationProvider
 from core.loader import Loader
+from core.plugins.plugin import Plugin
+from core.plugins.plugin_loader import PluginLoader
 from core.sockets import SocketIOApp
 
 from core.types import Controller
+
 
 class Application:
     def __init__(self, 
                 controllers: List[Controller] = [],
                 on_server_start: Callable[['Application'], None] | None = None, 
                 on_server_runtime_error: Callable[[Exception], None] | None = None,
-                on_cli_run: Callable[['Application', CLI], None] | None = None) -> None:
+                on_cli_run: Callable[['Application', CLI], None] | None = None,
+                on_injections_run: Callable[['Application'], None] | None = None,
+                on_event_start: Callable[['Application', List[object]], None] | None = None,
+                on_event_shutdown: Callable[['Application', List[object]], None] | None = None) -> None:
         self.app = FastAPI(title="Ascender Framework API")
         self.socketio: SocketIOApp | None = None
 
         self._on_server_start = on_server_start
         self._on_server_runtime_error = on_server_runtime_error
         self._on_cli_run = on_cli_run
+        self._on_injections_run = on_injections_run
+        self._on_event_start = on_event_start
+        self._on_event_shutdown = on_event_shutdown
         
-        self.loader_module = Loader(self.app, self, controllers)
+        # Initialize Plugin Loader Module
+        self._plugin_loader = PluginLoader(self)
+
+        self.loader_module = Loader(self.app, self, controllers, self._plugin_loader)
         
         # Initialize CLI module
         self.__cli = CLI(self, app_name="AscCLI")
-    
+
     def test_callback(self, *args, **kwargs):
         print(*args, **kwargs)
 
@@ -76,7 +88,7 @@ class Application:
             raise e
     
     def get_version(self) -> str:
-        return "v1.0.3"
+        return "v1.1.0"
     
     def use_authentication(self, token_url: str = "/auth/login"):
         AscenderAuthenticationFramework.run_authentication(self, token_url=token_url)
@@ -92,12 +104,14 @@ class Application:
             use_threading (bool, optional): Determine whether it should launch multiprocessingly or not. Defaults to True.
         """
         self.socketio = SocketIOApp(self, **options)
-
-    def add_module(self, module: str, **options) -> None:
-        module.run_module(self.app, **options)
     
+    def use_plugin(self, plugin: Plugin):
+        self._plugin_loader.use_plugin(plugin)
+
     def __call__(self, *args: Any, **kwds: Any) -> Any:
         if self._on_server_start is not None:
+            if self._on_injections_run is not None:
+                self._on_injections_run(self)
             self._on_server_start(self)
         
         return self.app
