@@ -4,6 +4,7 @@ from typing import Any, Optional, Sequence
 from fastapi import APIRouter
 from fastapi.datastructures import Default
 from fastapi.params import Depends
+from functools import wraps
 
 from core.sockets import LoadedEndpoints
 
@@ -16,7 +17,7 @@ class Controller:
 
     def __call__(self, cls: object):
         router = APIRouter(tags=self.tags, prefix=self.prefix, dependencies=self.dependencies)
-        
+        @wraps(cls)
         def wrapper(*args, **kwargs):
             instance = cls(*args, **kwargs)
             

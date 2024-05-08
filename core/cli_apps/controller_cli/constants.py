@@ -21,7 +21,10 @@ def setup() -> ControllerModule:
         "repository": {repo_name},
         "repository_entities": {
             # Add your entities here...
-        }
+        },
+        "plugin_configs": {
+            # Configuration for plugins here...
+        },
     }
 """.replace("{controller_name}", self.controller_name).replace("{controller_name_lower}", self.controller_name.lower()).replace("{service_name}", self.service_name).replace("{repo_name}", self.repo_name)
 
@@ -100,12 +103,13 @@ class {service_name}(Service):
 
     def get_models_file(self) -> str:
         return """from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel, SecretStr
 
 class UserResponse(BaseModel):
     id: int
     username: str
-    email: str
+    email: Optional[str] = None
     is_active: bool
     is_superuser: bool
     created_at: datetime
@@ -209,7 +213,10 @@ def setup() -> ControllerModule:
         "repository": {repo_name},
         "repository_entities": {
             # Add your entities here...
-        }
+        },
+        "plugin_configs": {
+            # Configuration for plugins here...
+        },
     }
 """.replace("{controller_name}", self.controller_name).replace("{controller_name_lower}", self.controller_name.lower()).replace("{service_name}", self.service_name).replace("{repo_name}", self.repo_name)
         return f"""

@@ -23,3 +23,12 @@ with open("[BASE_PATH]/settings.py", "a+") as s:
 
     if contents.find("HEADERS") == -1:
         s.write("\nHEADERS = None")
+    
+    if contents.find("PLUGINS_LOGLEVEL") == -1:
+        s.write('\nPLUGINS_LOGLEVEL = "INFO"')
+
+try:
+    os.remove("[BASE_PATH]/start.py")
+    os.replace("[INSTALLATION_PATH]/start.py", "[BASE_PATH]/start.py")
+except:
+    pass

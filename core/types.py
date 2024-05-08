@@ -1,5 +1,4 @@
-
-from typing import List, TypedDict
+from typing import Any, List, TypedDict
 from tortoise.models import Model as Entity
 
 from core.extensions.repositories import Repository
@@ -18,3 +17,4 @@ class ControllerModule(TypedDict):
     services: dict[str, type[Service]]
     repository: type[Repository] | None
     repository_entities: dict[str, Entity]
+    plugin_configs: dict[str, Any]

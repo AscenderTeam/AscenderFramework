@@ -12,21 +12,21 @@ class BaseStore(Generic[T]):
         self.__watchers: list[Callable[[T, T], None]] = []
     
     @overload
-    def get(self, filter: Callable[[T], any] | None = None) -> T:
+    def get(self, filter_expr: Callable[[T], any] | None = None) -> T:
         ...
     
     @overload
     def get(self) -> T:
         ...
     
-    def get(self, filter: Callable[[T], any] | None = None) -> T:
+    def get(self, filter_expr: Callable[[T], any] | None = None) -> T:
         """
         Made for pydantic only
         """
-        if filter is None:
+        if filter_expr is None:
             return self.__states
         
-        return filter(self.__states)
+        return filter(filter_expr, self.__states)
     
     def set(self, value: T) -> None:
         self.__execute_watchers(self.__states, value)

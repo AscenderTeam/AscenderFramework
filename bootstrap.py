@@ -18,6 +18,9 @@ class Bootstrap:
         app.loader_module.load_all_controllers()
     
     @staticmethod
-    def cli_boot_up(_: Application, cli: CLI):
+    def cli_boot_up(app: Application, cli: CLI):
         pass
-        
+
+    @staticmethod
+    def plugin_boot_up(app: Application):
+        pass

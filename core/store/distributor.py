@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from core.store.storage import BaseStore
 
 if TYPE_CHECKING:
@@ -10,10 +10,7 @@ class Distributor:
     stores: dict[str, list[BaseStore | any]] = {}
 
     @staticmethod
-    def register_store(app: Application, name: str, store: BaseStore) -> None:
-        if not isinstance(app, Application):
-            raise TypeError("You need an instance of app")
-        
+    def register_store(name: str, store: BaseStore) -> None:
         Distributor.stores[name] = store
     
     @staticmethod
@@ -23,3 +20,7 @@ class Distributor:
     @staticmethod
     def get_stores() -> dict[str, BaseStore]:
         return Distributor.stores
+    
+    @staticmethod
+    def create_base_store(default_values: Any):
+        return BaseStore(default_values)

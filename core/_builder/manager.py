@@ -76,5 +76,7 @@ class BuildManager:
         Classic build is only runs uvicorn in debug - off mode.
         Build also allows developer to run uvicorn server with custom parameters
         """
+        if self.app._on_injections_run is not None:
+            self.app._on_injections_run(self.app)
         self.app._on_server_start(self.app)
         uvicorn.run(self.app.app, host=self.server_host, port=self.server_port, **self.server_settings)
