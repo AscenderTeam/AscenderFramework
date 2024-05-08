@@ -29,6 +29,6 @@ with open("[BASE_PATH]/settings.py", "a+") as s:
 
 try:
     os.remove("[BASE_PATH]/start.py")
-    os.replace("[INSTALLATION_PATH]/start.py", "[BASE_PATH]")
+    os.replace("[INSTALLATION_PATH]/start.py", "[BASE_PATH]/start.py")
 except:
     pass
