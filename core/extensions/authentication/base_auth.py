@@ -37,8 +37,13 @@ class BaseAuthentication(AuthenticationProvider[UserEntity, SessionManager]):
         
         except InvalidTokenError:
             return None
-        user = await UserEntity.filter(id=session.get("user", 0)).first()
-        if not user:
+        # Fix: https://github.com/AscenderTeam/AscenderFramework/issues/13
+        try:
+            user = await UserEntity.filter(id=session.get("user")).first()
+            if not user:
+                return None
+        except Exception:
+            # Fix: https://github.com/AscenderTeam/AscenderFramework/issues/13
             return None
         
         return user
