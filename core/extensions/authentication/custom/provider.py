@@ -1,4 +1,5 @@
 from typing import TypeVar, Generic
+from typing_extensions import deprecated
 from fastapi.security import OAuth2PasswordBearer
 
 from core.extensions.authentication.sessions import SessionManager
@@ -6,6 +7,8 @@ from core.extensions.authentication.sessions import SessionManager
 T = TypeVar("T")
 S = TypeVar("S", bound=SessionManager)
 
+
+@deprecated("This method of authentication is deprected and replaced by controller authentication from version v1.2.0!")
 class AuthenticationProvider(Generic[T, S]):
 
     session: S

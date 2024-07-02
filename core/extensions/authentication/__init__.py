@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+from typing_extensions import deprecated
 
 from core.extensions.authentication.base_auth import BaseAuthentication
 from core.extensions.authentication.custom.provider import AuthenticationProvider
@@ -7,6 +8,8 @@ from core.extensions.authentication.custom.provider import AuthenticationProvide
 if TYPE_CHECKING:
     from core.application import Application
 
+
+@deprecated("This method of authentication is deprected and replaced by controller authentication from version v1.2.0! Use `ascender run controllers auth --name` instead")
 class AscenderAuthenticationFramework:
     
     application: Application

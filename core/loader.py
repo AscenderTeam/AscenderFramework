@@ -1,10 +1,15 @@
 from __future__ import annotations
 import asyncio
+from genericpath import isfile
 from inspect import isawaitable, unwrap
 import os
 from typing import TYPE_CHECKING, List
 from fastapi import FastAPI
 from importlib import import_module
+from core.database.engine import DatabaseEngine
+from core.database.orms.sqlalchemy import SQLAlchemyORM
+from core.extensions.repositories import IdentityRepository, Repository
+from core.extensions.services import Service
 from core.plugins.plugin_loader import PluginLoader
 from core.sockets import LoadedEndpoints
 from core.store.distributor import Distributor
@@ -57,6 +62,10 @@ class Loader:
             # path: controller/
             if not os.path.isdir(f"{controller['base_path']}/{mvc}"):
                 continue
+
+            if os.path.isfile(f"{controller['base_path']}/{mvc}/.ignore"):
+                continue
+            
             namespace_path = f"{controller['base_path']}.{mvc}"
             
             # Get controller's endpoints.py
@@ -81,19 +90,29 @@ class Loader:
         controller = setup.get('controller')
         services = setup.get('services', {})
         repository = setup.get('repository', None)
-        repository_entities = setup.get('repository_entities', {})
         
         self._plugin_loader.before_controller_load(unwrap(controller).__name__, controller, setup)
 
         if repository is not None:
-            repository = repository(**repository_entities)
+            irepository = repository
+            repo_args = {}
+            db_engine = self._application.service_registry.get_singletone(DatabaseEngine)
+            if db_engine and isinstance(db_engine.engine, SQLAlchemyORM):
+                repo_args["_context"] = db_engine.generate_context()
+            try:
+                repository = repository(**repo_args)
+            except TypeError as e:
+                print(e)
+                repository = repository()
+            
+            self._application.service_registry.add_singletone(irepository, repository)
         
-        service_instances = {}
         for key, service in services.items():
             service._loader = self
-            service_instances[key+"_service"] = service(repository=repository)
+            self._application.service_registry.add_singletone(service, service(repository=repository))
 
-        return controller(**service_instances)
+        parameters = self._application.service_registry.get_parameters(controller.__init__)
+        return controller(**parameters)
     
     def load_all_controllers(self, recursive: bool = True):
         """
@@ -106,9 +125,7 @@ class Loader:
             recursive (bool, optional): Determine whether it should load subdirectories of `controller` like directory. Defaults to True.
         """
         for controller in self._controllers:
-            self.load_controller(controller['name'], recursive=recursive)
-        
-        self.initialize_dependencies()
+            self.load_controller(controller['name'], exclude=controller["exclude_controllers"], recursive=recursive)
     
     def initialize_dependencies(self):
         """
@@ -118,16 +135,21 @@ class Loader:
         - Runs __mounted__ method to initialize all dependencies
         - Mounts all SocketIO endpoints
         """
-        for controller in self._active_controllers:
-            if hasattr(controller, 'injectable_services'):
-                for service in getattr(controller, 'injectable_services'):
-                    if hasattr(service, "__mounted__"):
-                        if isawaitable(getattr(service, "__mounted__")):
-                            asyncio.run(getattr(service, "__mounted__")())
-                            continue
+        # for controller in self._active_controllers:
+        #     if hasattr(controller, 'injectable_services'):
+        #         for service in getattr(controller, 'injectable_services'):
+        #             if hasattr(service, "__mounted__"):
+        #                 if isawaitable(getattr(service, "__mounted__")):
+        #                     asyncio.run(getattr(service, "__mounted__")())
+        #                     continue
                         
-                        getattr(service, "__mounted__")()
-        
+        #                 getattr(service, "__mounted__")()
+        for interface, service in self._application.service_registry.singletones.items():
+            if isinstance(service, (Service, Repository, IdentityRepository)):
+                # print(interface)
+                parameters = self._application.service_registry.get_parameters(service)
+                for key, value in parameters.items():
+                    setattr(service, key, value)
         # Initialize dependencies in plugins
         self._plugin_loader.initialize_dependencies(self._active_controllers)
 

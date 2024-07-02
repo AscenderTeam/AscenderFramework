@@ -50,8 +50,7 @@ class Controller:
 
 def Get(path: str = "/", response_model: Any = Default(None),
                  status_code: int | None = None,
-                 tags: list[str | Enum] = None,
-                 dependencies: Sequence[Depends] = [], **kwargs):
+                 tags: list[str | Enum] = None, **kwargs):
 
     if not path.startswith("/"):
         path = f"/{path}"
@@ -62,7 +61,7 @@ def Get(path: str = "/", response_model: Any = Default(None),
             "response_model": response_model,
             "status_code": status_code,
             "tags": tags,
-            "dependencies": dependencies,
+            "dependencies": getattr(func, "_dependencies", []),
             **kwargs,
         }
         func._controller_method = "GET"
@@ -72,8 +71,7 @@ def Get(path: str = "/", response_model: Any = Default(None),
 
 def Post(path: str = "/", response_model: Any = Default(None),
                  status_code: int | None = None,
-                 tags: list[str | Enum] = None,
-                 dependencies: Sequence[Depends] | None = None, **kwargs):
+                 tags: list[str | Enum] = None, **kwargs):
     
     if not path.startswith("/"):
         path = f"/{path}"
@@ -84,7 +82,7 @@ def Post(path: str = "/", response_model: Any = Default(None),
             "response_model": response_model,
             "status_code": status_code,
             "tags": tags,
-            "dependencies": dependencies,
+            "dependencies": getattr(func, "_dependencies", []),
             **kwargs,
         }
         func._controller_method = "POST"
@@ -94,8 +92,7 @@ def Post(path: str = "/", response_model: Any = Default(None),
 
 def Put(path: str = "/", response_model: Any = Default(None),
                  status_code: int | None = None,
-                 tags: list[str | Enum] = None,
-                 dependencies: Sequence[Depends] | None = None, **kwargs):
+                 tags: list[str | Enum] = None, **kwargs):
         
     if not path.startswith("/"):
         path = f"/{path}"
@@ -106,7 +103,7 @@ def Put(path: str = "/", response_model: Any = Default(None),
             "response_model": response_model,
             "status_code": status_code,
             "tags": tags,
-            "dependencies": dependencies,
+            "dependencies": getattr(func, "_dependencies", []),
             **kwargs,
         }
         func._controller_method = "PUT"
@@ -116,8 +113,7 @@ def Put(path: str = "/", response_model: Any = Default(None),
 
 def Patch(path: str = "/", response_model: Any = Default(None),
                  status_code: int | None = None,
-                 tags: list[str | Enum] = None,
-                 dependencies: Sequence[Depends] | None = None, **kwargs):
+                 tags: list[str | Enum] = None, **kwargs):
                 
     if not path.startswith("/"):
         path = f"/{path}"
@@ -128,7 +124,7 @@ def Patch(path: str = "/", response_model: Any = Default(None),
             "response_model": response_model,
             "status_code": status_code,
             "tags": tags,
-            "dependencies": dependencies,
+            "dependencies": getattr(func, "_dependencies", []),
             **kwargs,
         }
         func._controller_method = "PATCH"
@@ -138,8 +134,7 @@ def Patch(path: str = "/", response_model: Any = Default(None),
 
 def Delete(path: str = "/", response_model: Any = Default(None),
                  status_code: int | None = None,
-                 tags: list[str | Enum] = None,
-                 dependencies: Sequence[Depends] | None = None, **kwargs):
+                 tags: list[str | Enum] = None, **kwargs):
             
     if not path.startswith("/"):
         path = f"/{path}"
@@ -150,7 +145,7 @@ def Delete(path: str = "/", response_model: Any = Default(None),
             "response_model": response_model,
             "status_code": status_code,
             "tags": tags,
-            "dependencies": dependencies,
+            "dependencies": getattr(func, "_dependencies", []),
             **kwargs,
         }
         func._controller_method = "DELETE"
