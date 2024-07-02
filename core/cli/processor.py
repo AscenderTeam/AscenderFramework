@@ -29,27 +29,33 @@ class CLI:
 
         install(max_frames=20, suppress=["click"])
 
-    def register_generic(self, generic_cli: GenericCLI) -> None:
-        if generic_cli in self.generic_clis:
+    def register_generic(self, generic_cli: type[GenericCLI]) -> None:
+
+        instance = generic_cli(_application=self.application, _sr=self.application.service_registry)
+
+        if not isinstance(instance, GenericCLI):
+            raise ValueError(f"GenericCLI {generic_cli} is not a GenericCLI instance")
+        
+        if instance in self.generic_clis:
             raise ValueError(f"GenericCLI {generic_cli} already registered")
         
-        if not isinstance(generic_cli, GenericCLI):
-            raise ValueError(f"GenericCLI {generic_cli} is not a GenericCLI instance")
-
-        self.generic_clis.append(generic_cli)
+        self.generic_clis.append(instance)
     
-    def register_base(self, name: str, base_cli: BaseCLI) -> None:
-        if base_cli in self.base_clis:
+    def register_base(self, name: str, base_cli: type[BaseCLI]) -> None:
+        
+        instance = base_cli(_application=self.application, _sr=self.application.service_registry)
+
+        if instance in self.base_clis:
             raise ValueError(f"BaseCLI Instance `{base_cli.__class__.__name__}` is already registered")
         
-        if not isinstance(base_cli, BaseCLI):
+        if not isinstance(instance, BaseCLI):
             raise ValueError(f"Instance `{base_cli.__class__.__name__}` is not a BaseCLI instance")
-        
-        self.base_clis.append((name, base_cli))
+
+        self.base_clis.append((name, instance))
 
     def load_basic(self, main_group: click.Group) -> None:
         for name, base_cli in self.base_clis:
-            command = LoaderBaseCLI(base_cli, self.application, name, lambda: print("test")).run()
+            command = LoaderBaseCLI(base_cli, self.application, name, lambda: None).run()
             main_group.add_command(command)
     
     def load_generic(self, main_group: click.Group) -> None:

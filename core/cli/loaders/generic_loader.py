@@ -27,7 +27,11 @@ class GenericLoader:
         """
         ctx = ContextApplication(self.application)
         def call_cli(**kwargs):
-            getattr(self.cli, name)(ctx=ctx, **kwargs)
+            method = getattr(self.cli, name)
+            print(method)
+            di_params = self.application.service_registry.get_parameters(method)
+            kwargs = {**kwargs, **di_params}
+            method(ctx=ctx, **kwargs)
         
         return call_cli
 
