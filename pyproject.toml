@@ -21,6 +21,10 @@ python-socketio = "^5.10.0"
 fastapi-socketio = "^0.0.10"
 requests = "^2.31.0"
 pyjwt = "^2.8.0"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.31"}
+pydantic = {extras = ["email"], version = "^2.7.4"}
+inflection = "^0.5.1"
+chardet = "^5.2.0"
 
 
 [build-system]
