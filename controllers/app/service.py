@@ -6,7 +6,6 @@ class AppService(Service):
 
     def __init__(self, repository: AppRepo) -> None:
         self._repository = repository
-        
     
     async def get_hello(self):
-        return "test"
+        return "Yay! It works!"

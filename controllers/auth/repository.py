@@ -1,37 +1,52 @@
-# from entities.[your_entity] import [YourEntity]Entity
-from core.extensions.authentication.entity import UserEntity
-from core.extensions.repositories import Repository
+from pydantic import EmailStr
+from sqlalchemy import or_
+from core.database.dbcontext import AppDBContext
+from core.extensions.authentication.password_manager import AuthPassManager
+from entities.user import UserEntity
+from core.extensions.repositories import IdentityRepository, Repository
 
 
-class AuthRepo(Repository):
-    def __init__(self) -> None:
-        """
-        Define your repository here
-
-        Name of entities that were set in `def setup()` in endpoints.py file are will passed into __init__ here
-        Note that if you are not using entities that were added in `def setup()` then remove it from there also, or else you will receive error
-        """
-        # def __init__(self, [your_entity]: YourEntity]Entity) -> None:
-        #   self.[your_entity] = [your_entity]
-
-    async def update_user_from_entity(self, entity: UserEntity, **kwargs) -> UserEntity:
-        """
-        Update user from entity
-
-        :param entity: UserEntity
-        :param kwargs: Any
-        :return: UserEntity
-        """
-        query = entity.update_from_dict(kwargs)
-
-        await query.save()
-        return query
+class AuthRepo(IdentityRepository):
+    def __init__(self, _context: AppDBContext) -> None:
+        self._context = _context
     
-    async def delete_user(self, entity: UserEntity):
-        """
-        Delete user
+    async def create_user(self, username: str, email: EmailStr, password: str) -> UserEntity:
+        async with self._context() as db:
+            entity = UserEntity(username=username, email=email.lower(), password=password)
+            db.add(entity)
+            await db.commit()
+            await db.refresh(entity)
+        
+        return entity
 
-        :param user_id: str
-        :return: bool
-        """
-        return await entity.delete()
+    async def update_user(self, user_id: int, **new_values) -> UserEntity | None:
+        async with self._context() as db:
+            entity = await db.get(UserEntity, user_id)
+            
+            if not entity:
+                return None
+            
+            for key, value in new_values.items():
+                setattr(entity, key, value)
+
+        return entity
+    
+    async def get_user(self, user_id: int) -> UserEntity | None:
+        query = await self._context.construct(UserEntity).filter(UserEntity.id == user_id)
+
+        result = query.first()
+        return result[0] if result else None
+    
+    async def get_user_by_login(self, login: str) -> UserEntity | None:
+        query = await self._context.construct(UserEntity).filter(
+            or_(UserEntity.username == login, UserEntity.email == login.lower()))
+        result = query.first()
+        return result[0] if result else None
+    
+    async def delete_user(self, user_id: int) -> None:
+        async with self._context() as db:
+            entity = await db.get(UserEntity, user_id)
+            if not entity:
+                return None
+                
+            await db.delete(entity)
