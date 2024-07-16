@@ -15,5 +15,4 @@ class ControllerModule(TypedDict):
     controller: object
     services: dict[str, type[Service]]
     repository: type[Repository] | None
-    repository_entities: dict[str, type[Entity]]
     plugin_configs: NotRequired[dict[str, Any]]

@@ -6,11 +6,14 @@ from functools import wraps
 from typing import TYPE_CHECKING, Callable, List, Optional
 
 from core.cli.application import ContextApplication, ErrorHandler
+from core.cli.injectable import Injectable
 from core.cli.models import ArgumentCMD, ArgumentsFormat, OptionCMD
 from core.errors.base import DeclaredBaseCliIsNotDefined, IncorrectCommandArgument
 from rich import print as cprint
 from rich.columns import Columns
-from inspect import isfunction, unwrap
+from inspect import Parameter, isfunction, unwrap
+
+from core.registries.service import ServiceRegistry
 
 if TYPE_CHECKING:
     from core.application import Application
@@ -18,14 +21,27 @@ if TYPE_CHECKING:
 
 class BaseCLI:
 
-    def __init__(self) -> None:
-        pass
+    _application: Application
+    _sr: ServiceRegistry
+
+    def __init__(self, _application: Application, _sr: ServiceRegistry):
+        self._application = _application
+        self._sr = _sr
 
     def get_arguments(self):
         result: list[ArgumentsFormat] = []
+        ignorable_params = []
 
+        di_parameters = self._sr.get_parameters(self)
+
+        for key, value in di_parameters.items():
+            ignorable_params.append(key)
+            setattr(self, key, value)
+        
         # Iterate over annotated class variables
         for key, value in self.__class__.__dict__["__annotations__"].items():
+            if key in ignorable_params:
+                continue
             # Check if the variable is public and its type is among the specified types
             current_value = getattr(self, key, None)
             if not key.startswith('_'):
@@ -47,14 +63,21 @@ class GenericCLI:
     help: Optional[str] = None
     configs: Optional[dict] = None
 
-    def __init__(self) -> None:
-        pass
+    _application: Application
+    _sr: ServiceRegistry
 
-    def get_method_arguments(self, _method: Callable) -> list[ArgumentsFormat]:
+    def __init__(self, _application: Application,
+                 _sr: ServiceRegistry) -> None:
+        self._application = _application
+        self._sr = _sr
+
+    def get_method_arguments(self, _method: Callable, ignore: list[str]) -> list[ArgumentsFormat]:
         result: list[ArgumentsFormat] = []
         signature = inspect.signature(_method)
 
         for name, param in signature.parameters.items():
+            if name in ignore:
+                continue
             # Determine the type of the parameter
             param_type = param.annotation if param.annotation is not inspect.Parameter.empty else str
 
@@ -76,12 +99,27 @@ class GenericCLI:
 
     def get_methods(self) -> list[tuple[str, list[ArgumentsFormat]]]:
         result: list[tuple[str, list[ArgumentsFormat]]] = []
+
         for method_name, method in self.__class__.__dict__.items():
-            if isfunction(method) and method_name != "__init__":
+            if not isfunction(method):
+                continue
+
+            ignorable_params = []
+
+            method_signature = inspect.signature(method)
+            
+            for name, value in method_signature.parameters.items():
+                try:
+                    if issubclass(value.annotation, Injectable):
+                        ignorable_params.append(name)
+                except:
+                    pass
+
+            if method_name != "__init__" and method_name:
                 # Unwrap the method to get to the original function if it's wrapped by a decorator
                 original_method = unwrap(method)
                 # Get the arguments of the method
-                arguments = self.get_method_arguments(original_method)
+                arguments = self.get_method_arguments(original_method, ignorable_params)
                 result.append((method_name, arguments))
 
         return result
@@ -101,6 +139,7 @@ def console_command(name: Optional[str] = None, help: Optional[str] = None, **kw
         f.alt_name = name
         f.help = help
         f.kwargs = kwargs
+        
         @wraps(f)
         def decorator(*args, **kwargs):
             # if args:

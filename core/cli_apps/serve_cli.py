@@ -3,7 +3,7 @@ from typing import Literal, Optional
 
 from core._builder.manager import BuildManager
 from core.cli.application import ContextApplication
-from core.cli.main import BaseCLI
+from core.cli import BaseCLI
 from core.cli.models import OptionCMD
 from rich.table import Table
 from rich.panel import Panel

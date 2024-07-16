@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 from core.cli.application import ContextApplication, Table, Panel
 from core.cli.async_module import CoroCLI
 from core.cli.main import GenericCLI, console_command
@@ -7,12 +7,16 @@ from core.cli.models import OptionCMD
 from core.utils.cacher import AscCacher
 from settings import BASE_PATH, TORTOISE_ORM
 
+if TYPE_CHECKING:
+    from core.application import Application
+    from core.registries.service import ServiceRegistry
+
 class MigrateCLI(GenericCLI):
     app_name: str = "migration"
     help: Optional[str] = "Migrate data from one database to another"
     
-    def __init__(self):
-        super().__init__()
+    def __init__(self, _application: "Application", _sr: "ServiceRegistry"):
+        super().__init__(_application, _sr)
         self._name = 'migrate'
         self._description = 'Migrate data from one database to another'
         self._author = 'Zahcoder34'

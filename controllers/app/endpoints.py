@@ -6,7 +6,6 @@ from core.utils.controller import Controller, Get
 
 @Controller()
 class App:
-
     def __init__(self, app_service: AppService) -> None:
         self.app_service = app_service
 
@@ -22,8 +21,5 @@ def setup() -> ControllerModule:
             "app": AppService
         },
         "repository": AppRepo,
-        "repository_entities": {
-            # Add your entities here...
-        },
         "plugin_configs": {}
     }
