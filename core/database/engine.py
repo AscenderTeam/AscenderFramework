@@ -6,6 +6,7 @@ from core.database.errors.wrong_orm import WrongORMException
 from core.database.orms.sqlalchemy import SQLAlchemyORM
 from core.database.orms.tortoise import TortoiseORM
 from core.database.types.orm_enum import ORMEnum
+from core.extensions.repositories import IdentityRepository
 
 
 class DatabaseEngine:
@@ -36,3 +37,9 @@ class DatabaseEngine:
         _context = AppDBContext(self.engine)
 
         return _context
+    
+    def identity_repo(self, _repo: type[IdentityRepository]):
+        if isinstance(self.engine, SQLAlchemyORM):
+            return _repo(self.generate_context())
+        
+        return _repo()
