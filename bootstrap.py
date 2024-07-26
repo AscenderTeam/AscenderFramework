@@ -3,7 +3,6 @@ from core.application import Application
 from core.cli.processor import CLI
 from core.database.engine import DatabaseEngine
 from core.database.types.orm_enum import ORMEnum
-from core.extensions.authentication.entity import UserEntity
 from core.identity.security import Security
 from settings import DATABASE_CONNECTION, TORTOISE_ORM
 
@@ -12,6 +11,7 @@ class Bootstrap:
 
     @staticmethod
     def server_boot_up(app: Application):
+        app.setup_docs(enabled=False)
         app.use_database(lambda e: Bootstrap.database_registry(app, e),
                          ORMEnum.SQLALCHEMY, DATABASE_CONNECTION)
         # app.use_authentication()
@@ -33,7 +33,7 @@ class Bootstrap:
         engine.load_entity("entities.user")
         engine.run_database()
         app.add_authorization(Bootstrap.authorization_registry,
-                              identity_repository=AuthRepo(engine.generate_context()), 
+                              identity_repository=engine.identity_repo(AuthRepo), 
                               auth_scheme="oauth2",
                               secret="asdwq231")
 
