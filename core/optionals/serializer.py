@@ -5,11 +5,11 @@ T = TypeVar("T")
 E = TypeVar("E")
 
 
-def serialize_tortoise_model(pydantic_model: type[T], tortoise_model: E, **custom_fields):
+def serialize_tortoise_model(pydantic_model: type[T], db_entity: E, **custom_fields):
     # Serialize Tortoise model to dictionary
     serialized_data = {
         key: value
-        for key, value in tortoise_model.__dict__.items()
+        for key, value in db_entity.__dict__.items()
         if not callable(value) and not key.startswith('_')
     }
 

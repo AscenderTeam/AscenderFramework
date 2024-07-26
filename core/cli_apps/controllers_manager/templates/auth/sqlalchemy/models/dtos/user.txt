@@ -1,7 +1,8 @@
-from pydantic import BaseModel, EmailStr, SecretStr
+from core.optionals import BaseDTO
+from pydantic import EmailStr, SecretStr
 
 
-class UserDTO(BaseModel):
+class UserDTO(BaseDTO):
     username: str
     email: EmailStr
     password: str

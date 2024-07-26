@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+from core.optionals import BaseDTO
 
 
-class AuthDTO(BaseModel):
+class AuthDTO(BaseDTO):
     login: str
     password: str

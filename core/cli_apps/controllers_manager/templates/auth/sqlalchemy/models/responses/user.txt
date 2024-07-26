@@ -1,7 +1,8 @@
-from pydantic import BaseModel, EmailStr, SecretStr, ConfigDict
+from pydantic import EmailStr, SecretStr, ConfigDict
+from core.optionals import BaseResponse
 
 
-class UserResponse(BaseModel):
+class UserResponse(BaseResponse):
     model_config = ConfigDict(from_attributes=True)
     
     id: int
