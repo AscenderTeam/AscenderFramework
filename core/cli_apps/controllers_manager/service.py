@@ -1,5 +1,6 @@
 from core.cli.application import ContextApplication
 from core.cli.injectable import Injectable
+from core.database.types.orm_enum import ORMEnum
 from core.registries.service import ServiceRegistry
 
 
@@ -31,13 +32,14 @@ class ControllerService(Injectable):
     def build_auth_controller(self, ctx: ContextApplication,
                               controller_name: str,
                               controller_path: str,
+                              orm_mode: ORMEnum,
                               entity_module: str):
-        ctx.console_print(f"[cyan]Creating new  Identity Controller with name:[/cyan] {controller_name}...")
+        ctx.console_print(f"[cyan]Creating new Identity Controller with name:[/cyan] {controller_name}...")
         
         # imported on row
         from .builders.auth import AuthBuilder
 
-        builder = AuthBuilder(controller_name, controller_path, entity_module)
+        builder = AuthBuilder(controller_name, controller_path, orm_mode, entity_module)
         _controller = builder()
 
         ctx.console_print("[yellow]Warning![/yellow] Avoid passing the controller name with spaces and follow casing types!")

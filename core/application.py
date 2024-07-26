@@ -1,6 +1,5 @@
 from core.cli_apps.controllers_manager.app import ControllersManagerCLI
 from core.cli_apps.migrate_cli import MigrateCLI
-from core.cli_apps.users_cli import UsersCLI
 from core.database.engine import DatabaseEngine
 from core.database.types.orm_enum import ORMEnum
 from core.extensions.authentication import AscenderAuthenticationFramework
@@ -23,6 +22,7 @@ from core.registries.service import ServiceRegistry
 from core.sockets import SocketIOApp
 
 from core.types import Controller
+from settings import DOCS_URLS
 
 
 class Application:
@@ -31,10 +31,10 @@ class Application:
                 on_server_start: Callable[['Application'], None] | None = None, 
                 on_server_runtime_error: Callable[[Exception], None] | None = None,
                 on_cli_run: Callable[['Application', CLI], None] | None = None,
-                on_injections_run: Callable[['Application'], None] | None = None,
-                on_event_start: Callable[['Application', List[object]], None] | None = None,
-                on_event_shutdown: Callable[['Application', List[object]], None] | None = None) -> None:
-        self.app = FastAPI(title="Ascender Framework API")
+                on_injections_run: Callable[['Application'], None] | None = None) -> None:
+        self.app = FastAPI(title="Ascender Framework API", 
+                           docs_url=DOCS_URLS["swagger"],
+                           redoc_url=DOCS_URLS["redoc"])
         self.socketio: SocketIOApp | None = None
 
         self.service_registry = ServiceRegistry()
@@ -42,8 +42,6 @@ class Application:
         self._on_server_runtime_error = on_server_runtime_error
         self._on_cli_run = on_cli_run
         self._on_injections_run = on_injections_run
-        self._on_event_start = on_event_start
-        self._on_event_shutdown = on_event_shutdown
         
         # Initialize Plugin Loader Module
         self._plugin_loader = PluginLoader(self)
@@ -54,8 +52,25 @@ class Application:
         # Initialize CLI module
         self.__cli = CLI(self, app_name="AscCLI")
 
-    def test_callback(self, *args, **kwargs):
-        print(*args, **kwargs)
+    def setup_docs(self, title: str | None = None,
+                   description: str | None = None,
+                   **options):
+        
+        params = {
+            "title": title,
+            "description": description,
+            **options
+        }
+
+        for param_key, param_value in params.items():
+            if param_key in ["title", "description"]:
+                if param_value is not None:
+                    setattr(self.app, param_key, param_value)
+                
+                continue
+
+            setattr(self.app, param_key, param_value)
+
 
     def use_database(self, logical_o: Callable[[DatabaseEngine], None], orm: ORMEnum, configuration: dict):
         # module = import_module("core.database")
@@ -64,17 +79,11 @@ class Application:
         database = DatabaseEngine(self.app, orm, configuration)
         self.service_registry.add_singletone(DatabaseEngine, database)
         logical_o(database)
-    
-    async def use_database_cli(self):
-        module = import_module("core.database")
-
-        await module.run_database_cli()
 
     def add_middleware(self, middleware: type, **options) -> None:
         self.app.add_middleware(middleware, **options)
 
     def run_cli(self) -> None:
-        
         if self._on_cli_run is not None:
             self._on_cli_run(self, self.__cli)
 

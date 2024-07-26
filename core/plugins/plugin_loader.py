@@ -9,14 +9,17 @@ import logging
 
 from settings import PLUGINS_LOGLEVEL
 
-
 if TYPE_CHECKING:
     from core.application import Application
 
 
 class PluginLoader:
+    """
+    ## Plugin Loader
+
+    The core engine plugin loader is responsible for managing plugins and loading them.
+    """
     __plugins: dict[str, Plugin] = {}
-    _mvc_injectors: dict[str, Any] = {}
 
     def __init__(self, application: Application) -> None:
         self.application = application
@@ -24,6 +27,11 @@ class PluginLoader:
         
     def setup_logger(self):
         logger = logging.getLogger("ascender-plugins")
+        
+        # handlers checkup
+        if logger.hasHandlers():
+            logger.handlers.clear()
+
         rich_handler = RichHandler(
             rich_tracebacks=True,
             show_time=True,
@@ -32,11 +40,12 @@ class PluginLoader:
         logger.setLevel(PLUGINS_LOGLEVEL)
         # rich_handler.setFormatter(PluginsLoggerFormatter())
         logger.addHandler(rich_handler)
+        logger.propagate = False
         self.logger = logger
 
     def use_plugin(self, plugin: Plugin):
         plugin.logger = self.logger
-        plugin.install(self.application, storage=Distributor)
+        plugin.install(self.application)
         self.__plugins[plugin.name] = plugin
 
     def before_controller_load(self, name: str, instance: object, configuration: ControllerModule):

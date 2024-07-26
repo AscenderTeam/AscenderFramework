@@ -1,0 +1,47 @@
+from [controller_namespace].models import AuthDTO, UserDTO
+from [controller_namespace].repository import [repository]
+from [controller_namespace].service import [service]
+from core.identity.decorators.auth_refresher import AuthRefresher
+from core.identity.decorators.authorize import Authorize
+from core.identity.decorators.claim import Claim
+from core.types import ControllerModule
+from core.utils.controller import Controller, Get, Post
+
+
+@Controller()
+class [controller]:
+    def __init__(self, [services_di]) -> None:
+        [service_definition]
+
+    @Post("login")
+    async def login(self, data: AuthDTO):
+        return await self.[service_lowered].authenticate(data)
+
+    @Post("register")
+    async def register(self, data: UserDTO):
+        return await self.[service_lowered].create_user(data)
+    
+    @Post("refresh-token")
+    @AuthRefresher()
+    async def refresh_token(self, credentials: tuple[str, str]):
+        return {"access_token": credentials[0], "refresh_token": credentials[1],
+                "type": "bearer"}
+
+    @Get("me")
+    @Authorize("isUser")
+    @Claim()
+    async def user_information(self, user_claim: dict):
+        return await self.[service_lowered].get_user(user_claim["user_id"])
+
+
+def setup() -> ControllerModule:
+    return {
+        "controller": [controller],
+        "services": {
+            [service_definition_secondary],
+        },
+        "repository": [repository],
+        "plugin_configs": {
+            # Configuration for plugins here...
+        },
+    }

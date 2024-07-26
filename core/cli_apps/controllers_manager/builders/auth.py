@@ -3,13 +3,15 @@ import inflection
 from core.cli_apps.controllers_manager.builder import ControllerBuilder
 from core.cli_apps.controllers_manager.errors.improper_namespace import ImproperNamespaceError
 from core.cli_apps.controllers_manager.loader import TLoader
+from core.database.types.orm_enum import ORMEnum
 
 
 class AuthBuilder(ControllerBuilder):
-    def __init__(self, name: str, controller_dir: str,
+    def __init__(self, name: str, controller_dir: str, orm_type: ORMEnum,
                  entity_module: str) -> None:
         super().__init__(name, controller_dir)
         self.entity_module = entity_module
+        self.orm_type = orm_type
     
     def prepare_placeholders(self) -> dict[str, str]:
         if len(self.entity_module.split(".")) < 2:
@@ -43,6 +45,8 @@ class AuthBuilder(ControllerBuilder):
         template_placeholders = self.prepare_placeholders()
 
         template_loader = TLoader("auth", **template_placeholders)
+        template_loader.add_pathpoint(self.orm_type.value)
+        
         template_loader.load_structure(True)
         template_loader.load_template(f"{self.controller_dir}/{self.name}")
         return template_loader.structure_memory

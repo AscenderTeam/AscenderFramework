@@ -34,3 +34,8 @@ BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 HEADERS = None
 PLUGINS_LOGLEVEL = "INFO"
 AUTHORIZATION_SCHEME = HTTPBearer()
+
+DOCS_URLS={
+    "swagger": "/docs",
+    "redoc": "/redoc"
+}

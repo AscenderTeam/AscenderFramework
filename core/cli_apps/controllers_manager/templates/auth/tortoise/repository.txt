@@ -1,0 +1,34 @@
+from core.extensions.repositories import IdentityRepository
+from [entity_namespace] import [user_entity]
+from tortoise.expressions import Q
+from pydantic import EmailStr
+
+
+class [repository](IdentityRepository):
+    
+    async def create_user(self, username: str, email: EmailStr, password: str) -> [user_entity]:
+        entity = [user_entity](username=username, email=email.lower(), password=password)
+        await entity.save(entity)
+
+        return entity
+
+    async def update_user(self, user_id: int, **new_values) -> [user_entity] | None:
+        if not (entity := await self.get_user(user_id=user_id)):
+            return None
+
+        await entity.update_from_dict(new_values).save()
+
+        return entity
+    
+    async def get_user(self, user_id: int) -> [user_entity] | None:
+        return await [user_entity].filter(Q(id=user_id)).first()
+    
+    async def get_user_by_login(self, login: str) -> [user_entity] | None:
+        return await [user_entity].filter(Q(username=login) | Q(email=login)).first()
+
+    
+    async def delete_user(self, user_id: int) -> None:
+        if not (entity := await self.get_user(user_id=user_id)):
+            return None
+        
+        await entity.delete()
