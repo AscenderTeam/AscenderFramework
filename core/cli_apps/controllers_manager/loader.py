@@ -15,9 +15,13 @@ class TLoader:
         self.template_placeholders = template_placeholders
         self.metadatas = []
         self.structure_memory = []
+        self.additional_pathpoints = []
     
     def define_metadata(self, metadata: list[StructureMetadata]):
         self.metadatas.append(metadata)
+    
+    def add_pathpoint(self, point: str):
+        self.additional_pathpoints.append(point)
     
     def load_fromdir(self, dirpath: os.PathLike, fill_template: bool = True):
         structures = os.listdir(dirpath)
@@ -25,7 +29,6 @@ class TLoader:
         for item in structures:
             if item in ["__pycache__"]:
                 continue
-            print(item, os.path.isdir(item))
             if os.path.isdir(f"{dirpath}/{item}"):
                 yield {
                     "type": "dir",
@@ -35,7 +38,6 @@ class TLoader:
                 continue
 
             if item.find(".txt") == -1:
-                print(item, "doesn't contain .txt, skipping")
                 continue
             
             content = ""
@@ -65,6 +67,11 @@ class TLoader:
     def load_structure(self, fill_template: bool = True):
         _path = f"{BASE_PATH}/core/cli_apps/controllers_manager/templates/{self.template_type}"
         
+        if len(self.additional_pathpoints):
+            _path = _path + "/"
+
+        _path = _path + "/".join(self.additional_pathpoints)
+
         for item in self.load_fromdir(_path):
             self.structure_memory.append(item)
     

@@ -9,18 +9,18 @@ class [repository](IdentityRepository):
     def __init__(self, _context: AppDBContext) -> None:
         self._context = _context
     
-    async def create_user(self, username: str, email: EmailStr, password: str) -> UserEntity:
+    async def create_user(self, username: str, email: EmailStr, password: str) -> [user_entity]:
         async with self._context() as db:
-            entity = UserEntity(username=username, email=email.lower(), password=password)
+            entity = [user_entity](username=username, email=email.lower(), password=password)
             db.add(entity)
             await db.commit()
             await db.refresh(entity)
         
         return entity
 
-    async def update_user(self, user_id: int, **new_values) -> UserEntity | None:
+    async def update_user(self, user_id: int, **new_values) -> [user_entity] | None:
         async with self._context() as db:
-            entity = await db.get(UserEntity, user_id)
+            entity = await db.get([user_entity], user_id)
             
             if not entity:
                 return None
@@ -30,21 +30,21 @@ class [repository](IdentityRepository):
 
         return entity
     
-    async def get_user(self, user_id: int) -> UserEntity | None:
-        query = await self._context.construct(UserEntity).filter(UserEntity.id == user_id)
+    async def get_user(self, user_id: int) -> [user_entity] | None:
+        query = await self._context.construct([user_entity]).filter([user_entity].id == user_id)
 
         result = query.first()
         return result[0] if result else None
     
-    async def get_user_by_login(self, login: str) -> UserEntity | None:
-        query = await self._context.construct(UserEntity).filter(
-            or_(UserEntity.username == login, UserEntity.email == login.lower()))
+    async def get_user_by_login(self, login: str) -> [user_entity] | None:
+        query = await self._context.construct([user_entity]).filter(
+            or_([user_entity].username == login, [user_entity].email == login.lower()))
         result = query.first()
         return result[0] if result else None
     
     async def delete_user(self, user_id: int) -> None:
         async with self._context() as db:
-            entity = await db.get(UserEntity, user_id)
+            entity = await db.get([user_entity], user_id)
             if not entity:
                 return None
                 
