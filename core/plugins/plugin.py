@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, final
 
 from core.extensions.repositories import Repository
 from core.extensions.services import Service
+from core.plugins.plugin_injector import PluginInjector
 from core.store.distributor import Distributor
 from core.types import ControllerModule
 
@@ -18,6 +19,7 @@ class Plugin:
 
     # Shouldn't be overrided
     logger: Logger
+    injector: PluginInjector
     
     # Overridable
     def install(self, application: Application, *args, **kwargs):
