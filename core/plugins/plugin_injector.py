@@ -1,13 +1,15 @@
-from typing import Self, TypeVar
-from core.application import Application
+from typing import TYPE_CHECKING, Self, TypeVar
 from core.extensions.repositories import IdentityRepository, Repository
 from core.extensions.services import Service
+
+if TYPE_CHECKING:
+    from core.application import Application
 
 I = TypeVar("I")
 
 
 class PluginInjector:
-    def __init__(self, application: Application) -> None:
+    def __init__(self, application: "Application") -> None:
         self.application = application
     
     def inject_mvc(self, interface: type[I], obj: I):
