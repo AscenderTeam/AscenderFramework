@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Self, TypeVar
+from typing import TYPE_CHECKING, TypeVar
 from core.extensions.repositories import IdentityRepository, Repository
 from core.extensions.services import Service
 
