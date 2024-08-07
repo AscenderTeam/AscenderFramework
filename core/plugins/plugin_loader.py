@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Literal
 from core.plugins.plugin import Plugin
+from core.plugins.plugin_injector import PluginInjector
 from core.store.distributor import Distributor
 from core.types import ControllerModule
 from rich.logging import RichHandler
@@ -45,6 +46,7 @@ class PluginLoader:
 
     def use_plugin(self, plugin: Plugin):
         plugin.logger = self.logger
+        plugin.injector = PluginInjector(self.application)
         plugin.install(self.application)
         self.__plugins[plugin.name] = plugin
 
