@@ -150,6 +150,7 @@ class Loader:
                 parameters = self._application.service_registry.get_parameters(service)
                 for key, value in parameters.items():
                     setattr(service, key, value)
+        
         # Initialize dependencies in plugins
         self._plugin_loader.initialize_dependencies(self._active_controllers)
 
