@@ -16,10 +16,11 @@ class Controller:
         self.dependencies = dependencies
 
     def __call__(self, cls: object):
-        router = APIRouter(tags=self.tags, prefix=self.prefix, dependencies=self.dependencies)
+        router = APIRouter(tags=self.tags, dependencies=self.dependencies)
         @wraps(cls)
         def wrapper(*args, **kwargs):
             instance = cls(*args, **kwargs)
+            instance._router_prefix = self.prefix
             
             for name, method in instance.__class__.__dict__.items():
                 

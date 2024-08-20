@@ -74,11 +74,12 @@ class Loader:
                 
                 if not module.setup:
                     continue
-
+                
                 prefix = f"/{mvc}"
                 router_name = " ".join(mvc.capitalize().split("_"))
                 controller_module = self.load_module(module.setup())
                 self._active_controllers.append(controller_module)
+                prefix = controller_module._router_prefix + prefix
                 self._app.include_router(controller_module.router, prefix=prefix, tags=[router_name])
                 
                 self._plugin_loader.after_controller_load(controller_module.__class__.__name__, controller_module, module.setup())
