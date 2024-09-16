@@ -109,7 +109,7 @@ class Application:
             raise e
     
     def get_version(self) -> str:
-        return "v1.2.3"
+        return "v1.2.4"
     
     def use_authentication(self, token_url: str = "/auth/login"):
         AscenderAuthenticationFramework.run_authentication(self, token_url=token_url)
