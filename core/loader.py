@@ -3,6 +3,7 @@ import asyncio
 from genericpath import isfile
 from inspect import isawaitable, unwrap
 import os
+from pathlib import Path
 from typing import TYPE_CHECKING, List
 from fastapi import FastAPI
 from importlib import import_module
@@ -66,7 +67,7 @@ class Loader:
             if os.path.isfile(f"{controller['base_path']}/{mvc}/.ignore"):
                 continue
             
-            namespace_path = f"{controller['base_path']}.{mvc}"
+            namespace_path = f"{Path(controller['base_path']).as_posix().replace('/', '.')}.{mvc}"
             
             # Get controller's endpoints.py
             if os.path.isfile(f"{controller['base_path']}/{mvc}/endpoints.py"):
