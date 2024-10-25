@@ -11,7 +11,7 @@ class [controller]:
 
     @Get()
     async def get_app_endpoint(self):
-        return await self.app_service.get_hello()
+        return await self.[service_name]_service.get_hello()
 
 
 def setup() -> ControllerModule:

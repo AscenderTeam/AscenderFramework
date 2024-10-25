@@ -21,7 +21,8 @@ class BasicBuilder(ControllerBuilder):
             "controller_namespace": f"{controller_namespace}.{underscored_name}",
             "services_di": f"{controller_lowered}_service: {base_pl['service']},",
             "service_definition": f"self.{controller_lowered}_service = {controller_lowered}_service",
-            "service_definition_secondary": f"\"{controller_lowered}_service\": {base_pl['service']}"
+            "service_definition_secondary": f"\"{controller_lowered}_service\": {base_pl['service']}",
+            "service_name": f"{controller_lowered}"
         }
 
         return {**base_pl, **metadata_pl}
