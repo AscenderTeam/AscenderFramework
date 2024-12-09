@@ -1,0 +1,6 @@
+from ascender.common import BaseDTO
+
+
+class AuthDTO(BaseDTO):
+    login: str
+    password: str

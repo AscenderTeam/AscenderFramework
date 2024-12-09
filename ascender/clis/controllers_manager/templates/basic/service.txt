@@ -1,0 +1,11 @@
+from ascender.contrib.services import Service
+from [controller_namespace].repository import [repository]
+
+
+class [service](Service):
+
+    def __init__(self, repository: [repository]) -> None:
+        self._repository = repository
+    
+    async def get_hello(self):
+        return "[controller] works."

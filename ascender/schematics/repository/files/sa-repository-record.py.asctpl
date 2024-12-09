@@ -1,0 +1,51 @@
+{%- for from_package, package_type in package_imports -%}
+from {{ from_package }} import {{ package_type }}
+{% endfor %}
+{{- upper_section -}}
+{%- for entity in entities %}
+    async def create_{{entity.name | stripped}}(self, **data) -> {{ entity.name }}:
+        async with self._context() as _db:
+            entity = {{ entity.name }}(**data)
+            
+            _db.add(entity)
+            await _db.commit()
+            await _db.refresh(entity)
+        
+        return entity
+
+    async def update_{{entity.name | stripped}}(self, {{entity.name | stripped}}_id: {{ entity.fields.id | field_type }}, **data) -> {{ entity.name }}:
+        async with self._context() as _db:
+            entity = await _db.get({{ entity.name }}, {{entity.name | stripped}}_id)
+            
+            for k, v in data.items():
+                setattr(entity, k, v)
+            
+            await _db.commit()
+            await _db.refresh(entity)
+        
+        return {{ entity.name }}
+
+    async def get_{{entity.name | stripped}}s(self) -> list[{{ entity.name }}]:
+        query = await self._context.construct({{ entity.name }})
+
+        return query.scalars().all()
+
+    async def get_{{entity.name | stripped}}s_offset(self, offset: int, limit: int) -> list[{{ entity.name }}]:
+        query = await self._context.construct({{ entity.name }}).offset(offset).limit(limit)
+
+        return query.scalars().all()
+
+    async def get_{{entity.name | stripped}}s_count(self) -> int:
+        query = self._context.construct({{ entity.name }}).subquery()
+        count = await self._context.construct(func.count).select_from(query)
+
+        return count.scalar()
+
+    async def get_{{entity.name | stripped}}(self, {{entity.name | stripped}}_id: {{ entity.fields.id | field_type }}) -> {{ entity.name }} | None:
+        query = await self._context.construct({{ entity.name }}).filter({{ entity.name }}.id == {{entity.name | stripped}}_id)
+
+        return query.scalar()
+
+    def fetch_{{entity.name | stripped}}(self):
+        return self._context.construct({{ entity.name }})
+{% endfor -%}

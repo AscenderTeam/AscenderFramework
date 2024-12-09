@@ -1,0 +1,7 @@
+from sqlalchemy import func
+from ascender.common import Injectable
+from ascender.contrib.repositories import Repository
+
+
+@Injectable()
+class {{ repository_name | pascal_case }}Repo(Repository):
