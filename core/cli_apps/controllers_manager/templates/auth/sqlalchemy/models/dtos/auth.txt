@@ -1,6 +1,0 @@
-from core.optionals import BaseDTO
-
-
-class AuthDTO(BaseDTO):
-    login: str
-    password: str
