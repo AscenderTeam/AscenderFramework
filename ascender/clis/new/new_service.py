@@ -63,7 +63,7 @@ class NewService(Service):
         )
 
         # Installing framework within poetry's virtualenv scope and other additional packages
-        subprocess.run("poetry config virtualenvs.create true && poetry add ascender", shell=True, check=True)
+        subprocess.run("poetry config virtualenvs.create true && poetry add ascender-framework", shell=True, check=True)
 
     def create_project_files(
         self,
