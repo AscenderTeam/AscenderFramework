@@ -1,7 +1,0 @@
-from ascender.core.database.dbcontext import AppDBContext
-from ascender.contrib.repositories import Repository
-
-
-class [repository](Repository):
-    def __init__(self, _context: AppDBContext | None = None) -> None:
-        super().__init__(_context)

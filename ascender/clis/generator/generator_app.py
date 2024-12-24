@@ -1,6 +1,5 @@
-from typing import Any, Literal
+from typing import Literal
 
-from click import BOOL
 import click
 from ascender.clis.generator.create_generator_service import CreateGeneratorService
 from ascender.core.cli.application import ContextApplication

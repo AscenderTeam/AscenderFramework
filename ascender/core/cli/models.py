@@ -48,7 +48,6 @@ class ArgumentCMD:
     
     def validate(self, value: any) -> bool:
         # TODO: Make a validator
-
         return True
 
     def __repr__(self) -> str:

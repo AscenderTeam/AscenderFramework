@@ -3,6 +3,7 @@
 
 A simple and powerful Web API framework for python. Developed by [Ascender](https://ascender.space)
 """
+import os
 from ascender.core.application import Application
 from ascender.core.types import Controller, IBootstrap
 
@@ -18,4 +19,6 @@ def ascender_launcher(
 
 
 def _builtin_launcher():
+    os.environ["CLI_MODE"] = "1"
+    
     return Application(object, {}).run_cli()

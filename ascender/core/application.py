@@ -78,7 +78,7 @@ class Application:
         self.__cli.run()
 
     def get_version(self) -> str:
-        return "v1.3.0-beta.3"
+        return "v1.3.0-beta.4"
 
     def load_providers(self):
         hierarchy_module = HierarchyModule()
@@ -173,6 +173,8 @@ class Application:
             if issubclass(provider, AbstractModule):
                 instance.on_module_init()
         else:
+            if isinstance(provider, AbstractModule):
+                provider.on_module_init()
             # Handle non-module providers
             self.service_registry.add_singletone(type(provider), provider)
             if is_lazy:
