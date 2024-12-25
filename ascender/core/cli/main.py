@@ -3,7 +3,7 @@ import inspect
 
 from sys import argv
 from functools import wraps
-from typing import TYPE_CHECKING, Callable, List, Optional
+from typing import TYPE_CHECKING, Any, Callable, List, Optional
 
 from ascender.core.cli.application import ContextApplication, ErrorHandler
 from ascender.core.cli.injectable import Injectable
@@ -20,14 +20,14 @@ if TYPE_CHECKING:
 
 
 class BaseCLI:
+    _config: dict[str, Any] = {}
 
     def get_arguments(self):
         result: list[ArgumentsFormat] = []
         # Iterate over annotated class variables
-        for key, value in self.__class__.__dict__["__annotations__"].items():
+        for key, value in self.__class__.__dict__.get("__annotations__", {}).items():
             # Check if the variable is public and its type is among the specified types
             current_value = getattr(self, key, None)
-            print(current_value)
             if not key.startswith('_'):
                 # Optionally, get the current value of the variable
                 result.append({"argument": key, "type": value,

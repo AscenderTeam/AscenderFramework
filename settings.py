@@ -8,7 +8,7 @@ import os
 DATABASE_CONNECTION = {
     "type": "dbstring",
     "content": "sqlite+aiosqlite:///database.db",
-    "entities": ["entities.user"],
+    "entities": [],
 }
 
 ORIGINS = [

@@ -55,12 +55,12 @@ class LoaderBaseCLI:
 
     def _as_command(self) -> None:
         arguments = self.get_arguments()
-        command = click.RichCommand(self.name, callback=self.execute_cli)
+        command = click.RichCommand(self.name, context_settings=self.cli._config, callback=self.execute_cli)
         
         for arg in arguments:
             if arg["is_ourobj"]:
                 if arg["is_arg"]:
-                    command.params.append(click.Argument([arg["argument"]], type=arg["type"], default=arg["value"].default, required=arg["value"].required
+                    command.params.append(click.Argument([arg["argument"]], type=arg["type"], default=arg["value"].default, required=arg["value"].required, **arg["value"].additional_kwargs
                                                  ))
                 else:
                     command.params.append(arg["value"].parse(arg["argument"]))
