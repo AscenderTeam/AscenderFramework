@@ -35,7 +35,7 @@ class GenericLoader:
         return call_cli
 
     def _as_command(self, name: str, method_name: str, arguments: list[ArgumentsFormat], **metadata) -> None:
-        command = RichCommand(name, callback=self.execute_cli(method_name), **metadata)
+        command = RichCommand(name, context_settings=self.cli.configs, callback=self.execute_cli(method_name), **metadata)
         
         for arg in arguments:
             if arg["is_ourobj"]:

@@ -2,6 +2,7 @@ from inflection import titleize
 from ascender.abstracts.factory import AbstractFactory
 from ascender.abstracts.module import AbstractModule
 from ascender.clis.cli_module import CliModule
+from ascender.common.api_docs import DefineAPIDocs
 from ascender.core.cli.provider import CLIProvider
 from typing import Any, Callable
 from fastapi import FastAPI
@@ -26,7 +27,7 @@ class Application:
         main_controller: Controller,
         bootstrap: IBootstrap
     ) -> None:
-        self.app = FastAPI(title="Ascender Framework API")
+        self.app = FastAPI(title="Ascender Framework API", docs_url=None, redoc_url=None)
 
         self.main_controller = main_controller
         self.bootstrap = bootstrap
@@ -67,6 +68,9 @@ class Application:
         )
         self.main_controller = controller
 
+    def define_api_docs(self, configs: DefineAPIDocs):
+        self.app = configs.update_instance(self.app)
+
     def run_cli(self) -> None:
         # NOTE: For custom CLIs that were used in provider
         if cli_provider := self.service_registry.resolve(CLIProvider):
@@ -78,7 +82,7 @@ class Application:
         self.__cli.run()
 
     def get_version(self) -> str:
-        return "v1.3.0-beta.4"
+        return "v1.3.0-beta.5"
 
     def load_providers(self):
         hierarchy_module = HierarchyModule()
@@ -88,6 +92,10 @@ class Application:
                                                     not p.factory_method else p, providers)))
 
         for provider in providers:
+            if isinstance(provider, DefineAPIDocs):
+                self.define_api_docs(provider)
+                continue
+
             if isinstance(provider, Provider):
                 if not provider.injectable:
                     raise ValueError(

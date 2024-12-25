@@ -7,6 +7,7 @@ from .inject import Inject
 from .injectfn import inject
 from .injectable import Injectable
 from .repository import ProvideRepository
+from .api_docs import DefineAPIDocs
 
 __all__ = [
     "BaseDTO", 
@@ -16,5 +17,6 @@ __all__ = [
     "Inject",
     "ProvideRepository",
     "inject",
-    "Injectable"
+    "Injectable",
+    "DefineAPIDocs"
 ]

@@ -56,7 +56,14 @@ class DIModule:
             list[Any]: The sorted list of items.
         """
         # Build dependency graph
-        graph = {cls: [] for cls in items}
+        graph = {}
+
+        for cls in items:
+            try:
+                graph[cls] = []
+            except:
+                continue
+
         independent_classes = []
 
         for cls in items:

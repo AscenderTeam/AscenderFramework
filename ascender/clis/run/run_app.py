@@ -1,11 +1,13 @@
+import os
 import subprocess
+import sys
 from ascender.core.cli.application import ContextApplication
 from ascender.core.cli.main import BaseCLI
 from ascender.core.cli.models import ArgumentCMD
 
 
 class RunCLI(BaseCLI):
-    command: str = ArgumentCMD(nargs=-1)
+    _config = {"ignore_unknown_options": True, "allow_extra_args": True}
 
     def __init__(self):
         ...
@@ -14,5 +16,5 @@ class RunCLI(BaseCLI):
         self, 
         ctx: ContextApplication
     ):
-        ctx.console_print(self.command)
-        return subprocess.call(f"poetry run python start.py {self.command}")
+        os.environ["CLI_MODE"] = "0"
+        return subprocess.call(f"poetry run python start.py {' '.join(sys.argv[2:])}", shell=True)
