@@ -1,11 +1,11 @@
-from ascender.core.utils.controller import Controller, Get, Post, Delete, Patch
+from ascender.core.utils.controller import Controller, Get
 
 
 @Controller(
     standalone=True,
     guards=[],
     imports=[],
-    providers=[]
+    providers=[],
 )
 class MainController:
     def __init__(self):
@@ -13,4 +13,4 @@ class MainController:
     
     @Get()
     async def main_endpoint(self) -> str:
-        return "main works!"
+        return

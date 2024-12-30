@@ -1,17 +1,14 @@
-from asyncio import iscoroutine
 from enum import Enum
 import inspect
-from typing import TYPE_CHECKING, Any, Sequence, TypeVar
+from typing import Any, Sequence, TypeVar
 
 from fastapi import APIRouter
 from fastapi.datastructures import Default
 from fastapi.params import Depends
 
-from ascender.abstracts.factory import AbstractFactory
 from ascender.abstracts.module import AbstractModule
 from ascender.core.di.hierarchy_module import HierarchyModule
 from ascender.core.di.provider import Provider
-from ascender.core.registries.service import ServiceRegistry
 from ascender.core.application import Application
 
 
@@ -171,6 +168,9 @@ class Controller(HierarchyModule):
         cls.router = router
         cls.standalone = self.standalone
         cls.__declaration_type__ = "controller"
+
+        if self.standalone:
+            cls.__di_module__ = self
 
         return cls
 

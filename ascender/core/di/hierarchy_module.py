@@ -60,7 +60,7 @@ class HierarchyModule(DIModule):
         Handles the initialization of provider objects in the local module scope.
         """
         # Resolve the appropriate provider type
-        provider_type = type(provider) if provider.__class__ != type else provider
+        provider_type = provider if isinstance(provider, type) else type(provider)
 
         # Check global and local dependencies
         service_registry = ServiceRegistry()
@@ -73,6 +73,7 @@ class HierarchyModule(DIModule):
 
         if isinstance(provider, AbstractFactory):
             # Handle AbstractFactory
+            provider.__di_module__ = self
             self._lazy_loading_dependencies.append(provider)
             self._factory_scope.append(provider)
             return
@@ -83,16 +84,19 @@ class HierarchyModule(DIModule):
 
             if provider.__class__ != type:
                 raise TypeError("Cannot resolve provider type for the factory provider!")
-
+            
+            instance = factory_method()
+            instance.__di_module__ = self
             if is_lazy:
-                self._lazy_loading_dependencies.append(factory_method())
+                self._lazy_loading_dependencies.append(instance)
             else:
-                self._module_scope[provider] = factory_method()
+                self._module_scope[provider] = instance
             return
 
         # Handle AbstractModule or type-based providers
-        if provider.__class__ == type:
+        if isinstance(provider, type):
             instance = self.inject_eager_dependency(provider)
+            instance.__di_module__ = self
             self._module_scope[provider] = instance
 
             if is_lazy:
@@ -102,6 +106,7 @@ class HierarchyModule(DIModule):
             if issubclass(provider, AbstractModule):
                 instance.on_module_init()
         else:
+            provider.__di_module__ = self
             # Handle non-module providers
             self._module_scope[provider_type] = provider
             if is_lazy:
@@ -122,7 +127,9 @@ class HierarchyModule(DIModule):
             if issubclass(declaration, (Guard, ParamGuard)):
                 declaration.__di_module__ = self
                 return
+            
             declaration_dependency = self.inject_eager_dependency(declaration)
+            declaration_dependency.__di_module__ = self
             self._module_scope[declaration] = declaration_dependency
             
             # Add in case if there are lazy loaders
@@ -135,7 +142,7 @@ class HierarchyModule(DIModule):
             for t, o in factory_injectables.items():
                 if t in self._module_scope:
                     continue
-                
+                o.__di_module__ = self
                 self._module_scope[t] = o
                 self._lazy_loading_dependencies.append(o)
 

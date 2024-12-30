@@ -82,7 +82,7 @@ class Application:
         self.__cli.run()
 
     def get_version(self) -> str:
-        return "v1.3.0-beta.5"
+        return "v1.3.0-beta.6"
 
     def load_providers(self):
         hierarchy_module = HierarchyModule()

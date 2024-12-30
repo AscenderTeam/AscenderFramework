@@ -1,7 +1,5 @@
 from typing import TypeVar
 
-from ascender.core.registries.service import ServiceRegistry
-
 
 T = TypeVar("T")
 
