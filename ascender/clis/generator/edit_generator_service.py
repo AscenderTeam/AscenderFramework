@@ -1,14 +1,15 @@
 import os
+from pathlib import Path
 from typing import Any
 from ascender.common.injectable import Injectable
-from ascender.contrib.services import Service
+from ascender.core.services import Service
 from ascender.core.database.types.orm_enum import ORMEnum
 from ascender.schematics.module.edit import ModuleEditor
 from ascender.schematics.repository.edit import RepositoryEditor
 from ascender.schematics.utilities.case_filters import pascal_case
 
 
-@Injectable()
+@Injectable(provided_in="root")
 class EditGeneratorService(Service):
     def __init__(self):
         ...
@@ -16,14 +17,17 @@ class EditGeneratorService(Service):
     def get_module_path(
         self,
         name: str,
-        path: list[str]
+        path: os.PathLike | str
     ):
-        # print(f"{'/'.join(path)}/{name}_module.py")
-        if os.path.exists(f"{'/'.join(path)}/{name}_module.py"):
-            return f"{'/'.join(path)}/{name}_module.py"
+        # Use os.path.join for cross-platform compatibility
+        module_path = Path(path, f"{name}_module.py").relative_to(os.getcwd())
 
-        if len(path) > 1:
-            return self.get_module_path(name, path[:-1])
+        if module_path.exists():
+            return module_path
+
+        # Recursive check for module in parent directories
+        if module_path.parents:
+            return self.get_module_path(name, module_path.parent)
 
         return None
 
@@ -36,8 +40,7 @@ class EditGeneratorService(Service):
         providers: list[str],
         declarations: list[str],
     ):
-        _path = parent_path.split("/")
-        if not (module_path := self.get_module_path(name, _path)):
+        if not (module_path := self.get_module_path(name, parent_path)):
             return None
 
         module_editor = ModuleEditor(

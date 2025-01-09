@@ -1,82 +1,72 @@
-# Ascender Framework
+<h1 align="center">Ascender Framework - The modern, powerful API framework</h1>
 
-## Introduction
 
-Ascender Framework is a powerful, FastAPI-based framework designed to streamline the development of web applications. Inspired by NestJS and some parts of Laravel, it combines the simplicity of Python with the robust architecture of modern web frameworks.
+<p align="center">
+<img src="logo.png" height="150px" />
+<br>
+<em>
+Ascender Framework is a powerful, FastAPI-based framework designed to streamline the development of web applications. <br>
+Inspired by NestJS and some parts of other DI frameworks, it combines the simplicity of Python with the robust architecture of modern web frameworks.</em>
+</p>
 
-## Features
+<p align="center">
+    <a href="https://framework.ascender.space">Official Website</a>
+</p>
 
-- **FastAPI-based**: Leverages FastAPI's speed and ease of use.
-- **CLI Support**: Powerful CLI tools for efficient project management.
-- **Caching System**: Utilizes `.asc_cache` for efficient data handling.
-- **Asynchronous Support**: Built-in async support with Tortoise ORM for database interactions.
-- **Modular Structure**: Inspired by NestJS, offering a structured and modular architecture.
 
-## Installation
+## Documentation
 
-```bash
-pip install ascender
-ascender projects new <project-name>
-cd <project-name>
-```
+Get started! Learn the basics of framework and explore more advanced features and topics.
 
-We recommend using [Poetry](https://python-poetry.org/) for dependency management. 
-However pip is also can be used for installing dependencies.
+- [Getting Started](https://framework.ascender.space/tutorials/quickstart)
+- [Architecture](https://framework.ascender.space/tutorials/essentials)
+- [Controllers](https://framework.ascender.space/tutorials/basics/controllers)
+- [Validators](https://framework.ascender.space/tutorials/basics/pydantic)
+- [Guards](https://framework.ascender.space/tutorials/basics/guards)
 
-Pip:
-```bash
-pip install -r requirements.txt
-```
+### Advanced level
 
-Poetry:
-```bash
-poetry install
-```
+- [Database](https://framework.ascender.space/tutorials/databases)
+- [Abstract Providers](https://framework.ascender.space/tutorials/essentials/dependency-injection/abstracts)
+- [CLI Factory](https://framework.ascender.space/tutorials/cli)
+- [API](https://framework.ascender.space/api-references)
+
 
 ## Getting Started
 
-1. **Initialize the Application**:
-   Use `ascender run serve` to start your application.
-
-2. **Database Initialization**:
-   Utilize the `use_database()` function for initializing the database.
-
-3. **Creating Controllers**:
-   Controllers include `endpoints.py`, `service.py`, and `repository.py`. Optionally, you can add `models.py` for Pydantic models and `serializer.py` for serialization.
-
-## CLI Commands
-
-- **Create a New Controller**:
-  ```bash
-  ascender run controllers new --name <controller-name>
-  ```
-
-- **Add Optional Files to a Controller**:
-  ```bash
-  ascender run controllers optionals --name <controller-name>
-  ```
-
-- **Initialize Database Migration**:
-  ```bash
-  ascender run migration init
-  ```
-
-- **Create a Database Migration**:
-  ```bash
-  ascender run migration migrate --name MigrationName
-  ```
+Install Ascender Framework (with it's CLI) globally:
+```
+pip install ascender-framework
+```
+Initialize project workspace:
+```
+ascender new --name <project-name> --orm-mode <tortoise|sqlalchemy>
+```
+Run the first development server:
+```
+cd <project-name>
+ascender serve
+```
+or use local CLI:
+```
+ascender run serve
+```
 
 ## Project Structure
 
-- `bootstrap.py`: For server configuration and controller registration.
-- `controllers/`: Contains the controllers with their respective `endpoints.py`, `service.py`, and `repository.py`.
-- `{controller}/models/` or `models.py`: (Optional) Pydantic models for data structure definition.
-- `{controller}/serializers/` or `serializers.py`: (Optional) For converting Tortoise models to Pydantic models.
+- `bootstrap.py`: For framework and server configuration.
+- `controllers/`: Contains the controllers with main controller.
+- `start.py`: Contains initialization and bootstrap entrypoint for entire application.
 
 ## Contributing
 
-Contributions are welcome! Please adhere to the project's coding standards and commit guidelines.
+Contributions are welcome! Please read through our [contributing guidelines](https://framework.ascender.space/guidelines/contributions).
+
+## Need a help?
+
+If you need any help, report bug, improve documentation or contribute, please read our guidelines for [contributing](CONTRIBUTING.md) and then head out into issues of this repository.
 
 ## License
 
 This project is licensed under the [GNU General Public License v3.0](LICENSE).
+

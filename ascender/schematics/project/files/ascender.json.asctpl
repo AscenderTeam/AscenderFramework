@@ -1,0 +1,68 @@
+{
+    "project": {
+        "name": "{{projectname}}",
+        "version": "0.1.0",
+        "description": "{{projectname}}"
+    },
+    "paths": {
+        "source": "src",
+        "output": "build",
+        "static": "public",
+        "logs": "logs"
+    },
+    "logging": {
+        "level": "debug",
+        "file": "logs/ascender.log",
+        "console": true,
+        "rotation": {
+            "enabled": true,
+            "max_size": "10MB",
+            "backup_count": 5
+        }
+    },
+    "build": {
+        "target": "production",
+        "minify": true,
+        "obfuscate": true,
+        "stripComments": true,
+        "includeStatic": true,
+        "includeLogs": true,
+        "maxBuildSizeMB": 50
+    },
+    "server": {
+        "workers": 1,
+        "reload": true,
+        "timeout": 5,
+        "requestLogging": true
+    },
+    "features": {
+        "dependencyInjection": {
+            "strictMode": true,
+            "circularDependencyHandling": "error"
+        },
+        "runtimeMonitoring": true,
+        "autoMigrations": false,
+        "staticFileServing": true
+    },
+    "environment": {
+        "default": "development",
+        "environments": {
+            "development": {
+                "debug": true,
+                "logging": "info"
+            },
+            "production": {
+                "debug": false,
+                "logging": "error"
+            },
+            "test": {
+                "debug": true,
+                "logging": "warn",
+                "build": {
+                    "target": "test",
+                    "includeStatic": false
+                }
+            }
+        }
+    }
+}

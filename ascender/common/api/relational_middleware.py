@@ -1,5 +1,5 @@
 from typing import Any
-from ascender.abstracts.middleware import AscenderMiddleware
+from ascender.abc.middleware import AscenderMiddleware
 
 
 class FromFastAPIMiddleware(AscenderMiddleware):

@@ -1,9 +1,7 @@
-from ascender.start import ascender_launcher
-from bootstrap import appBootstrap
-from controllers.main_controller import MainController
+from ascender.core.applications.configure_imports import configure_imports
+configure_imports()
 
-
-app = ascender_launcher(MainController, appBootstrap)
+from src.main import app
 
 if __name__ == "__main__":
     app.launch()

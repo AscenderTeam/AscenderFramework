@@ -1,5 +1,5 @@
 from ascender.common import Injectable
-from ascender.contrib.services import Service
+from ascender.core import Service
 
 
 @Injectable()

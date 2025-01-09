@@ -11,7 +11,7 @@ from readchar import readchar
 import sys
 
 if TYPE_CHECKING:
-    from ascender.core.application import Application
+    from ascender.core.applications.application import Application
 
 
 class ContextApplication:

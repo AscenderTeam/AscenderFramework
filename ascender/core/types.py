@@ -1,18 +1,10 @@
-from abc import ABC
-from dataclasses import dataclass
-from typing import Any, List, NotRequired, TypeVar, TypedDict
-from tortoise.models import Model as Entity
+from typing import TypeVar, TypedDict
 
-from ascender.contrib.repositories import Repository
-from ascender.contrib.services import Service
+from ascender.core.di.interface.provider import Provider
 
 
 T = TypeVar("T")
 
 
-class Controller(ABC):
-    pass
-
-
 class IBootstrap(TypedDict):
-    providers: list[T]
+    providers: list[Provider]

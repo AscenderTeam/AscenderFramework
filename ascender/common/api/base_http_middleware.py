@@ -1,6 +1,6 @@
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint, Request, Response
 
-from ascender.abstracts.middleware import AscenderMiddleware
+from ascender.abc.middleware import AscenderMiddleware
 
 
 class AscenderHTTPMiddleware(AscenderMiddleware):

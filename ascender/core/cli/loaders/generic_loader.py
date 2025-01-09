@@ -9,7 +9,7 @@ from ascender.core.cli.main import GenericCLI
 from ascender.core.cli.models import ArgumentCMD, ArgumentsFormat
 
 if TYPE_CHECKING:
-    from ascender.core.application import Application
+    from ascender.core.applications.application import Application
 
 
 class GenericLoader:
@@ -28,8 +28,6 @@ class GenericLoader:
         ctx = ContextApplication(self.application)
         def call_cli(**kwargs):
             method = getattr(self.cli, name)
-            di_params = self.application.service_registry.get_parameters(method)
-            kwargs = {**kwargs, **di_params}
             method(ctx=ctx, **kwargs)
         
         return call_cli

@@ -10,7 +10,7 @@ from ascender.core.cli.main import GenericCLI, BaseCLI
 from rich.traceback import install
 
 if TYPE_CHECKING:
-    from ascender.core.application import Application
+    from ascender.core.applications.application import Application
 
 
 class CLI:

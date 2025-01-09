@@ -1,6 +1,6 @@
 from sqlalchemy import func
 from ascender.common import Injectable
-from ascender.contrib.repositories import Repository
+from ascender.core.repositories import Repository
 
 
 @Injectable()

@@ -1,0 +1,2 @@
+class NotStandaloneError(Exception):
+    pass

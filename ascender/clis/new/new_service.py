@@ -3,14 +3,14 @@ import subprocess
 from time import sleep
 from ascender.clis.generator.create_generator_service import CreateGeneratorService
 from ascender.common import Injectable
-from ascender.contrib.services import Service
+from ascender.core.services import Service
 from ascender.core.cli.application import ContextApplication
 from ascender.core.database.types.orm_enum import ORMEnum
 from ascender.schematics.project.create import ProjectCreator
 from ascender.schematics.utilities.case_filters import kebab_case
 
 
-@Injectable()
+@Injectable(provided_in="root")
 class NewService(Service):
 
     def __init__(self, create_generator_service: CreateGeneratorService):
@@ -20,7 +20,8 @@ class NewService(Service):
         self,
         ctx: ContextApplication,
         name: str,
-        orm_mode: ORMEnum
+        orm_mode: ORMEnum,
+        standalone: bool
     ):
         _path = os.path.abspath(name.strip().replace(" ", ""))
 
@@ -38,7 +39,7 @@ class NewService(Service):
             sleep(1)
         # Initializing Package Manager, Virtual environment & Ascender Framework package
         self.initialize_packages(name)
-        project_files = self.create_project_files(_path, orm_mode)
+        project_files = self.create_project_files(_path, orm_mode, standalone)
 
         for project_file in project_files:
             ctx.console_print(
@@ -57,7 +58,7 @@ class NewService(Service):
         # Initialize package manager: Poetry
         # NOTE: Ascender Framework REQUIRES poetry to be included in project
         subprocess.run(
-            f"poetry init --name {kebab_case(project_name).lower()} --python \"^3.11\" --description \"{project_name}\" --no-interaction",
+            f"poetry init --name {kebab_case(project_name).lower()} --python \">=3.11,<3.14\" --description \"{project_name}\" --no-interaction",
             check=True,
             shell=True
         )
@@ -68,9 +69,10 @@ class NewService(Service):
     def create_project_files(
         self,
         path: os.PathLike | str,
-        orm_mode: ORMEnum
+        orm_mode: ORMEnum,
+        standalone: bool
     ):
-        project_creator = ProjectCreator(path, orm_mode)
+        project_creator = ProjectCreator(path, orm_mode, standalone)
 
         if not (project_files := project_creator.invoke()):
             raise ValueError("Failed to generate a crucial project file")

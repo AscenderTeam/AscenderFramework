@@ -1,6 +1,7 @@
 import os
 from typing import Any
 from jinja2 import Environment, FileSystemLoader, Template
+from ascender.core._config.asc_config import _AscenderConfig
 from ascender.schematics.base.create import SchematicsCreator
 from ascender.schematics.utilities.case_filters import kebab_case, pascal_case, snake_case
 
@@ -10,11 +11,12 @@ class ServiceCreator(SchematicsCreator):
         self,
         name: str
     ):
+        self.path_config = _AscenderConfig().config.paths
         self.name = name
 
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         self.environment = Environment(loader=FileSystemLoader(self.base_path))
-        self.save_path = f"{name.lower()}_service.py"
+        self.save_path = f"{self.path_config.source}/{name.lower()}_service.py"
 
     def load_template(self):
         self.environment.filters['pascal_case'] = pascal_case

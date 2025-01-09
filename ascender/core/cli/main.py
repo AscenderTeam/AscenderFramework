@@ -14,10 +14,9 @@ from rich.columns import Columns
 from inspect import isfunction, unwrap
 
 from ascender.core.registries.service import ServiceRegistry
-
 if TYPE_CHECKING:
-    from ascender.core.application import Application
-
+    from ascender.core.applications.application import Application
+    
 
 class BaseCLI:
     _config: dict[str, Any] = {}

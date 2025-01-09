@@ -10,9 +10,10 @@ class NewCLI(BaseCLI):
     project_name: str = OptionCMD("--name", "--project-name", "-n", required=True, ctype=str)
     orm_mode: str = OptionCMD("--orm-mode", "-om", default="sqlalchemy", 
                               required=False, ctype=click.Choice(["tortoise", "sqlalchemy"]))
+    standalone: bool = OptionCMD("--no-standalone", default=False, is_flag=True, required=False)
 
     def __init__(self, new_service: NewService):
         self.new_service = new_service
 
     def callback(self, ctx: ContextApplication):
-        return self.new_service.initialize_project(ctx, self.project_name, ORMEnum(self.orm_mode))
+        return self.new_service.initialize_project(ctx, self.project_name, ORMEnum(self.orm_mode), self.standalone)

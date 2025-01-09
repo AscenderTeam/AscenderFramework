@@ -3,7 +3,7 @@ import os
 from typing import Any, Literal
 from ascender.clis.generator.edit_generator_service import EditGeneratorService
 from ascender.common.injectable import Injectable
-from ascender.contrib.services import Service
+from ascender.core.services import Service
 from ascender.core.database.types.orm_enum import ORMEnum
 from ascender.schematics.controller.create import ControllerCreator
 from ascender.schematics.guard.create import GuardCreator
@@ -14,7 +14,7 @@ from ascender.schematics.utilities.case_filters import pascal_case
 from ascender.schematics.utilities.namespace_maker import path_to_namespace
 
 
-@Injectable()
+@Injectable(provided_in="root")
 class CreateGeneratorService(Service):
     def __init__(
         self, 
@@ -173,10 +173,10 @@ class CreateGeneratorService(Service):
                 name=module,
                 package_imports={
                     repository_package: repository_class_name,
-                    "ascender.common": "ProvideRepository",
+                    "ascender.core.utils.repository": "provideRepository",
                 },
                 imports=[],
-                providers=[f"ProvideRepository({repository_class_name})"],
+                providers=[f"provideRepository({repository_class_name})"],
                 declarations=[]
             )
         

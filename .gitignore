@@ -173,3 +173,6 @@ cython_debug/
 .asc_cache/
 migrations/
 /.vscode
+/logs
+
+.codegpt

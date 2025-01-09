@@ -10,27 +10,35 @@ class ProjectCreator(SchematicsCreator):
     def __init__(
         self,
         path: str,
-        orm_mode: ORMEnum
+        orm_mode: ORMEnum,
+        standalone: bool
     ):
         self.path = path
         self.orm_mode = orm_mode
+        self.standalone = standalone
 
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         self.environment = Environment(loader=FileSystemLoader(f"{self.base_path}/files"))
         self.save_paths = {
-            "start": "start.py",
-            "bootstrap": "bootstrap.py",
+            "main": "src/main.py",
+            "bootstrap": "src/bootstrap.py",
+            "app_module": "src/app_module.py",
             "gitignore": ".gitignore",
-            "settings": "settings.py",
+            "settings": "src/settings.py",
+            "routes": "src/routes.py",
+            "configs": "ascender.json",
             "license": "LICENSE",
             "readme": "README.md",
             "requirements": "requirements.txt"
         }
 
         self.templates = {
-            "start": "start.py.asctpl",
+            "main": "main.py.asctpl",
             "bootstrap": "bootstrap.py.asctpl",
+            "app_module": "app_module.py.asctpl",
+            "routes": "routes.py.asctpl",
             "gitignore": ".gitignore",
+            "configs": "ascender.json.asctpl",
             "settings": "settings.py.asctpl",
             "readme": "README.md"
         }
@@ -46,17 +54,12 @@ class ProjectCreator(SchematicsCreator):
         return self.environment.get_template(template)
 
     def post_processing(self, template: str):
-        if template == "bootstrap":
-            return {
-                "orm_mode": self.orm_mode.name
-            }
-
         if template == "settings":
             return {
                 "connection_type": f"{self.orm_mode.value}.asctpl"
             }
 
-        return {}
+        return {"projectname": os.path.normpath(self.path).replace("\\", "/").split("/")[-1], "standalone": self.standalone, "orm_mode": self.orm_mode.name}
 
     def process_template(self, post_processing, template):
         return template.render(**post_processing)
@@ -84,6 +87,12 @@ class ProjectCreator(SchematicsCreator):
 
         # Rendering templates & saving them into rendered templates
         for template_name, _ in self.templates.items():
+            if template_name == "bootstrap" and self.standalone:
+                continue
+            
+            if template_name == "app_module" and not self.standalone:
+                continue
+
             if not (template := self.load_template(template_name)):
                 return None
 

@@ -1,6 +1,7 @@
 import os
 from typing import Any, Literal
 from jinja2 import Environment, Template, FileSystemLoader
+from ascender.core._config.asc_config import _AscenderConfig
 from ascender.schematics.base.create import SchematicsCreator
 from ascender.schematics.utilities.case_filters import kebab_case, pascal_case, snake_case
 
@@ -12,13 +13,14 @@ class GuardCreator(SchematicsCreator):
         guard_type: Literal["single", "parametrized"] = "single",
         guards: list[str] | None = None
     ):
+        self.path_config = _AscenderConfig().config.paths
         self.name = name
         self.guard_type = guard_type
         self.guards = guards
 
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         self.environment = Environment(loader=FileSystemLoader(self.base_path))
-        self.save_path = f"{name.lower()}_guard.py"
+        self.save_path = f"{self.path_config.source}/{name.lower()}_guard.py"
 
     def load_template(self):
         self.environment.filters['pascal_case'] = pascal_case

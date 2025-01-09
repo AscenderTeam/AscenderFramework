@@ -1,4 +1,4 @@
-from ascender.core.utils.controller import Controller, Get
+from ascender.core import Controller, Get
 
 
 @Controller(

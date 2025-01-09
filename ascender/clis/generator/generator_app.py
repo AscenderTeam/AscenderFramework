@@ -29,6 +29,11 @@ class GeneratorCLI(GenericCLI):
         module: str | None = OptionCMD(
             "-m", default=None, ctype=str, required=False),
     ):
+        if name == "unicorn":
+            ctx.console_print("Generating unicorn... 🦄")
+            ctx.console_print("[red]Error:[/] Unicorns are mythical. Try generating a 'real' controller instead.")
+            return
+        
         module_update, file_info = self.create_generator_service.generate_controller(
             name, standalone,
             prefix, suffix,

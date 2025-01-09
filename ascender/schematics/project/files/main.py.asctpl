@@ -1,0 +1,14 @@
+{%- if standalone %}from app_module import AppModule {%- else %}from bootstrap import appBootstrap {%- endif %}
+from ascender.core._builder.build import build
+from ascender.core.applications.create_application import createApplication
+
+
+{%- if standalone %}
+app = createApplication(app_module=AppModule)
+{%- else %}
+app = createApplication(config=appBootstrap)
+{%- endif %}
+
+
+if __name__ == "__main__":
+    app.launch()

@@ -1,6 +1,7 @@
 import os
 from typing import Any, TypeVar, get_type_hints
 from jinja2 import Environment, FileSystemLoader, Template
+from ascender.core._config.asc_config import _AscenderConfig
 from ascender.core.database.types.orm_enum import ORMEnum
 from ascender.schematics.base.create import SchematicsCreator
 from ascender.schematics.utilities.case_filters import kebab_case, pascal_case, snake_case
@@ -17,13 +18,14 @@ class RepositoryCreator(SchematicsCreator):
         entity_imports: dict[str, type[E]],
         orm_mode: ORMEnum
     ):
+        self.path_config = _AscenderConfig().config.paths
         self.name = name
         self.entity_imports = entity_imports
         self.orm_mode = orm_mode
 
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         self.environment = Environment(loader=FileSystemLoader(self.base_path))
-        self.save_path = f"{name.lower()}_repository.py"
+        self.save_path = f"{self.path_config.source}/{name.lower()}_repository.py"
 
     def load_template(self):
         self.environment.filters['pascal_case'] = pascal_case

@@ -1,5 +1,5 @@
 from starlette.middleware.cors import CORSMiddleware
-from ascender.abstracts.middleware import AscenderMiddleware
+from ascender.abc.middleware import AscenderMiddleware
 
 import typing
 

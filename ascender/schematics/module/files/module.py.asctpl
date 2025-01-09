@@ -1,4 +1,4 @@
-from ascender.common.module import AscModule
+from ascender.core import AscModule
 
 
 @AscModule(

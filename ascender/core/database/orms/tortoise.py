@@ -4,13 +4,12 @@ from tortoise.contrib.fastapi import register_tortoise
 
 
 class TortoiseORM:
-    def __init__(self, app: FastAPI, configuration: dict) -> None:
-        self.app = app
+    def __init__(self, configuration: dict) -> None:
         self.configuration = configuration
 
-    def run_database(self):
+    def run_database(self, app: FastAPI):
         register_tortoise(
-            self.app,
+            app,
             config=self.configuration,
             generate_schemas=True,
             add_exception_handlers=True

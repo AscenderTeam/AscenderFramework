@@ -1,18 +1,16 @@
 from abc import abstractmethod
 from functools import wraps
-from typing import TYPE_CHECKING, final
+from typing import final
 from typing import Any, Callable
 
 from fastapi.params import Depends
 
 from ascender.core.registries.service import ServiceRegistry
-
-if TYPE_CHECKING:
-    from ascender.core.di.hierarchy_module import HierarchyModule
+from ascender.core.struct.module_ref import AscModuleRef
 
 
 class ParamGuard:
-    __di_module__: "HierarchyModule" = None
+    __di_module__: AscModuleRef = None
     __declaration_type__: str = "guard"
     
     @abstractmethod
@@ -30,9 +28,7 @@ class ParamGuard:
 
             return self.__post_init__(**params)
         
-        params = self.__di_module__.inject(self.__post_init__)
-
-        self.__post_init__(**params)
+        self.__di_module__._injector.inject_factory_def(self.__post_init__)()
 
     def _define_dependencies(self, executable: Callable[..., None]):
         """
