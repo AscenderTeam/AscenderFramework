@@ -38,6 +38,10 @@ pyinstaller = "^6.11.1"
 [tool.poetry.scripts]
 ascender = "ascender.start:_builtin_launcher"
 
+[tool.poetry.group.dev.dependencies]
+mkdocs = "^1.6.1"
+mkdocs-material = "^9.5.49"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

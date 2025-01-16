@@ -77,8 +77,9 @@ def createApplication(
         return root_injector.get(Application)  # type: ignore
 
     if config is None and app_module is not None:
+        # print(app_module.__asc_module__.providers)
         root_injector.create(app_module.__asc_module__.providers + internal_providers)
-        app_module.__asc_module__.providers = []
+        # app_module.__asc_module__.providers = []
         # Module-based application creation
         if not root_injector.injector:
             raise RuntimeError("Root injector is not initialized.")

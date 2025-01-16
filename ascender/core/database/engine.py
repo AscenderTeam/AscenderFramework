@@ -14,7 +14,7 @@ class DatabaseEngine:
     def __init__(self, orm: ORMEnum, configuration: dict[str, Any]) -> None:
         self.orm = orm
         self.configuration = configuration
-        self.engine = TortoiseORM(self.app, configuration) if orm == ORMEnum.TORTOISE else SQLAlchemyORM(configuration)
+        self.engine = TortoiseORM(configuration) if orm == ORMEnum.TORTOISE else SQLAlchemyORM(configuration)
     
     def load_entity(self, *entity_modules):
         if not isinstance(self.engine, SQLAlchemyORM):

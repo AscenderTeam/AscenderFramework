@@ -14,6 +14,6 @@ appBootstrap: IBootstrap = {
             "value": DefineAPIDocs(swagger_url="/docs", redoc_url="/redoc"),
         },
         provideRouter(routes),
-        provideDatabase(ORMEnum.SQLALCHEMY, DATABASE_CONNECTION)
+        provideDatabase(ORMEnum.SQLALCHEMY, DATABASE_CONNECTION),
     ]
 }

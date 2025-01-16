@@ -126,6 +126,10 @@ class RouterNode:
         try:
             self.logger.debug(f"Mounting controller [cyan]{controller.__name__}[/cyan] to router-path [yellow]{self.route['path']}[/yellow]")
             self.controller = load_module(controller, self.injector)
+        except RuntimeError:
+            self.controller = controller
+        
+        try:
             self.controller = self.controller.__controller__.hydrate_controller(self.injector)
             self.logger.info(f"Controller [cyan]{controller.__name__}[/cyan] successfully loaded")
         except RuntimeError:

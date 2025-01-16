@@ -4,12 +4,12 @@ from controllers.main_controller import MainController
 
 @AscModule(
     imports=[
-        # MainController
+        MainController
     ],
     declarations=[],
     providers=[],
     exports=[
-        # MainController
+        MainController
     ]
 )
 class ControllersModule:
