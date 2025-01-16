@@ -18,17 +18,17 @@ Inspired by NestJS and some parts of other DI frameworks, it combines the simpli
 
 Get started! Learn the basics of framework and explore more advanced features and topics.
 
-- [Getting Started](https://framework.ascender.space/tutorials/quickstart)
-- [Architecture](https://framework.ascender.space/tutorials/essentials)
-- [Controllers](https://framework.ascender.space/tutorials/basics/controllers)
-- [Validators](https://framework.ascender.space/tutorials/basics/pydantic)
-- [Guards](https://framework.ascender.space/tutorials/basics/guards)
+- [Getting Started](https://framework.ascender.space/overview)
+- [Architecture](https://framework.ascender.space/essentials)
+- [Controllers](https://framework.ascender.space/essentials/controllers)
+- [Validators](https://framework.ascender.space/essentials/data-validation)
+- [Modular Design](https://framework.ascender.space/essentials/dependency-injection)
 
 ### Advanced level
 
 - [Database](https://framework.ascender.space/tutorials/databases)
-- [Abstract Providers](https://framework.ascender.space/tutorials/essentials/dependency-injection/abstracts)
-- [CLI Factory](https://framework.ascender.space/tutorials/cli)
+- [Providers](https://framework.ascender.space/di/dependency-providers)
+- [Custom CLI](https://framework.ascender.space/cli/custom)
 - [API](https://framework.ascender.space/api-references)
 
 
