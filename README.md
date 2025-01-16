@@ -18,8 +18,8 @@ Inspired by NestJS and some parts of other DI frameworks, it combines the simpli
 
 Get started! Learn the basics of framework and explore more advanced features and topics.
 
-- [Getting Started](https://framework.ascender.space/overview)
-- [Architecture](https://framework.ascender.space/essentials)
+- [Getting Started](https://framework.ascender.space/introduction/installation)
+- [Architecture](https://framework.ascender.space/introduction/overview)
 - [Controllers](https://framework.ascender.space/essentials/controllers)
 - [Validators](https://framework.ascender.space/essentials/data-validation)
 - [Modular Design](https://framework.ascender.space/essentials/dependency-injection)
