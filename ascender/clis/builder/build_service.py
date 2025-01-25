@@ -1,3 +1,4 @@
+import os
 from ascender.clis.builder.build_message_service import BuildMessageService
 from ascender.core import Service
 from ascender.common import Injectable
@@ -14,6 +15,8 @@ class BuildService(Service):
         self.build_message_service = build_message_service
 
     def get_configs(self):
+        os.environ["ASC_MODE"] = "build"
+        os.environ["CLI_MODE"] = "0"
         return _AscenderConfig().config
 
     def start_build(self, ctx: ContextApplication):
@@ -25,8 +28,9 @@ class BuildService(Service):
         if build_configs.obfuscate:
             self.build_message_service.display_obfuscation_start(ctx)
             self.build_file_manager(False)
+
             obfuscate_project(
-                configs.project["name"], configs.paths.output, configs.paths.source
+                configs.project["name"], configs.paths.output, configs.paths.source, configs.build.packages, configs.build.importMetadata
             )
 
             self.build_message_service.display_obfuscation_finished(ctx, f"{configs.paths.output}/{configs.project['name']}")

@@ -1,7 +1,7 @@
+import os
 from ascender.clis.builder.build_service import BuildService
 from ascender.core.cli.application import ContextApplication
 from ascender.core.cli.main import BaseCLI
-
 
 class BuildCLI(BaseCLI):
     def __init__(self, build_service: BuildService):

@@ -34,7 +34,7 @@ class _AscenderConfig:
         
         if not os.path.exists(path):
             path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "stub.json")
-        
+            
         with open(path, "r") as f:
             try:
                 self.config = AscenderConfig.model_validate_json(f.read())

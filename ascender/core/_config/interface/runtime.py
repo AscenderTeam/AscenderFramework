@@ -25,6 +25,8 @@ class BuildConfig(BaseModel):
     includeStatic: bool = Field(True, description="Whether to include static files in the build.")
     includeLogs: bool = Field(True, description="Whether to include logs in the build.")
     maxBuildSizeMB: int = Field(50, ge=1, description="Maximum allowed build size in MB.")
+    packages: list[str] = Field([], description="Additional packages and imports will be included during build")
+    importMetadata: list[str] = Field([], description="Additional import metadatas will be included during build")
 
 
 class ServerConfig(BaseModel):

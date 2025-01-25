@@ -24,7 +24,7 @@
     "build": {
         "target": "production",
         "minify": true,
-        "obfuscate": false,
+        "obfuscate": true,
         "stripComments": true,
         "includeStatic": true,
         "includeLogs": true,

@@ -2,7 +2,13 @@ import os
 import PyInstaller.__main__
 
 
-def obfuscate_project(project_name: str, output_dir: str, source_dir: str):
+def obfuscate_project(
+    project_name: str,
+    output_dir: str,
+    source_dir: str,
+    hidden_imports: list[str] = [],
+    metadata_imports: list[str] = []
+):
     """
     Obfuscates a Python project using PyArmor.
 
@@ -16,11 +22,17 @@ def obfuscate_project(project_name: str, output_dir: str, source_dir: str):
     """
     # Resolve absolute paths
     output_dir = os.path.abspath(f"{output_dir}/{project_name}")
-    source_dir = os.path.abspath(f"{source_dir}/main.py")
+    source_dir = os.path.abspath(f"{source_dir}/_build.py")
 
     # Ensure the output directory exists
     os.makedirs(output_dir, exist_ok=True)
 
+    # Define additional python-packages & metadatas
+    _hidden_imports = [f"--hidden-import={package}" for package in hidden_imports]
+    _recursive_metadata = [f"--recursive-copy-metadata={metadata}" for metadata in metadata_imports]
+
+    print(_hidden_imports)
+    print(_recursive_metadata)
     # Define PyArmor obfuscation options
     options = [
         source_dir,    # Source directory
@@ -28,12 +40,15 @@ def obfuscate_project(project_name: str, output_dir: str, source_dir: str):
         "--noconfirm",
         "--recursive-copy-metadata", "tortoise-orm",
         "--recursive-copy-metadata", "readchar",
+        "--recursive-copy-metadata", "sqlalchemy",
         "--hidden-import=pydantic_core",
         "--hidden-import=pydantic.typing",
         "--hidden-import=pydantic",
         "--hidden-import=uvicorn",
         "--add-data", "ascender.json:ascender.json",
-        "--distpath", output_dir
+        "--distpath", output_dir,
+        *_hidden_imports,
+        *_recursive_metadata
     ]
 
     # Run PyArmor obfuscation
