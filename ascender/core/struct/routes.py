@@ -15,14 +15,23 @@ def create_route_decorator(
         **kwargs
     ):
         path = "" if path == "/" else f"/{path.lstrip('/')}"
+
         def wrapper(func):
-            func.__cmetadata__ = {
+            metadata = {
                 "methods": [method],
                 "path": path,
                 "response_model": response_model,
                 "status_code": status_code,
                 "tags": tags,
                 **kwargs
+            }
+            if not (getattr(func, "__cmetadata__", None)):
+                func.__cmetadata__ = metadata
+                return func
+
+            func.__cmetadata__ = {
+                **func.__cmetadata__,
+                **metadata,
             }
 
             return func

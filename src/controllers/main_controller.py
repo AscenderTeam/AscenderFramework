@@ -11,5 +11,5 @@ class MainController:
     def __init__(self): ...
     
     @Get()
-    async def main_endpoint(self) -> str:
+    async def main_endpoint(self):
         return "main works!"

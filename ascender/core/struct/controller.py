@@ -80,7 +80,6 @@ class Controller(AscModule):
         
         # Get injector from controller's DI module
         self.controller_ref = _injector.inject_factory_def(self.controller_ref)()
-        
         return self.controller_ref
 
     def create_module(self, _parent):

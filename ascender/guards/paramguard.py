@@ -5,8 +5,9 @@ from typing import Any, Callable
 
 from fastapi.params import Depends
 
-from ascender.core.registries.service import ServiceRegistry
+from ascender.core.applications.root_injector import RootInjector
 from ascender.core.struct.module_ref import AscModuleRef
+from ascender.core.utils.module import load_module
 
 
 class ParamGuard:
@@ -24,10 +25,18 @@ class ParamGuard:
     @final
     def handle_di(self):
         if not self.__di_module__:
-            params = ServiceRegistry().get_parameters(self.__post_init__)
-
-            return self.__post_init__(**params)
+            RootInjector().injector.inject_factory_def(self.__post_init__)()
+            return
         
+        di_module = self.__di_module__
+        
+        # Load module or if it's already loaded then just use it and ignore `RuntimeError: module is already loaded`
+        try:
+            di_module = load_module(di_module)
+        except RuntimeError:
+            pass
+        
+        # Execute `self.__post_init__` method
         self.__di_module__._injector.inject_factory_def(self.__post_init__)()
 
     def _define_dependencies(self, executable: Callable[..., None]):
@@ -60,7 +69,12 @@ class ParamGuard:
         # NOTE: This function allows dependency injection on the guard only when it will be called
         _updatedfunc = self._define_dependencies(executable)
         
-        setattr(_updatedfunc, "_dependencies", [*getattr(executable, "_dependencies", []), Depends(self.handle_di)])
+        
+        if hasattr(_updatedfunc, "__cmetadata__"):
+            _updatedfunc.__cmetadata__["dependencies"] = [*executable.__cmetadata__.get("dependencies", []), Depends(self.handle_di)]
+        
+        else:
+            _updatedfunc.__cmetadata__ = {"dependencies": [Depends(self.handle_di)]}
 
         @wraps(executable)
         async def wrapper(*args, **kwargs):

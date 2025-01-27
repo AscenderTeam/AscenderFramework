@@ -36,7 +36,7 @@ class Guard(ABC):
     @final
     def handle_di(self):
         if not self.__di_module__:
-            return RootInjector().existing_injector.inject_factory_def(self.__post_init__)
+            return RootInjector().existing_injector.inject_factory_def(self.__post_init__)()
         
         di_module = self.__di_module__
         
@@ -47,13 +47,18 @@ class Guard(ABC):
             pass
         
         # Execute `self.__post_init__` method
-        self.__di_module__._injector.inject_factory_def(self.__post_init__)
+        self.__di_module__._injector.inject_factory_def(self.__post_init__)()
     
     def __call__(self, executable: Callable[..., None]) -> Any:
-        if not getattr(executable, "_dependencies", None):
-            setattr(executable, "_dependencies", [Depends(self.handle_di), Depends(self.can_activate)])
-            return executable
-        setattr(executable, "_dependencies", [*getattr(executable, "_dependencies"), Depends(self.handle_di), Depends(self.can_activate)])
+        if not getattr(executable, "__cmetadata__", None):
+            executable.__cmetadata__ = {"dependencies": [Depends(self.handle_di), Depends(self.can_activate)]}
+        
+        else:
+            if not executable.__cmetadata__.get("dependencies", None):
+                executable.__cmetadata__["dependencies"] = [Depends(self.handle_di), Depends(self.can_activate)]
+                return executable
+            
+            executable.__cmetadata__["dependencies"] = [*executable.__cmetadata__["dependencies"], Depends(self.handle_di), Depends(self.can_activate)]
         
         @wraps(executable)
         async def wrapper(*args, **kwargs):

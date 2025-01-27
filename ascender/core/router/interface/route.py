@@ -42,20 +42,10 @@ class RouterRoute(TypedDict):
     NOTE: Use this if you have non-standalone and module-based controller
     """
 
-    single_guards: Sequence[Guard]
+    guards: Sequence[Guard]
     """
     Applies Ascender Framework's single guards to all routes of controller
 
-    NOTE: The guard specified won't inherit and be able to inject dependencies of loaded controller or module. 
-    It will only have access to root or global scope
-    """
-
-    param_guards: Sequence[ParamGuard]
-    """
-    Applies Ascender Framework's parametrized guards to all routes of controller.
-
-    NOTE: All routes of controller will have some parameters defined in guards specified here. Make sure to define them in all methods of routes!
-    
     NOTE: The guard specified won't inherit and be able to inject dependencies of loaded controller or module. 
     It will only have access to root or global scope
     """
