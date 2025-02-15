@@ -1,5 +1,5 @@
 from __future__ import annotations
-from inspect import unwrap
+from inspect import isclass, unwrap
 from typing import TYPE_CHECKING, Callable, Optional
 
 import rich_click as click
@@ -19,6 +19,7 @@ class GenericLoader:
         self.application = application
         self.callback = callback
         self.name = cli.app_name if cli.app_name else name
+        self.aliases = cli.name_aliases
         self.cli = cli
 
     def execute_cli(self, name: str):
@@ -37,7 +38,7 @@ class GenericLoader:
         
         for arg in arguments:
             if arg["is_ourobj"]:
-                if arg["type"] == ArgumentCMD:
+                if isclass(arg["type"]) and issubclass(arg["type"], ArgumentCMD):
                     command.params.append(click.Argument([arg["argument"]], type=arg["value"].type, default=arg["value"].default, required=(arg["value"].required)
                                                  ))
                 else:
@@ -51,14 +52,21 @@ class GenericLoader:
         return command
 
 
-    def _as_group(self) -> RichGroup:
+    def _as_group(self, name: str) -> RichGroup:
         methods = self.cli.get_methods()
-        group = RichGroup(name=self.name)
-        for name, arguments in methods:
+        group = RichGroup(name=name)
+        for method_name, arguments in methods:
             
             try:
-                method_meta = getattr(self.cli, name)
-                command = self._as_command(method_meta.alt_name or name, method_name=name, arguments=arguments, help=method_meta.help, **method_meta.kwargs)
+                method_meta = getattr(self.cli, method_name)
+                if hasattr(method_meta, "alt_name"):
+                    for name in method_meta.alt_name:
+                        command = self._as_command(name, method_name=method_name, arguments=arguments, help=method_meta.help, **method_meta.kwargs)
+                        group.add_command(command)
+                
+                    continue
+
+                command = self._as_command(name, method_name=method_name, arguments=arguments, help=method_meta.help, **method_meta.kwargs)
                 group.add_command(command)
 
             except AttributeError:
@@ -66,9 +74,14 @@ class GenericLoader:
         # Run group
         return group
 
-    def run(self) -> RichGroup:
-        group = self._as_group()
-        return group
+    def run(self) -> list[RichGroup]:
+        groups = [self._as_group(self.name)]
+
+        if self.aliases:
+            for alias in self.aliases:
+                groups.append(self._as_group(alias))
+        
+        return groups
 
     def __call__(self) -> None:
         self.run()

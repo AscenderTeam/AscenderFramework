@@ -1,3 +1,4 @@
+from typing import Literal
 from ascender.core.database.engine import DatabaseEngine
 from ascender.core.database.orms.sqlalchemy import SQLAlchemyORM
 from ascender.core.di.abc.base_injector import Injector

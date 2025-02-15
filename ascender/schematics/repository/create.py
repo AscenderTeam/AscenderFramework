@@ -16,12 +16,14 @@ class RepositoryCreator(SchematicsCreator):
         self,
         name: str,
         entity_imports: dict[str, type[E]],
-        orm_mode: ORMEnum
+        orm_mode: ORMEnum,
+        is_root: bool = True
     ):
         self.path_config = _AscenderConfig().config.paths
         self.name = name
         self.entity_imports = entity_imports
         self.orm_mode = orm_mode
+        self.is_root = is_root
 
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         self.environment = Environment(loader=FileSystemLoader(self.base_path))
@@ -64,6 +66,7 @@ class RepositoryCreator(SchematicsCreator):
             "repository_name": name,
             "upper_section": upper_section,
             "package_imports": package_imports.items(),
+            "is_root": self.is_root,
             "entities": entities,
         }
 

@@ -37,6 +37,7 @@ class RouterNode:
         self.__process_children(route.get("children", []), self.injector)
         self.hydrate()
         self.load_routes()
+        self.load_hooks()
 
     def __process_children(self, children: Sequence[RouterRoute], injector: AscenderInjector):
         """
@@ -85,6 +86,21 @@ class RouterNode:
             self.router.add_api_route(endpoint=callback, **metadata)
             
             self.logger.debug(f"Route {metadata['path']} of {self.controller.__class__.__name__} successfully mounted to webserver")
+    
+    def load_hooks(self):
+        """
+        Loads all controller-related hooks, these are custom defined decorators that were wrapped over controller.
+
+        It executes `on_load` method of the ControllerDecoratorHook and passes route configuration
+        """
+        hooks = self.controller.__controller__.get_hooks()
+
+        for callback, metadata in hooks.items():
+            metadata["setter"](self.controller, self.route)
+            metadata["callback"](callback)
+            
+            self.logger.debug(f"Controller metadata hook {metadata['name']} has been loaded and mounted successfully")
+
 
     def load_single_guards(self, guards: Sequence[Guard], dependencies: Sequence[Depends]):
         """

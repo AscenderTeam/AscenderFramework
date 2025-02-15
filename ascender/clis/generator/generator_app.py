@@ -10,7 +10,8 @@ from ascender.core.database.types.orm_enum import ORMEnum
 
 class GeneratorCLI(GenericCLI):
     app_name: str = "generate"
-    help: str = "Generates service|controller|guard|cli|module"
+    name_aliases: list[str] = ["g"]
+    help: str = "Generates project components such as services, controllers, guards, CLIs, and modules."
 
     def __init__(
         self,
@@ -18,7 +19,8 @@ class GeneratorCLI(GenericCLI):
     ):
         self.create_generator_service = create_generator_service
 
-    @console_command(name="controller")
+    @console_command(name="controller", help="Generate a new controller. Alias: `c`.")
+    @console_command(name="c")
     def generate_controller(
         self,
         ctx: ContextApplication,
@@ -43,7 +45,8 @@ class GeneratorCLI(GenericCLI):
         if module_update:
             ctx.console_print(f"[yellow]{module_update['schematic_type']}[/yellow] {module_update['file_path']} [cyan]({module_update['write_size']} bytes)[/cyan]")
     
-    @console_command(name="service")
+    @console_command(name="service", help="Generate a new service. Alias: `s`.")
+    @console_command(name="s")
     def generate_service(
         self,
         ctx: ContextApplication,
@@ -56,7 +59,8 @@ class GeneratorCLI(GenericCLI):
         if module_update:
             ctx.console_print(f"[yellow]{module_update['schematic_type']}[/yellow] {module_update['file_path']} [cyan]({module_update['write_size']} bytes)[/cyan]")
     
-    @console_command(name="module")
+    @console_command(name="module", help="Generate a new module. Alias: `m`.")
+    @console_command(name="m")
     def generate_module(
         self,
         ctx: ContextApplication,
@@ -69,12 +73,13 @@ class GeneratorCLI(GenericCLI):
         if module_update:
             ctx.console_print(f"[yellow]{module_update['schematic_type']}[/yellow] {module_update['file_path']} [cyan]({module_update['write_size']} bytes)[/cyan]")
 
-    @console_command(name="repository")
+    @console_command(name="repository", help="Generate a new repository. Alias: `r`.")
+    @console_command(name="r")
     def generate_repository(
         self,
         ctx: ContextApplication,
         name: str,
-        entities: list[str] = OptionCMD("-e", multiple=True, ctype=str),
+        entities: list[str] = OptionCMD("-e", multiple=True, ctype=str, default=(), required=False),
         orm_mode: str = OptionCMD("--orm", "-om", ctype=click.Choice([e.value for e in ORMEnum])),
         module: str | None = OptionCMD("-m", default=None, ctype=str, required=False)
     ):
@@ -92,7 +97,8 @@ class GeneratorCLI(GenericCLI):
         if module_update:
             ctx.console_print(f"[yellow]{module_update['schematic_type']}[/yellow] {module_update['file_path']} [cyan]({module_update['write_size']} bytes)[/cyan]")
     
-    @console_command(name="guard")
+    @console_command(name="guard", help="Generate a new guard. Alias: `g`.")
+    @console_command(name="g")
     def generate_guard(
         self,
         ctx: ContextApplication,

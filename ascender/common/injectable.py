@@ -11,7 +11,7 @@ T = TypeVar("T")
 class Injectable:
     def __init__(
         self, 
-        provided_in: Literal["root"] | type[AscModuleRef] | None = None,
+        provided_in: Literal["root", "any"] | type[AscModuleRef] | None = None,
         provided_as: Provider | None = None
     ):
         self.provided_in = provided_in
@@ -31,6 +31,10 @@ class Injectable:
         return cls
 
     def _self_provider(self, cls):
+        if self.provider_meta and self.provider_meta.get("provide"):
+            if "@SELF" in self.provider_meta["provide"]:
+                self.provider_meta["provide"] = cls
+
         return {"provide": cls, "use_class": cls} if not self.provider_meta else self.provider_meta
 
     def _register_in_root(self, cls: type[T]):

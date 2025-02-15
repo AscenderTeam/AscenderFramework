@@ -43,6 +43,7 @@ class BaseCLI:
 
 class GenericCLI:
     app_name: Optional[str] = None
+    name_aliases: list[str] = []
     help: Optional[str] = None
     configs: Optional[dict] = None
 
@@ -110,7 +111,10 @@ def console_command(name: Optional[str] = None, help: Optional[str] = None, **kw
     Command decorator for generic cli
     """
     def inner_wrapper(f):
-        f.alt_name = name
+        if hasattr(f, "alt_name"):
+            f.alt_name = [*f.alt_name, name]
+        else:
+            f.alt_name = [name]
         f.help = help
         f.kwargs = kwargs
         

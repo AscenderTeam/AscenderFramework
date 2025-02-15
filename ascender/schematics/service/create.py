@@ -9,10 +9,12 @@ from ascender.schematics.utilities.case_filters import kebab_case, pascal_case, 
 class ServiceCreator(SchematicsCreator):
     def __init__(
         self,
-        name: str
+        name: str,
+        is_root: bool = True
     ):
         self.path_config = _AscenderConfig().config.paths
         self.name = name
+        self.is_root = is_root
 
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         self.environment = Environment(loader=FileSystemLoader(self.base_path))
@@ -32,7 +34,8 @@ class ServiceCreator(SchematicsCreator):
         name = path[-1]
 
         return {
-            "service_name": name
+            "service_name": name,
+            "is_root": self.is_root
         }
 
     def process_template(self, post_processing: dict[str, Any], template: Template):

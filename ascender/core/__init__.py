@@ -6,6 +6,7 @@ including database entities, engines, dependency injection, and CLI utilities.
 """
 
 from .struct.controller import Controller
+from .struct.controller_hook import ControllerDecoratorHook
 from .struct.routes import Get, Post, Put, Patch, Delete
 from .di.interface.provider import Provider
 
@@ -29,5 +30,6 @@ __all__ = [
     "Delete",
     "Service",
     "Repository",
-    "IdentityRepository"
+    "IdentityRepository",
+    "ControllerDecoratorHook"
 ]

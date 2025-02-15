@@ -7,14 +7,13 @@ from ascender.core._config.asc_config import _AscenderConfig
 
 
 def configure_staticfile_serving(app: FastAPI):
-    logger = getLogger("Ascender Framework")
     config = _AscenderConfig().config
 
     if config.features.staticFileServing:
         path = os.path.abspath(config.paths.static)
         os.makedirs(path, exist_ok=True)
         
-        logger.debug(f"Mounting statics directory in {path}")
+        # logger.debug(f"Mounting statics directory in {path}")
 
         app.mount("/static", StaticFiles(directory=path), name="static")
-        logger.info("Successfully mounted statics dir")
+        # logger.info("Successfully mounted statics dir")

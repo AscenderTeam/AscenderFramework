@@ -1,4 +1,4 @@
-from typing import Any, Callable, MutableMapping, Sequence, TypeVar, cast
+from typing import Any, Awaitable, Callable, MutableMapping, Sequence, TypeVar, cast
 
 from ascender.core.di.injector import AscenderInjector
 from ascender.core.struct.module import AscModule
@@ -64,6 +64,29 @@ class Controller(AscModule):
                        ] = method.__cmetadata__
 
         return routes
+    
+    def get_hooks(self):
+        """
+        Gets all `hook` methods in controller, that were wrapped by custom decorators.
+        When controller is being hydrated and loaded, these hooks can be accessed
+        
+        Raises:
+            ValueError: If `get_routes` is being called when controller is not created and hydrated.
+
+        Returns:
+            hook_metadata: Controller hook's metadata
+        """
+        if isinstance(self.controller_ref, type):
+            raise ValueError(f"Controller {self.controller_ref.__name__} was not hydrated. "
+                             "Ensure the controller is properly instantiated and hydrated before calling `get_hooks`.")
+        
+        hooks: MutableMapping[Callable[..., Any], Any] = {}
+
+        for name, method in self.controller_ref.__class__.__dict__.items():
+            if hasattr(method, "__hook_metadata__"):
+                hooks[getattr(self.controller_ref, name)] = method.__hook_metadata__
+
+        return hooks
 
     def hydrate_controller(self, _injector: AscenderInjector):
         """

@@ -27,10 +27,7 @@ class _AscenderConfig:
         return self.config.environment.environments[self.config.build.target]
 
     def load_config(self):
-        if os.getenv("ASC_MODE", "server") == "cli":
-            path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "stub.json")
-        else:
-            path = os.path.abspath("ascender.json")
+        path = os.path.abspath("ascender.json")
         
         if not os.path.exists(path):
             path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "stub.json")

@@ -1,4 +1,9 @@
+from ascender.common.base.dto import BaseDTO
 from ascender.core import Controller, Get
+
+
+class PleasureDTO(BaseDTO):
+    pleasure_level: int
 
 
 @Controller(
@@ -8,7 +13,8 @@ from ascender.core import Controller, Get
     providers=[],
 )
 class MainController:
-    def __init__(self): ...
+    def __init__(self):
+        ...
     
     @Get()
     async def main_endpoint(self):

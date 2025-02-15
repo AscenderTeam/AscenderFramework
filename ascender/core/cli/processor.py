@@ -56,9 +56,10 @@ class CLI:
     
     def load_generic(self, main_group: click.Group) -> None:
         for generic_cli in self.generic_clis:
-            group = GenericLoader(generic_cli, self.application,
+            groups = GenericLoader(generic_cli, self.application,
                                   callback=self.callback)
-            main_group.add_command(group.run(), self.app_name if generic_cli.app_name is None else None)
+            for group in groups.run():
+                main_group.add_command(group)
 
     def run(self) -> None:
         main_group = click.RichGroup()

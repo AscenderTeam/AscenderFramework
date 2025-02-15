@@ -9,6 +9,7 @@ from ascender.core._config.static_files import configure_staticfile_serving
 from ascender.core.cli.main import BaseCLI, GenericCLI
 from ascender.core.cli.processor import CLI
 from ascender.core.database.engine import DatabaseEngine
+from ascender.core.logger._logger import configure_logger
 from ascender.core.router.graph import RouterGraph
 
 
@@ -30,6 +31,7 @@ class Application:
         self.app = FastAPI(title=self.docs_settings.title, 
                            docs_url=self.docs_settings.swagger_url, 
                            redoc_url=self.docs_settings.redoc_url,
+                           debug=_AscenderConfig().get_environment().debug,
                            description=self.docs_settings.description, 
                            version=_AscenderConfig().get_version())
         
@@ -68,12 +70,26 @@ class Application:
         """
         Launches application in server-mode and builds up fastapi enforcing Uvicorn to handle server part
         """
+        
         os.environ["ASC_MODE"] = "server"
+        
+        # Enviornment configuration
+        environment = _AscenderConfig().get_environment()
+        # Configure logger
+        logger = configure_logger(_AscenderConfig().config.logging)
+        logger.setLevel(environment.logging.upper())
+
         # Define all CLI applications
         self.run_cli()
         self.router_graph.create_router_graph(self)
         return self.app
     
     def __call__(self):
+        # Enviornment configuration
+        environment = _AscenderConfig().get_environment()
+        # Configure logger
+        logger = configure_logger(_AscenderConfig().config.logging)
+        logger.setLevel(environment.logging.upper())
+
         self.router_graph.create_router_graph(self)
         return self.app

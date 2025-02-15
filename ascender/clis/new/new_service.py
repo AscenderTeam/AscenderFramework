@@ -20,10 +20,11 @@ class NewService(Service):
         self,
         ctx: ContextApplication,
         name: str,
+        relpath: str,
         orm_mode: ORMEnum,
         standalone: bool
     ):
-        _path = os.path.abspath(name.strip().replace(" ", ""))
+        _path = os.path.abspath(relpath.format(project_name=name.strip().replace(" ", "")))
 
         if os.path.isdir(_path) and os.listdir(_path):
             raise FileExistsError(

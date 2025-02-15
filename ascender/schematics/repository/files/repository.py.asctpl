@@ -3,5 +3,5 @@ from ascender.common import Injectable
 from ascender.core.repositories import Repository
 
 
-@Injectable()
+@Injectable(provided_in={{ '"root"' if is_root else 'None' }})
 class {{ repository_name | pascal_case }}Repo(Repository):

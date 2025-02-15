@@ -1,14 +1,13 @@
+from logging import getLogger
 from ascender.clis.builder.build_app import BuildCLI
 from ascender.clis.generator.generator_app import GeneratorCLI
 from ascender.clis.new.new_app import NewCLI
 from ascender.clis.run.run_app import RunCLI
 from ascender.clis.serve.serve_app import ServeCLI
 from ascender.common.api_docs import DefineAPIDocs
-from ascender.core._config.asc_config import _AscenderConfig
 from ascender.core.cli.provider import provideCLI
 from ascender.core.database.engine import DatabaseEngine
 from ascender.core.di.abc.base_injector import Injector
-from ascender.core.logger._logger import configure_logger, configure_uvicorn_logger
 from ascender.core.router.graph import RouterGraph
 from ascender.core.struct.module_ref import AscModuleRef
 from ascender.core.types import IBootstrap
@@ -37,13 +36,6 @@ def createApplication(
     # Initialize the root injector
     root_injector = RootInjector()
 
-    # Enviornment configuration
-    environment = _AscenderConfig().get_environment()
-
-    # Configure logger
-    logger = configure_logger(_AscenderConfig().config.logging)
-    logger.setLevel(environment.logging.upper())
-
     # Internal providers necessary for Application creation
     internal_providers: list[Provider] = [
         provideCLI(BuildCLI),
@@ -66,7 +58,7 @@ def createApplication(
         },
         {
             "provide": "ASC_LOGGER",
-            "value": logger
+            "use_factory": lambda: getLogger("Ascender Framework")
         }
     ]
 

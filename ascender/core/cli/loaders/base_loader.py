@@ -8,7 +8,7 @@ from ascender.core.cli.main import BaseCLI
 from ascender.core.cli.models import ArgumentCMD, CommandNull, OptionCMD
 
 if TYPE_CHECKING:
-    from ascender.core.application import Application
+    from ascender.core.applications.application import Application
 
 
 class LoaderBaseCLI:

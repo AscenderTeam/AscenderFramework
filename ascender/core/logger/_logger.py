@@ -3,6 +3,7 @@ from rich.logging import RichHandler
 import logging
 import os
 
+from ascender.core._config.asc_config import _AscenderConfig
 from ascender.core._config.interface.environment import EnvironmentConfig
 from ascender.core._config.interface.runtime import LoggingConfig, ServerConfig
 from ascender.core.logger.formatter import AscenderFormatter
@@ -13,12 +14,12 @@ from .rotation import configure_file_logging
 def configure_logger(config: LoggingConfig):
     """
     Configures a logger with the AscenderFormatter.
-    
-    :param name: Name of the logger.
-    :param level: Logging level (default is DEBUG).
-    :param log_file: Optional file path to write logs to.
-    :return: Configured logger instance.
     """
+    # Disable root logger's bad stuff
+    root_logger = getLogger()
+    root_logger.setLevel(logging.WARNING)
+    root_logger.propagate = False
+
     # Create logger
     logger = getLogger("Ascender Framework")
 
@@ -36,30 +37,31 @@ def configure_logger(config: LoggingConfig):
     # Optional: Create file handler for logging to a file
     if config.file:
         rotation_config = config.rotation
-        file_handler = configure_file_logging(os.path.abspath(config.file), rotation_config)
+        logs_path = _AscenderConfig().config.paths.logs
+        file_handler = configure_file_logging(os.path.abspath(os.path.join(logs_path, config.file)), rotation_config)
         logger.addHandler(file_handler)
 
     return logger
 
 
-def configure_uvicorn_logger(config: LoggingConfig, environment: EnvironmentConfig):
-    """
-    Configure Uvicorn-specific loggers to align with the application's logging setup.
-    """
-    uvicorn_access = getLogger("uvicorn.access")
-    uvicorn_access.setLevel(environment.logging.upper())
-    uvicorn_access.propagate = False
+# def configure_uvicorn_logger(config: LoggingConfig, environment: EnvironmentConfig):
+#     """
+#     Configure Uvicorn-specific loggers to align with the application's logging setup.
+#     """
+#     uvicorn_access = getLogger("uvicorn.access")
+#     # uvicorn_access.setLevel(environment.logging.upper())
+#     # uvicorn_access.propagate = False
 
-    # Add handlers to Uvicorn loggers
-    formatter = AscenderFormatter()
-    console_handler = RichHandler(show_time=False, show_path=False)
-    console_handler.setFormatter(formatter)
+#     # # Add handlers to Uvicorn loggers
+#     # formatter = AscenderFormatter()
+#     # console_handler = RichHandler(show_time=False, show_path=False)
+#     # console_handler.setFormatter(formatter)
 
-    uvicorn_access.addHandler(console_handler)
+#     # uvicorn_access.addHandler(console_handler)
 
-    if config.file:
-        rotation_config = config.rotation
-        file_handler = configure_file_logging(os.path.abspath(config.file), rotation_config)
-        uvicorn_access.addHandler(file_handler)
+#     # if config.file:
+#     #     rotation_config = config.rotation
+#     #     file_handler = configure_file_logging(os.path.abspath(config.file), rotation_config)
+#     #     uvicorn_access.addHandler(file_handler)
     
-    return uvicorn_access
+#     return uvicorn_access

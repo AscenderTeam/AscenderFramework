@@ -2,6 +2,7 @@ import os
 import socket
 from fastapi import FastAPI
 from ascender.common import Injectable
+from ascender.common.api_docs import DefineAPIDocs
 from ascender.core._config.asc_config import _AscenderConfig
 from ascender.core.services import Service
 from watchfiles import run_process
@@ -42,14 +43,14 @@ class ServeService(Service):
             },
         },
         "loggers": {
-            "uvicorn": {"handlers": [], "level": "INFO", "propagate": False},
+            "uvicorn": {"handlers": [], "level": "ERROR", "propagate": False},
             "uvicorn.error": {"level": "INFO"},
             "uvicorn.access": {"handlers": ["access"], "level": "INFO", "propagate": False},
         },
     }
 
-    def __init__(self):
-        ...
+    def __init__(self, docs_settings: DefineAPIDocs):
+        self.docs_settings = docs_settings
 
     def start_reloader(self, app: FastAPI, host: str, port: int):
         run_process(os.getcwd(), target=self.start_server,
@@ -60,7 +61,7 @@ class ServeService(Service):
         self.runtime_info(host, port)
         # source_path = _AscenderConfig().config.paths.source
         # print(f"{source_path}.main:app")
-        uvicorn.run(f"main:app", host=host, port=port, factory=True, log_config=self.LOG_CONFIG_WITHOUT_DEFAULT,
+        uvicorn.run(f"main:app", host=host, port=port, factory=True,
                     **self.server_configurations())
 
     def server_configurations(self):
@@ -93,10 +94,13 @@ class ServeService(Service):
         console_print("Listening to {host}:{port}".format(
             host=host, port=port))
 
-        connection_address = get_network_address()
-
         connection_panel = Panel("""
 Local address: [cyan]http://{host}:{port}[/cyan]
-Network address: [cyan]http://{public_host}:{port}[/cyan]
-            """.format(host=host, port=port, public_host=connection_address), title="Connection Information", border_style=Style(color="cyan"))
+Primary Documentation URL [green](SWAGGER UI)[/]: {sw_docs}[/]
+Secondary Documentation URL [cyan](REDOC)[/]: {rd_docs}[/]
+            """.format(
+                host=host, 
+                port=port, 
+                sw_docs=f"[cyan]http://{host}:{port}{self.docs_settings.swagger_url}" if self.docs_settings.swagger_url else "[red italic]Disabled",
+                rd_docs=f"[cyan]http://{host}:{port}{self.docs_settings.redoc_url}" if self.docs_settings.redoc_url else "[red italic]Disabled"), title="Connection Information", border_style=Style(color="cyan"))
         console_print(connection_panel)

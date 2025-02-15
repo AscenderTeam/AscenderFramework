@@ -1,8 +1,10 @@
 from importlib import import_module
 import os
+import sys
 from typing import Any, Literal
 from ascender.clis.generator.edit_generator_service import EditGeneratorService
 from ascender.common.injectable import Injectable
+from ascender.core._config.asc_config import _AscenderConfig
 from ascender.core.services import Service
 from ascender.core.database.types.orm_enum import ORMEnum
 from ascender.schematics.controller.create import ControllerCreator
@@ -21,6 +23,7 @@ class CreateGeneratorService(Service):
         edit_generator_service: EditGeneratorService
     ):
         self.edit_generator_service = edit_generator_service
+        self.config = _AscenderConfig().config
     
     def generate_controller(
         self, 
@@ -42,14 +45,14 @@ class CreateGeneratorService(Service):
 
         # Data for import is collected >_o
         controller_class_name = pascal_case(post_processing_metadata["controller_name"]) + "Controller"
-        controller_package = path_to_namespace(controller_path)
+        controller_package = path_to_namespace(controller_path, self.config.paths.source)
 
         # Check if standalone and if not, then add it into module if specified
         module_update = None
         if not standalone and module:
             module_update = self.edit_generator_service.update_module(
                 parent_path=os.path.dirname(os.path.abspath(controller_path)),
-                name=name,
+                name=module,
                 package_imports={controller_package: controller_class_name},
                 imports=[],
                 providers=[],
@@ -63,7 +66,7 @@ class CreateGeneratorService(Service):
         name: str,
         module: str | None = None,
     ):
-        service_creator = ServiceCreator(name)
+        service_creator = ServiceCreator(name, not bool(module))
         
         # Creates and also returns information about file state
         file_info = service_creator.invoke()
@@ -75,7 +78,7 @@ class CreateGeneratorService(Service):
 
         # Data for import is collected >_o
         service_class_name = pascal_case(post_processing_metadata["service_name"]) + "Service"
-        service_package = path_to_namespace(service_path)
+        service_package = path_to_namespace(service_path, self.config.paths.source)
 
         # Check if standalone and if not, then add it into module if specified
         module_update = None
@@ -108,7 +111,7 @@ class CreateGeneratorService(Service):
 
         # Data for import is collected >_o
         module_class_name = pascal_case(post_processing_metadata["module_name"]) + "Module"
-        module_package = path_to_namespace(module_path)
+        module_package = path_to_namespace(module_path, self.config.paths.source)
 
         module_update = None
         if module:
@@ -138,7 +141,11 @@ class CreateGeneratorService(Service):
             # NOTE: Parses only this type of string, may raise error if it doesn't comply this type `entities.test:TestEntity`
             try:
                 import_path, entity_name = entity.split(":")
-                package = import_module(import_path)
+                try:
+                    package = import_module(import_path)
+                except ModuleNotFoundError:
+                    sys.path.append(os.getcwd())
+                    package = import_module(import_path)
 
                 if not hasattr(package, entity_name):
                     raise ValueError("Entities format validations failed to pass!")
@@ -151,7 +158,7 @@ class CreateGeneratorService(Service):
         if os.path.exists(os.path.abspath(f"{name.lower()}_repository.py")):
             return self.edit_generator_service.update_repository(name, entities_d, orm_mode)
         
-        repository_creator = RepositoryCreator(name, entities_d, orm_mode)
+        repository_creator = RepositoryCreator(name, entities_d, orm_mode, not bool(module))
         
         # Creates and also returns information about file state
         file_info = repository_creator.invoke()
@@ -163,7 +170,7 @@ class CreateGeneratorService(Service):
 
         # Data for import is collected >_o
         repository_class_name = pascal_case(post_processing_metadata["repository_name"]) + "Repo"
-        repository_package = path_to_namespace(repository_path)
+        repository_package = path_to_namespace(repository_path, self.config.paths.source)
 
         # Check if standalone and if not, then add it into module if specified
         module_update = None
