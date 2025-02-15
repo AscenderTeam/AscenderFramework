@@ -81,7 +81,7 @@ class KafkaRPCTransport(RPCTransport):
         self.logger.debug(
             f"[yellow] ASCENDER MICROSERVICES [/] | Sending message to [cyan]{pattern}[/] with correlation ID [green]{correlation_id}[/]")
         
-        await self.transport.producer.send_and_wait(topic=pattern, headers=[( "correlationId", correlation_id.encode() )], value=data)
+        await self.transport.producer.send(topic=pattern, headers=[( "correlationId", correlation_id.encode() )], value=data)
         # INFO LOG
         self.logger.info(
             f"[yellow] ASCENDER MICROSERVICES [/] | Successfully sent message pattern [bold cyan]{pattern}[/] to the message broker")
