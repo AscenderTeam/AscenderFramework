@@ -21,7 +21,7 @@ class RPCTransport(ABC):
     def __init__(self, transport: "BaseTransporter | ClientProxy"):
         self.transport = transport
         self.event_bus = self.transport.event_bus
-        self.event_bus.subscribe("*", self.listen_for_requests)
+        self.event_bus.subscribe("_rpc:response", self.listen_for_requests)
     
     @abstractmethod
     async def send_request(

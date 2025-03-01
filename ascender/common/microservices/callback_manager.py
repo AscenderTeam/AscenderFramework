@@ -124,7 +124,7 @@ class CallbackManager:
         # Serialize the response to JSON and send it using the RPC transport.
         serialized_response = parse_data(response).encode()
         await instance_context.rpc_transport.send_response(
-            pattern=instance_context.pattern,
+            pattern="_rpc:response",
             correlation_id=f"response-{instance_context.correlation_id}",
             response=serialized_response,
         )
@@ -202,6 +202,7 @@ class CallbackManager:
                             decoded_data, field_type)
 
                 except ValidationError as e:
+                    traceback.print_exc()
                     raised_exception = RPCException.from_validation_err(e)
 
             # Generate and assign the context if the callback expects it.
@@ -236,4 +237,10 @@ class CallbackManager:
                 return
             await self.handle_rpc_call(context, payload)
         else:
+            if raised_exception:
+                # Log the exception and continue processing
+                self.logger.error(
+                    "Error while preparing payload for event execution: %s", raised_exception)
+                return
+            
             await self.handle_event_call(payload)

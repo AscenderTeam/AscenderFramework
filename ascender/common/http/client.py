@@ -15,11 +15,13 @@ class HTTPClient:
     def __init__(
         self,
         base_url: str,
-        transport: AscHTTPTransport
+        transport: AscHTTPTransport,
+        **client_configs
     ):
         self.client = AsyncClient(
             base_url=base_url,
-            transport=transport
+            transport=transport,
+            **client_configs
         )
 
     async def get(

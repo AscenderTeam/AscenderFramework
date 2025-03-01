@@ -8,6 +8,8 @@ from .exceptions.rpc_exception import RPCException
 from .instances.kafka.context import KafkaContext
 from .instances.redis.context import RedisContext
 from .instances.tcp.context import TCPContext
+from .patterns.message_pattern import MessagePattern
+from .patterns.event_pattern import EventPattern
 
 from .types.transport import Transports
 
@@ -20,6 +22,8 @@ __all__ = [
     "RPCTransport",
     "BaseTransporter",
     "RPCException",
+    "EventPattern",
+    "MessagePattern",
     "KafkaContext",
     "RedisContext",
     "TCPContext",

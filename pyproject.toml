@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ascender-framework"
-version = "2.0rc1"
+version = "2.0rc2"
 description = "The Ascender Framework is a sophisticated and structured FastAPI-based framework, inspired by the principles of NestJS. It stands out for its modular and organized architecture, offering developers a streamlined and efficient way to build web applications"
 authors = ["AscenderTeam"]
 readme = "README.md"
@@ -44,6 +44,7 @@ ascender = "ascender.start:_builtin_launcher"
 mkdocs = "^1.6.1"
 mkdocs-material = "^9.5.49"
 aiokafka = "^0.12.0"
+redis = "^5.2.1"
 
 
 [build-system]

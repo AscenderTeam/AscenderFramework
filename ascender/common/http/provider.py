@@ -14,14 +14,15 @@ def provideHTTPClient(
         verify: ssl.SSLContext | str | bool = True,
         cert: CertTypes | None = None,
         trust_env: bool = True,
-        client_instance: type[HTTPClient] = HTTPClient
+        client_instance: type[HTTPClient] = HTTPClient,
+        **additional_configs
 ) -> Provider:
     client = client_instance(base_url, AscHTTPTransport(
         interceptors=interceptors,
         verify=verify,
         cert=cert,
         trust_env=trust_env
-    ))
+    ), **additional_configs)
     return {
         "use_factory": lambda: client,
         "provide": client_instance
