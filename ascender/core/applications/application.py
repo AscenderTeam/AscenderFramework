@@ -1,5 +1,5 @@
 import os
-from typing import Literal, Mapping, Sequence
+from typing import Iterable, Literal, Mapping, Sequence
 
 from fastapi import FastAPI
 from ascender.abc.middleware import AscenderMiddleware
@@ -21,11 +21,11 @@ class Application:
         cli_settings: Sequence[BaseCLI | GenericCLI] = [],
         docs_settings: DefineAPIDocs = DefineAPIDocs(),
         database_settings: DatabaseEngine | None = None,
-        middleware_settings: Sequence[AscenderMiddleware] = []
+        middleware_settings: Sequence[AscenderMiddleware] | AscenderMiddleware = []
     ) -> None:
         self.docs_settings = docs_settings
         self.database_settings = database_settings
-        self.middleware_settings = middleware_settings
+        self.middleware_settings = middleware_settings if isinstance(middleware_settings, Iterable) else [middleware_settings]
 
         # :internal:
         self.app = FastAPI(title=self.docs_settings.title, 
@@ -72,24 +72,18 @@ class Application:
         """
         
         os.environ["ASC_MODE"] = "server"
-        
-        # Enviornment configuration
-        environment = _AscenderConfig().get_environment()
-        # Configure logger
-        logger = configure_logger(_AscenderConfig().config.logging)
-        logger.setLevel(environment.logging.upper())
 
         # Define all CLI applications
         self.run_cli()
-        self.router_graph.create_router_graph(self)
+        # self.router_graph.create_router_graph(self)
         return self.app
     
     def __call__(self):
-        # Enviornment configuration
-        environment = _AscenderConfig().get_environment()
-        # Configure logger
-        logger = configure_logger(_AscenderConfig().config.logging)
-        logger.setLevel(environment.logging.upper())
+        # # Enviornment configuration
+        # environment = _AscenderConfig().get_environment()
+        # # Configure logger
+        # logger = configure_logger(_AscenderConfig().config.logging)
+        # logger.setLevel(environment.logging.upper())
 
         self.router_graph.create_router_graph(self)
         return self.app
