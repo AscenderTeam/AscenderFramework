@@ -80,10 +80,10 @@ class Application:
     
     def __call__(self):
         # # Enviornment configuration
-        # environment = _AscenderConfig().get_environment()
+        environment = _AscenderConfig().get_environment()
         # # Configure logger
-        # logger = configure_logger(_AscenderConfig().config.logging)
-        # logger.setLevel(environment.logging.upper())
+        logger = configure_logger(_AscenderConfig().config.logging)
+        logger.setLevel(environment.logging.upper())
 
         self.router_graph.create_router_graph(self)
         return self.app
