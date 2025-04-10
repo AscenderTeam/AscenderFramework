@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ascender-framework"
-version = "2.0rc5"
+version = "2.0rc6"
 description = "The Ascender Framework is a sophisticated and structured FastAPI-based framework, inspired by the principles of NestJS. It stands out for its modular and organized architecture, offering developers a streamlined and efficient way to build web applications"
 authors = ["AscenderTeam"]
 readme = "README.md"
@@ -13,7 +13,7 @@ homepage = "https://ascender-framework.com"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.14"
-fastapi = ">=0.115.12"
+fastapi = ">=0.115"
 python-dotenv = "^1.0.0"
 uvicorn = ">=0.25"
 rich = "^13.6.0"
