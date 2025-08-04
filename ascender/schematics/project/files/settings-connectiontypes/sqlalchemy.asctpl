@@ -1,3 +1,4 @@
     "type": "dbstring",
-    "content": "sqlite+aiosqlite:///database.db",
+    "content": "sqlite+aiosqlite:///database.db", # Replace with your own db string
     "entities": [],
+    "pool_options": {},

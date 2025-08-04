@@ -9,6 +9,7 @@ DATABASE_CONNECTION = {
     "type": "dbstring",
     "content": "sqlite+aiosqlite:///database.db",
     "entities": ["entities.user"],
+    "pool_options": {}
 }
 
 ORIGINS = [

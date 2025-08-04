@@ -11,7 +11,7 @@ class SQLAlchemyORM:
     def __init__(self, configuration: dict) -> None:
         self.configuration = configuration
         if configuration["type"] == "dbstring":
-            self.engine = create_async_engine(configuration["content"])
+            self.engine = create_async_engine(configuration["content"], **configuration.get("pool_options", {}))
         # else:
         # TODO: Add manual type support
         self.SessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=self.engine, class_=AsyncSession)
