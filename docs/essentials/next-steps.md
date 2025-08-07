@@ -32,9 +32,25 @@ Now that you have been introduced to main concepts and parts of Ascender Framewo
 
     ---
 
-    Dive deeper into routing in Ascender Framework. 
-    Find out more about Routing Graphs, Routing Node and Routes. 
+    Dive deeper into routing in Ascender Framework.
+    Find out more about Routing Graphs, Routing Node and Routes.
 
     [:octicons-arrow-right-24: Advanced Routing Guide](/routing/overview)
+
+-   :material-api:{ .lg .middle } __HTTP Client__
+
+    ---
+
+    Learn how to make outbound requests with the built-in HTTP client and interceptors.
+
+    [:octicons-arrow-right-24: HTTP Client Guide](/essentials/http-client)
+
+-   :material-lan:{ .lg .middle } __Microservices__
+
+    ---
+
+    Build distributed systems with Ascender's transport-agnostic microservice layer.
+
+    [:octicons-arrow-right-24: Microservices Overview](/microservices/overview)
 
 </div>

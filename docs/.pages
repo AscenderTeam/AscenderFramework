@@ -3,4 +3,4 @@ nav:
   - essentials
   - controllers
   - Dependency Injection: di
-  - microservices
+  - Microservices: microservices

@@ -1,17 +1,40 @@
 # Welcome to Ascender Framework
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+Ascender Framework is a powerful, FastAPI-based framework designed to streamline the development of web applications. Inspired by NestJS and other dependency-injection frameworks, it brings a modern architecture to Python projects.
 
-## Commands
+## Documentation
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+Get started quickly and explore more advanced features:
 
-## Project layout
+- [Getting Started](introduction/installation.md)
+- [Architecture](introduction/overview.md)
+- [Controllers](essentials/controllers.md)
+- [Validators](essentials/data-validation.md)
+- [Modular Design](essentials/dependency-injection.md)
+- [HTTP Client](essentials/http-client.md)
+- [Microservices](microservices/overview.md)
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+## Getting Started
+
+Install Ascender Framework (with its CLI) globally:
+
+```bash
+pip install ascender-framework
+```
+
+Initialize a new project:
+
+```bash
+ascender new --name <project-name> --orm-mode <tortoise|sqlalchemy>
+cd <project-name>
+ascender serve
+# or
+ascender run serve
+```
+
+## Project Structure
+
+- `bootstrap.py`: Framework and server configuration.
+- `controllers/`: Controller classes defining endpoints.
+- `start.py`: Application initialization entry point.
+
