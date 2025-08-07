@@ -16,6 +16,17 @@ With this module, developers can create highly maintainable, event-driven archit
 
 In addition, data serialization and conversion of [DTO](/essentials/data-validation#defining-dtos), [Response](/essentials/data-validation#defining-responses) models will be handled on Ascender Framework's Microservice module's side.
 
+## Core Components
 
+The microservices package is composed of several helper classes that work together:
+
+- **`provideMicroservices`** – registers transports and optionally exposes `ClientProxy` instances through injection tokens.
+- **`TransportManager`** – boots transports on application startup and wires message or event patterns to the in-memory bus.
+- **`SubscriptionEventBus`** – lightweight event bus that routes messages to handlers and supports wildcard subscriptions.
+- **`ClientProxy`** – high-level API used by services to send messages or emit events using the selected transport.
+
+These pieces allow services to communicate through a transport‑agnostic layer while staying fully integrated with Ascender's dependency injection.
 
 ## Learn more about Ascender Framework's dependency injection
+The microservice module relies on dependency injection. See the [Dependency Injection overview](/di/overview) for details.
+
