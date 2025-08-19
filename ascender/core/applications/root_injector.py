@@ -1,5 +1,6 @@
 from typing import Any, MutableSequence, Self, TypeVar
 from ascender.core.di.abc.base_injector import Injector
+from ascender.core.di.create import create_injector
 from ascender.core.di.injector import AscenderInjector
 from ascender.core.di.interface.consts import RAISE_NOT_FOUND
 from ascender.core.di.interface.injector import InjectorOptions
@@ -24,8 +25,10 @@ class RootInjector:
         return cls._instance
     
     def create(self, providers: list[Provider]):
-        self._injector = AscenderInjector(providers + self.providers)
-
+        self._injector = create_injector(
+            (*(provider for provider in providers if provider is not None), *self.providers)
+        )
+        
         return self
 
     def get(

@@ -61,7 +61,7 @@ def inject(
     """
     if isinstance(scope, str):
         if scope == "root":
-            return RootInjector().existing_injector.get(token, not_found_value=RAISE_NOT_FOUND if not fallback else fallback)
+            return RootInjector().existing_injector.get(token, not_found_value=RAISE_NOT_FOUND if not fallback else fallback) # type: ignore
         
         raise ScopeError(f"Unable to access specified `{scope}` scope")
     
@@ -72,4 +72,4 @@ def inject(
         raise RuntimeError(f"Unable to access scope `{scope.__name__}` due to `NotLoadedModule` error!")
     
     loaded_injector = scope._injector
-    return loaded_injector.get(token, not_found_value=RAISE_NOT_FOUND if not fallback else fallback)
+    return loaded_injector.get(token, not_found_value=RAISE_NOT_FOUND if not fallback else fallback) # type: ignore

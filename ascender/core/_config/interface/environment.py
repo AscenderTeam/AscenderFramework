@@ -11,10 +11,22 @@ class PathsConfig(BaseModel):
     static: Optional[str] = Field(None, description="Path to the static files directory.")
     logs: Optional[str] = Field(None, description="Path to the logs directory.")
     
+
+class OverrideConfig(BaseModel):
+    enabled: bool = Field(True, description="Whether dependency injection overrides are enabled.")
+    injector: Optional[str] = Field(
+        None, description="Custom injector class to use for dependency injection overrides."
+    )
+
+
 class EnvironmentConfig(BaseModel):
     debug: bool = Field(..., description="Whether debugging is enabled.")
     logging: Literal["debug", "info", "warn", "error", "critical"] = Field(..., description="Logging level.")
     build: Optional[BuildConfig] = Field(None, description="Build-specific settings for this environment.")
+    overrides: OverrideConfig = Field(
+        OverrideConfig(enabled=False, injector="ascender.core.di.injector.AscenderInjector"), 
+        description="Dependency injection settings for this environment."
+    )
 
 
 class EnvironmentsConfig(BaseModel):

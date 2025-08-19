@@ -49,7 +49,7 @@ class Application:
             self.database_settings.run_database(self.app)
         
         for middleware in self.middleware_settings:
-            self.app.add_middleware(middleware)
+            self.app.add_middleware(middleware) # type: ignore
 
     def __process_cli_apps(self):
         """
@@ -70,7 +70,6 @@ class Application:
         """
         Launches application in server-mode and builds up fastapi enforcing Uvicorn to handle server part
         """
-        
         os.environ["ASC_MODE"] = "server"
 
         # Define all CLI applications

@@ -70,7 +70,7 @@ def createApplication(
 
     if config is None and app_module is not None:
         # print(app_module.__asc_module__.providers)
-        root_injector.create(app_module.__asc_module__.providers + internal_providers)
+        root_injector.create(app_module.__asc_module__.providers + internal_providers) # type: ignore
         # app_module.__asc_module__.providers = []
         # Module-based application creation
         if not root_injector.injector:

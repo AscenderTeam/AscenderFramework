@@ -28,6 +28,12 @@ class DatabaseEngine:
             app.add_event_handler("shutdown", self.engine.shutdown_database)
         else:
             self.engine.run_database(app)
+            
+    async def run_database_manual(self):
+        if isinstance(self.engine, SQLAlchemyORM):
+            await self.engine.run_database()
+        else:
+            await self.engine.run_database_cli()
     
     def generate_context(self):
         if not isinstance(self.engine, SQLAlchemyORM):

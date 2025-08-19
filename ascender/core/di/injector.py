@@ -119,7 +119,7 @@ class AscenderInjector(Injector):
             if not isinstance(class_ref, type):
                 raise TypeError("Class provider has string as provider and lacks of `use_class` parameter")
             if static_class_provider.get("deps", None):
-                factory = lambda: class_ref(self.__inject_args(static_class_provider["deps"]))
+                factory = lambda: class_ref(self.__inject_args(static_class_provider["deps"])) # type: ignore
             else:
                 factory = self.inject_factory_def(class_ref)
         

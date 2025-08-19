@@ -41,6 +41,7 @@ mkdocs = "^1.6.1"
 mkdocs-material = "^9.5.49"
 aiokafka = "^0.12.0"
 redis = "^5.2.1"
+codetiming = "^1.4.0"
 
 
 [build-system]

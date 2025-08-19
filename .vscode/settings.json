@@ -1,5 +1,5 @@
 {
-    "python.analysis.typeCheckingMode": "off",
+    "python.analysis.typeCheckingMode": "basic",
     "material-icon-theme.files.color": "#90a4ae",
     "material-icon-theme.files.associations": {
         "ascender.json": "./extensions/icons/main.svg"
