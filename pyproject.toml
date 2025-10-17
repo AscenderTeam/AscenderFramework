@@ -32,6 +32,7 @@ pyinstaller = "^6.11.1"
 httpx = "^0.28.1"
 reactivex = ">=4.0.4"
 watchfiles = "^1.0.5"
+mkdocs-awesome-pages-plugin = "^2.10.1"
 
 [tool.poetry.scripts]
 ascender = "ascender.start:_builtin_launcher"
