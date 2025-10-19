@@ -1,0 +1,18 @@
+from ascender.common.api_docs import DefineAPIDocs
+from ascender.core.database import provideDatabase, ORMEnum
+from ascender.core.router import provideRouter
+from ascender.core.types import IBootstrap
+from routes import routes
+from settings import DATABASE_CONNECTION
+
+
+appBootstrap: IBootstrap = {
+    "providers": [
+        {
+            "provide": DefineAPIDocs,
+            "value": DefineAPIDocs(swagger_url="/docs", redoc_url="/redoc"),
+        },
+        provideRouter(routes),
+        provideDatabase(ORMEnum.{{orm_mode}}, DATABASE_CONNECTION)
+    ]
+}

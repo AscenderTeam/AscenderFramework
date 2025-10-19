@@ -1,0 +1,14 @@
+    "connections": {
+        "default": {
+            "engine": "tortoise.backends.sqlite",
+            "credentials": {
+                "file_path": "database.db"
+            }
+        }
+    },
+    "apps": {
+        "models": {
+            "models": ["aerich.models"],
+            "default_connection": "default"
+        }
+    }

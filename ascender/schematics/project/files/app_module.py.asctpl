@@ -1,0 +1,23 @@
+from ascender.common.api_docs import DefineAPIDocs
+from ascender.core.router import provideRouter
+from ascender.core import AscModule
+from ascender.core.database import provideDatabase, ORMEnum
+from settings import DATABASE_CONNECTION
+
+from routes import routes
+
+
+@AscModule(
+    imports=[],
+    declarations=[],
+    providers=[
+        {
+            "provide": DefineAPIDocs,
+            "value": DefineAPIDocs(swagger_url="/docs", redoc_url="/redoc"),
+        },
+        provideRouter(routes),
+        provideDatabase(ORMEnum.{{orm_mode}}, DATABASE_CONNECTION)
+    ],
+    exports=[]
+)
+class AppModule: ...

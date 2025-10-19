@@ -1,0 +1,23 @@
+from ascender.core import AscModule
+
+
+@AscModule(
+    imports=[
+        {%- for module_import in imports -%}
+            {{ module_import }},
+        {%- endfor -%}
+    ],
+    declarations=[
+        {%- for declaration in declarations -%}
+            {{ declaration }},
+        {%- endfor -%}
+    ],
+    providers=[
+        {%- for provider in providers -%}
+            {{ provider }},
+        {%- endfor -%}
+    ],
+    exports=[]
+)
+class {{ module_name | pascal_case }}Module:
+    ...

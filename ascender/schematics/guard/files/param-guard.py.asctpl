@@ -1,0 +1,24 @@
+from ascender.guards import ParamGuard
+from fastapi import Request
+
+
+class {{ guard_name | pascal_case }}Guard(ParamGuard):
+    def __init__(self):
+        """
+        Use __init__ for accepting parameters of guard decorator
+        """
+        ...
+    
+    def __post_init__(self):
+        """
+        Handle dependency injections, use for injecting DIs
+        """
+        ...
+    
+    {% for guard in guards %}
+    async def {{ guard | snake_case }}_guard(self, request: Request):
+        """
+        {{ guard }} _description
+        """
+        ...
+    {% endfor %}

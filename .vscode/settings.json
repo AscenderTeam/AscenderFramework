@@ -1,0 +1,7 @@
+{
+    "python.analysis.typeCheckingMode": "off",
+    "material-icon-theme.files.color": "#90a4ae",
+    "material-icon-theme.files.associations": {
+        "ascender.json": "./extensions/icons/main.svg"
+    }
+}

@@ -1,0 +1,21 @@
+{%- for from_package, package_type in package_imports -%}
+from {{ from_package }} import {{ package_type }}
+{% endfor %}
+
+{{- upper_section -}}
+    imports=[
+    {%- for module_import in final_imports %}
+        {{ module_import }},
+    {%- endfor %}
+    ],
+    declarations=[
+    {%- for declaration in final_declarations %}
+        {{ declaration }},
+    {%- endfor %}
+    ],
+    providers=[
+    {%- for provider in final_providers %}
+        {{ provider }},
+    {%- endfor %}
+    ],
+{{- lower_section }}

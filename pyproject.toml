@@ -1,30 +1,46 @@
 [tool.poetry]
 name = "ascender-framework"
-version = "1.2.4"
+version = "2.0rc6"
 description = "The Ascender Framework is a sophisticated and structured FastAPI-based framework, inspired by the principles of NestJS. It stands out for its modular and organized architecture, offering developers a streamlined and efficient way to build web applications"
 authors = ["AscenderTeam"]
 readme = "README.md"
+packages = [
+    { include = "ascender" },
+]
+include = ["logo.png"]
+repository = "https://github.com/ascender-team/ascenderframework"
+homepage = "https://ascender-framework.com"
 
 [tool.poetry.dependencies]
-python = "^3.11"
-fastapi = "^0.104.1"
-tortoise-orm = "^0.20.0"
+python = ">=3.11,<3.14"
+fastapi = ">=0.115"
 python-dotenv = "^1.0.0"
-uvicorn = {extras = ["standard"], version = "^0.24.0.post1"}
+uvicorn = ">=0.25"
 rich = "^13.6.0"
 readchar = "^4.0.5"
 aerich = "^0.7.2"
-bcrypt = "^4.0.1"
 click = "^8.1.7"
 rich-click = "^1.7.2"
-python-socketio = "^5.10.0"
-fastapi-socketio = "^0.0.10"
-requests = "^2.31.0"
-pyjwt = "^2.8.0"
-sqlalchemy = {extras = ["asyncio"], version = "^2.0.31"}
-pydantic = {extras = ["email"], version = "^2.7.4"}
+requests = ">=2.31.0"
+sqlalchemy = {version = ">=2.0.31", extras = ["asyncio"]}
+pydantic = {version = ">=2.7.4", extras = ["email"]}
 inflection = "^0.5.1"
 chardet = "^5.2.0"
+jinja2 = "^3.1.4"
+python-minifier = "^2.11.3"
+pyinstaller = "^6.11.1"
+httpx = "^0.28.1"
+reactivex = ">=4.0.4"
+watchfiles = "^1.0.5"
+
+[tool.poetry.scripts]
+ascender = "ascender.start:_builtin_launcher"
+
+[tool.poetry.group.dev.dependencies]
+mkdocs = "^1.6.1"
+mkdocs-material = "^9.5.49"
+aiokafka = "^0.12.0"
+redis = "^5.2.1"
 
 
 [build-system]

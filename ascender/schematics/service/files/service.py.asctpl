@@ -1,0 +1,8 @@
+from ascender.common import Injectable
+from ascender.core import Service
+
+
+@Injectable(provided_in={{ '"root"' if is_root else 'None' }})
+class {{ service_name | pascal_case }}Service(Service):
+    def __init__(self):
+        ...

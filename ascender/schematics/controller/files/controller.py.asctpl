@@ -1,0 +1,24 @@
+from ascender.core import Controller, Get
+
+
+@Controller(
+    standalone={% if standalone %}True{% else %}False{% endif %},
+    guards=[],
+    {%- if standalone %}
+    imports=[],
+    providers=[],
+    {%- endif %}
+    {%- if prefix %}
+    prefix="{{ prefix }}"{%- if suffix %},{% endif %}
+    {%- endif %}
+    {%- if suffix %}
+    suffix="{{ suffix }}"
+    {%- endif %}
+)
+class {{ controller_name | pascal_case }}Controller:
+    def __init__(self):
+        ...
+    
+    @Get()
+    async def {{ controller_name | snake_case }}_endpoint(self):
+        return "{{ controller_name }} works!"
