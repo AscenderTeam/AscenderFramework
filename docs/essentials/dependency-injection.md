@@ -79,4 +79,4 @@ class AscenderController:
 ```
 
 !!! tip
-    Read more about Ascender Framework's dependency injection (DI) patterns and use-cases in [Advanced Dependency Injection Guide](/dependency-injection/overview)
+    Read more about Ascender Framework's dependency injection (DI) patterns and use-cases in [Dependency Injection Overview](../di/overview.md)

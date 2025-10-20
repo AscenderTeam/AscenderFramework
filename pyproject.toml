@@ -33,6 +33,8 @@ httpx = "^0.28.1"
 reactivex = ">=4.0.4"
 watchfiles = "^1.0.5"
 mkdocs-awesome-pages-plugin = "^2.10.1"
+rich-argparse = "^1.7.1"
+pytest = "^8.4.2"
 
 [tool.poetry.scripts]
 ascender = "ascender.start:_builtin_launcher"
@@ -43,6 +45,10 @@ mkdocs-material = "^9.5.49"
 aiokafka = "^0.12.0"
 redis = "^5.2.1"
 codetiming = "^1.4.0"
+faker = "^37.11.0"
+pytest = "^8.4.2"
+mkdocstrings = "^0.30.1"
+mkdocstrings-python = "^1.18.2"
 
 
 [build-system]
