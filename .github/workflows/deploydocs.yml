@@ -37,7 +37,8 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "site/*"
+          source: "site/"
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           target: ${{ vars.DEPLOY_PATH }}
+          strip_components: 1
           rm: true
