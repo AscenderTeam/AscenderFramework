@@ -42,8 +42,8 @@ def createApplication(
     internal_providers: list[Provider] = [
         useCLI(BuildCLI),
         useCLI(GeneratorCLI),
-        useCLI(NewCLI),
-        useCLI(RunCLI),
+        # useCLI(NewCLI),
+        # useCLI(RunCLI),
         useCLI(ServeCLI),
         useCLI(TestRunnerCLI),
         {
