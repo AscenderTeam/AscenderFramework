@@ -3,4 +3,6 @@ nav:
   - essentials
   - controllers
   - Dependency Injection: di
-  - microservices
+  - CLI Engine: cli
+  - Microservices: microservices
+  - API Reference: api-reference

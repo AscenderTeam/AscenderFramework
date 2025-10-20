@@ -11,7 +11,14 @@ from ascender.core.database.types.orm_enum import ORMEnum
 class DatabaseEngine:
     engine: TortoiseORM | SQLAlchemyORM
 
-    def __init__(self, orm: ORMEnum, configuration: dict[str, Any]) -> None:
+    def __init__(self, orm: ORMEnum, configuration: Any) -> None:
+        """
+        Initialize the DatabaseEngine.
+
+        Args:
+            orm (ORMEnum): The ORM to use (Tortoise or SQLAlchemy).
+            configuration (Any): The configuration for the ORM.
+        """
         self.orm = orm
         self.configuration = configuration
         self.engine = TortoiseORM(configuration) if orm == ORMEnum.TORTOISE else SQLAlchemyORM(configuration)
@@ -28,8 +35,23 @@ class DatabaseEngine:
             app.add_event_handler("shutdown", self.engine.shutdown_database)
         else:
             self.engine.run_database(app)
+            
+    async def run_database_manual(self):
+        if isinstance(self.engine, SQLAlchemyORM):
+            await self.engine.run_database()
+        else:
+            await self.engine.run_database_cli()
     
     def generate_context(self):
+        """
+        Generate a database context for SQLAlchemy ORM.
+
+        Raises:
+            WrongORMException: If the ORM is not SQLAlchemy.
+
+        Returns:
+            AppDBContext: The database context that carries database session for SQLAlchemy.
+        """
         if not isinstance(self.engine, SQLAlchemyORM):
             raise WrongORMException("DatabaseEngine.generate_context()")
         _context = AppDBContext(self.engine)

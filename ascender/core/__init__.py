@@ -12,11 +12,22 @@ from .di.interface.provider import Provider
 
 from .di.inject import Inject
 from .di.injectfn import inject
+from .di.abc.base_injector import Injector
+from .di.test_injector import TestInjector
 from .struct.module import AscModule
 from .services import Service
 from .repositories import Repository, IdentityRepository
 
+from .database import AppDBContext
+
+from .applications.application import Application
+
+from . import cli_engine
+
 __all__ = [
+    "Injector",
+    "TestInjector",
+    "Application",
     "AppDBContext",
     "Provider",
     "Inject",
@@ -31,5 +42,6 @@ __all__ = [
     "Service",
     "Repository",
     "IdentityRepository",
-    "ControllerDecoratorHook"
-]
+    "ControllerDecoratorHook",
+    *cli_engine.__all__
+] # type: ignore

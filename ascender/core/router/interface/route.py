@@ -1,9 +1,9 @@
-from typing import Callable, NotRequired, Sequence, TypedDict
+from typing import Callable, NotRequired, Sequence
+from typing_extensions import TypedDict
 
 from ascender.core.struct.controller_ref import ControllerRef
 from ascender.core.struct.module_ref import AscModuleRef
 from ascender.guards.guard import Guard
-from ascender.guards.paramguard import ParamGuard
 
 
 class RouterRoute(TypedDict):
@@ -42,7 +42,7 @@ class RouterRoute(TypedDict):
     NOTE: Use this if you have non-standalone and module-based controller
     """
 
-    guards: Sequence[Guard]
+    guards: NotRequired[Sequence[Guard]]
     """
     Applies Ascender Framework's single guards to all routes of controller
 

@@ -1,5 +1,6 @@
 from typing import Any, MutableSequence, Sequence, TypeVar
 
+from ascender.core.di.create import create_injector
 from ascender.core.di.injector import AscenderInjector
 from ascender.core.di.interface.provider import Provider
 from ascender.core.struct.controller_ref import ControllerRef
@@ -53,7 +54,10 @@ class AscModule:
         """
         _parent_injector = _parent._injector if not isinstance(_parent, AscenderInjector) else _parent
         # Creates `AscenderInjector` instance on current module. Also assigns parent if there is
-        self.module_instance._injector = AscenderInjector(self.providers, _parent_injector)
+        self.module_instance._injector = create_injector(
+            self.providers,
+            parent=_parent_injector if isinstance(_parent_injector, AscenderInjector) else None
+        )
         
         # Processes current module after injector being created.
 

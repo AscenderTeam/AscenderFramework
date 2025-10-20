@@ -10,15 +10,15 @@ Now that you have been introduced to main concepts and parts of Ascender Framewo
 
     Build your first app with Ascender Framework Tutorials.
 
-    [:octicons-arrow-right-24: My First App Tutorial](/tutorial/basics)
+    [:octicons-arrow-right-24: Getting Started](../introduction/installation.md)
 
 -   :material-graph:{ .lg .middle } __Advanced DI Guide__
 
     ---
 
-    Learn more about Ascender Framework's Dependency Injection system, it's concept and how to use it
+    Learn more about Ascender Framework's Dependency Injection system, its concept and how to use it
 
-    [:octicons-arrow-right-24: Getting started](/dependency-injection/overview)
+    [:octicons-arrow-right-24: Getting started](../di/overview.md)
 
 -   :fontawesome-brands-markdown:{ .lg .middle } __Dive deeper to controllers__
 
@@ -26,15 +26,38 @@ Now that you have been introduced to main concepts and parts of Ascender Framewo
 
     Learn more about Controllers, the building blocks of Ascender Framework
 
-    [:octicons-arrow-right-24: Advanced Controller Guide](/controllers/overview)
+    [:octicons-arrow-right-24: Advanced Controller Guide](../controllers/overview.md)
 
--   :material-routes:{ .lg .middle } __Routing Guides__
+-   :material-terminal:{ .lg .middle } __CLI Commands__
 
     ---
 
-    Dive deeper into routing in Ascender Framework. 
-    Find out more about Routing Graphs, Routing Node and Routes. 
+    Create custom CLI commands and use the powerful CLI engine.
 
-    [:octicons-arrow-right-24: Advanced Routing Guide](/routing/overview)
+    [:octicons-arrow-right-24: CLI Overview](../cli/overview.md)
+
+-   :material-api:{ .lg .middle } __HTTP Client__
+
+    ---
+
+    Learn how to make outbound requests with the built-in HTTP client and interceptors.
+
+    [:octicons-arrow-right-24: HTTP Client Guide](../essentials/http-client.md)
+
+-   :material-test-tube:{ .lg .middle } __Testing__
+
+    ---
+
+    Write comprehensive tests with built-in testing utilities, mocking, and data generation.
+
+    [:octicons-arrow-right-24: Testing Guide](../essentials/testing.md)
+
+-   :material-lan:{ .lg .middle } __Microservices__
+
+    ---
+
+    Build distributed systems with Ascender's transport-agnostic microservice layer.
+
+    [:octicons-arrow-right-24: Microservices Overview](/microservices/overview)
 
 </div>

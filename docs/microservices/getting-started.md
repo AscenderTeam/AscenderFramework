@@ -154,7 +154,13 @@ class MainController:
         self,
         main_client: Annotated[ClientProxy, Inject("main")],
     ):
+        self.main_client = main_client
 ```
+
+`ClientProxy` exposes two primary methods:
+
+- **`send`** – send a message pattern and wait for an acknowledgment (RPC style).
+- **`emit`** – emit an event pattern without waiting for any acknowledgment.
 
 ### Emitting Events
 

@@ -1,5 +1,5 @@
 import os
-from typing import Sequence
+from typing import TYPE_CHECKING, Sequence
 from ascender.clis.generator.generator_app import GeneratorCLI
 from ascender.clis.new.new_app import NewCLI
 from ascender.clis.run.run_app import RunCLI
@@ -7,7 +7,9 @@ from ascender.core.cli.main import BaseCLI, GenericCLI
 from ascender.core.cli.processor import CLI
 from ascender.core.cli.provider import provideCLI
 from .root_injector import RootInjector
-from ascender.core.di.interface.provider import Provider
+
+if TYPE_CHECKING:
+    from ascender.core.di.interface.provider import Provider
 
 
 def cli_factory(cli_settings: Sequence[BaseCLI | GenericCLI]):
@@ -37,7 +39,7 @@ def createInternalApplication() -> CLI:
     root_injector = RootInjector()
 
     # Internal providers necessary for Application creation
-    internal_providers: list[Provider] = [
+    internal_providers: list["Provider"] = [
         provideCLI(GeneratorCLI),
         provideCLI(NewCLI),
         provideCLI(RunCLI),

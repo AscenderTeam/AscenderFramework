@@ -1,17 +1,14 @@
 from typing import Literal
 
-import click
 from ascender.clis.generator.create_generator_service import CreateGeneratorService
-from ascender.core.cli.application import ContextApplication
-from ascender.core.cli.main import GenericCLI, console_command
-from ascender.core.cli.models import ArgumentCMD, OptionCMD
+from ascender.core.cli_engine import Command, Handler, BooleanParameter, Parameter, GenericCLI
 from ascender.core.database.types.orm_enum import ORMEnum
 
+from rich import print as rprint
 
+
+@Command(name="generate", description="Generate application components like controllers, services, modules, repositories, and guards.", aliases=["g"], help="Generate various project components.")
 class GeneratorCLI(GenericCLI):
-    app_name: str = "generate"
-    name_aliases: list[str] = ["g"]
-    help: str = "Generates project components such as services, controllers, guards, CLIs, and modules."
 
     def __init__(
         self,
@@ -19,21 +16,18 @@ class GeneratorCLI(GenericCLI):
     ):
         self.create_generator_service = create_generator_service
 
-    @console_command(name="controller", help="Generate a new controller. Alias: `c`.")
-    @console_command(name="c")
+    @Handler("controller", "c", description="Generate a new controller. Alias: `c`.")
     def generate_controller(
         self,
-        ctx: ContextApplication,
         name: str,
-        standalone: bool = OptionCMD("--no-standalone", default=False, is_flag=True, required=False),
-        prefix: str = OptionCMD("-p", default="", required=False),
-        suffix: str = OptionCMD("-s", default="", required=False),
-        module: str | None = OptionCMD(
-            "-m", default=None, ctype=str, required=False),
+        standalone: bool = BooleanParameter(False, description="Generate as a standalone controller", flags=["--standalone", "-s"]),
+        prefix: str = Parameter("", names=["-pre", "--prefix"], description="Prefix for the controller name"),
+        suffix: str = Parameter("", names=["-suf", "--suffix"], description="Suffix for the controller name"),
+        module: str | None = Parameter(None, names=["-m", "--module"], description="Module to generate the controller in"),
     ):
         if name == "unicorn":
-            ctx.console_print("Generating unicorn... 🦄")
-            ctx.console_print("[red]Error:[/] Unicorns are mythical. Try generating a 'real' controller instead.")
+            rprint("Generating unicorn... 🦄")
+            rprint("[red]Error:[/] Unicorns are mythical. Try generating a 'real' controller instead.")
             return
         
         module_update, file_info = self.create_generator_service.generate_controller(
@@ -41,77 +35,67 @@ class GeneratorCLI(GenericCLI):
             prefix, suffix,
             module
         )
-        ctx.console_print(f"[green]{file_info['schematic_type']}[/green] {file_info['file_path']} [cyan]({file_info['write_size']} bytes)[/cyan]")
+        rprint(f"[green]{file_info['schematic_type']}[/green] {file_info['file_path']} [cyan]({file_info['write_size']} bytes)[/cyan]")
         if module_update:
-            ctx.console_print(f"[yellow]{module_update['schematic_type']}[/yellow] {module_update['file_path']} [cyan]({module_update['write_size']} bytes)[/cyan]")
-    
-    @console_command(name="service", help="Generate a new service. Alias: `s`.")
-    @console_command(name="s")
+            rprint(f"[yellow]{module_update['schematic_type']}[/yellow] {module_update['file_path']} [cyan]({module_update['write_size']} bytes)[/cyan]")
+
+    @Handler("service", "s", description="Generate a new service. Alias: `s`.")
     def generate_service(
         self,
-        ctx: ContextApplication,
         name: str,
-        module: str | None = OptionCMD(
-            "-m", default=None, ctype=str, required=False),
+        module: str | None = Parameter(names=["-m", "--module"], description="Module to generate the service in"),
     ):
         module_update, file_info = self.create_generator_service.generate_service(name, module)
-        ctx.console_print(f"[green]{file_info['schematic_type']}[/green] {file_info['file_path']} [cyan]({file_info['write_size']} bytes)[/cyan]")
+        rprint(f"[green]{file_info['schematic_type']}[/green] {file_info['file_path']} [cyan]({file_info['write_size']} bytes)[/cyan]")
         if module_update:
-            ctx.console_print(f"[yellow]{module_update['schematic_type']}[/yellow] {module_update['file_path']} [cyan]({module_update['write_size']} bytes)[/cyan]")
-    
-    @console_command(name="module", help="Generate a new module. Alias: `m`.")
-    @console_command(name="m")
+            rprint(f"[yellow]{module_update['schematic_type']}[/yellow] {module_update['file_path']} [cyan]({module_update['write_size']} bytes)[/cyan]")
+
+    @Handler("module", "m", description="Generate a new module. Alias: `m`.")
     def generate_module(
         self,
-        ctx: ContextApplication,
         name: str,
-        module: str | None = OptionCMD("-m", default=None, ctype=str, required=False)
+        module: str | None = Parameter(names=["-m", "--module"], description="Module to generate the module in"),
     ):
         module_update, file_info = self.create_generator_service.generate_module(name, module)
-        ctx.console_print(f"[green]{file_info['schematic_type']}[/green] {file_info['file_path']} [cyan]({file_info['write_size']} bytes)[/cyan]")
+        rprint(f"[green]{file_info['schematic_type']}[/green] {file_info['file_path']} [cyan]({file_info['write_size']} bytes)[/cyan]")
 
         if module_update:
-            ctx.console_print(f"[yellow]{module_update['schematic_type']}[/yellow] {module_update['file_path']} [cyan]({module_update['write_size']} bytes)[/cyan]")
+            rprint(f"[yellow]{module_update['schematic_type']}[/yellow] {module_update['file_path']} [cyan]({module_update['write_size']} bytes)[/cyan]")
 
-    @console_command(name="repository", help="Generate a new repository. Alias: `r`.")
-    @console_command(name="r")
+    @Handler("repository", "r", description="Generate a new repository. Alias: `r`.")
     def generate_repository(
         self,
-        ctx: ContextApplication,
         name: str,
-        entities: list[str] = OptionCMD("-e", multiple=True, ctype=str, default=(), required=False),
-        orm_mode: str = OptionCMD("--orm", "-om", ctype=click.Choice([e.value for e in ORMEnum])),
-        module: str | None = OptionCMD("-m", default=None, ctype=str, required=False)
+        entities: tuple[str] | None = Parameter(None, names=["-e", "--entities"], description="List of entities to include in the repository", nargs="*"),
+        orm_mode: str = Parameter("default", names=["--orm-mode"], description="ORM mode to use for the repository"),
+        module: str | None = Parameter(names=["-m", "--module"], description="Module to generate the repository in", default=None)
     ):
         repository = self.create_generator_service.generate_repository(
             name, 
-            entities=entities, 
+            entities=entities or tuple(), 
             orm_mode=ORMEnum(orm_mode), 
             module=module
         )
         if isinstance(repository, dict):
-            return ctx.console_print(f"[yellow]{repository['schematic_type']}[/yellow] {repository['file_path']} [cyan]({repository['write_size']} bytes)[/cyan]")
+            return rprint(f"[yellow]{repository['schematic_type']}[/yellow] {repository['file_path']} [cyan]({repository['write_size']} bytes)[/cyan]")
 
         module_update, file_info = repository
-        ctx.console_print(f"[green]{file_info['schematic_type']}[/green] {file_info['file_path']} [cyan]({file_info['write_size']} bytes)[/cyan]")
+        rprint(f"[green]{file_info['schematic_type']}[/green] {file_info['file_path']} [cyan]({file_info['write_size']} bytes)[/cyan]")
         if module_update:
-            ctx.console_print(f"[yellow]{module_update['schematic_type']}[/yellow] {module_update['file_path']} [cyan]({module_update['write_size']} bytes)[/cyan]")
-    
-    @console_command(name="guard", help="Generate a new guard. Alias: `g`.")
-    @console_command(name="g")
+            rprint(f"[yellow]{module_update['schematic_type']}[/yellow] {module_update['file_path']} [cyan]({module_update['write_size']} bytes)[/cyan]")
+
+    @Handler("guard", "gd", description="Generate a new guard. Alias: `gd`.")
     def generate_guard(
         self,
-        ctx: ContextApplication,
         name: str,
-        guard_type: Literal["single", "parametrized"] = OptionCMD("--guard-type", "-gt", 
-                                                                  ctype=click.Choice(["single", "parametrized"]), default="single", required=False),
-        guards: list[str] = OptionCMD("--guards", required=False, multiple=True),
-        module: str | None = OptionCMD("-m", default=None, ctype=str, required=False)
+        guard_type: Literal["single", "parametrized"] = Parameter("single", names=["--type"], description="Type of guard to generate"),
+        module: str | None = Parameter(names=["-m", "--module"], description="Module to generate the guard in", default=None),
+        guards: tuple[str] | None = Parameter(None, names=["--guards"], description="List of guards to include", nargs="+", action="extend")
     ):
         guard_update, file_info = self.create_generator_service.generate_guard(
             name, guard_type, guards, module
         )
         
-        ctx.console_print(f"[green]{file_info['schematic_type']}[/green] {file_info['file_path']} [cyan]({file_info['write_size']} bytes)[/cyan]")
+        rprint(f"[green]{file_info['schematic_type']}[/green] {file_info['file_path']} [cyan]({file_info['write_size']} bytes)[/cyan]")
         if guard_update:
-            ctx.console_print(f"[yellow]{guard_update['schematic_type']}[/yellow] {guard_update['file_path']} [cyan]({guard_update['write_size']} bytes)[/cyan]")
+            rprint(f"[yellow]{guard_update['schematic_type']}[/yellow] {guard_update['file_path']} [cyan]({guard_update['write_size']} bytes)[/cyan]")

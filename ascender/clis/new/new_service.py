@@ -9,6 +9,8 @@ from ascender.core.database.types.orm_enum import ORMEnum
 from ascender.schematics.project.create import ProjectCreator
 from ascender.schematics.utilities.case_filters import kebab_case
 
+from rich import print as rprint
+
 
 @Injectable(provided_in="root")
 class NewService(Service):
@@ -18,7 +20,6 @@ class NewService(Service):
 
     def initialize_project(
         self,
-        ctx: ContextApplication,
         name: str,
         relpath: str,
         orm_mode: ORMEnum,
@@ -43,7 +44,7 @@ class NewService(Service):
         project_files = self.create_project_files(_path, orm_mode, standalone)
 
         for project_file in project_files:
-            ctx.console_print(
+            rprint(
                 f"[green]{project_file['schematic_type']}[/green] {project_file['file_path']} [cyan]({project_file['write_size']} bytes)[/cyan]")
 
         # Generate crucial controller parts

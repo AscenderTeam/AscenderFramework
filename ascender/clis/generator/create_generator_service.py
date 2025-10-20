@@ -133,7 +133,7 @@ class CreateGeneratorService(Service):
         name: str,
         entities: tuple[str],
         orm_mode: ORMEnum,
-        module: str
+        module: str | None = None
     ):
         entities_d: dict[str, Any] = {}
 
@@ -193,10 +193,10 @@ class CreateGeneratorService(Service):
         self,
         name: str,
         guard_type: Literal["single", "parametrized"] = "single",
-        guards: list[str] = [],
+        guards: tuple[str] | None = None,
         module: str | None = None
     ):
-        guard_creator = GuardCreator(name, guard_type, guards)
+        guard_creator = GuardCreator(name, guard_type, list(guards) if guards else [])
         
          # Creates and also returns information about file state
         file_info = guard_creator.invoke()

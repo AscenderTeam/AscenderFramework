@@ -1,4 +1,4 @@
-from typing import Any, Callable, ForwardRef, NotRequired, TypeVar
+from typing import Any, Callable, ForwardRef, NotRequired, TypeAlias, TypeVar
 from typing_extensions import TypedDict
 
 
@@ -84,7 +84,7 @@ Creates an instance by invoking `__init__` method of `type`.
 Uses specified `type` as an injectable `token`
 """
 
-Provider = (ValueProvider 
+Provider: TypeAlias = (ValueProvider 
             | StaticClassProvider 
             | FactoryProvider 
             | type[Any]

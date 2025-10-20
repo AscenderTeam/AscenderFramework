@@ -4,29 +4,26 @@ import subprocess
 import sys
 from ascender.core._config.asc_config import _AscenderConfig
 from ascender.core.cli.application import ContextApplication
-from ascender.core.cli.main import BaseCLI
+from ascender.core.cli_engine import Command, BasicCLI
+
+from rich import print as rprint
 
 
-class RunCLI(BaseCLI):
+@Command(name="run", description="Run the Ascender Framework application.", aliases=["r"], help="Lunch the Ascender Framework application including custom CLI commands.")
+class RunCLI(BasicCLI):
     _config = {"ignore_unknown_options": True, "allow_extra_args": True}
 
     def __init__(self):
         ...
 
-    def callback(
-        self,
-        ctx: ContextApplication
-    ):
+    def execute(self):
         os.environ["CLI_MODE"] = "0"
         
-        if " ".join(sys.argv).find("run relax") != -1: return self.get_cow(ctx)
+        if " ".join(sys.argv).find("run relax") != -1: return self.get_cow()
         source = _AscenderConfig().config.paths.source
         return subprocess.call(f"poetry run python {source}/main.py {' '.join(sys.argv[2:])}", shell=True)
 
-    def get_cow(
-        self,
-        ctx: ContextApplication
-    ):
+    def get_cow(self):
         relax_replicas = [
             "Take a deep breath. The bugs will fix themselves... maybe.",
             "Debugging is like being the detective in a crime movie where you are also the murderer.",
@@ -47,4 +44,4 @@ class RunCLI(BaseCLI):
                 ||----w |
                 ||     ||
 """
-        ctx.console_print(f"\"{random.choice(relax_replicas)}\"\n{cow}")
+        rprint(f"\"{random.choice(relax_replicas)}\"\n{cow}")
