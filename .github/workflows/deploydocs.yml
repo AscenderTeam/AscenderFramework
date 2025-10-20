@@ -39,5 +39,5 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           source: "site/*"
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          target: ${{ secrets.DEPLOY_PATH }}
+          target: ${{ vars.DEPLOY_PATH }}
           rm: true
