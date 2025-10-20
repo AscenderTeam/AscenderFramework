@@ -10,4 +10,4 @@ from ascender.core.applications._create_internal import createInternalApplicatio
 def _builtin_launcher():
     os.environ["CLI_MODE"] = "1"
     
-    return createInternalApplication().run()
+    return createInternalApplication()()
