@@ -4,8 +4,10 @@ from ascender.clis.generator.generator_app import GeneratorCLI
 from ascender.clis.new.new_app import NewCLI
 from ascender.clis.run.run_app import RunCLI
 from ascender.clis.serve.serve_app import ServeCLI
+from ascender.clis.tests.tests_app import TestRunnerCLI
 from ascender.common.api_docs import DefineAPIDocs
 from ascender.core.cli.provider import provideCLI
+from ascender.core.cli_engine.provider import useCLI
 from ascender.core.database.engine import DatabaseEngine
 from ascender.core.di.abc.base_injector import Injector
 from ascender.core.router.graph import RouterGraph
@@ -38,11 +40,12 @@ def createApplication(
 
     # Internal providers necessary for Application creation
     internal_providers: list[Provider] = [
-        provideCLI(BuildCLI),
-        provideCLI(GeneratorCLI),
-        provideCLI(NewCLI),
-        provideCLI(RunCLI),
-        provideCLI(ServeCLI),
+        useCLI(BuildCLI),
+        useCLI(GeneratorCLI),
+        useCLI(NewCLI),
+        useCLI(RunCLI),
+        useCLI(ServeCLI),
+        useCLI(TestRunnerCLI),
         {
             "provide": Application,
             "use_factory": lambda graph, cli, docs, injector: Application(
@@ -54,7 +57,7 @@ def createApplication(
                 }),
                 middleware_settings=injector.get("ASC_MIDDLEWARE", not_found_value=[])
             ),
-            "deps": [RouterGraph, "CLI_INTERFACE", DefineAPIDocs, Injector]
+            "deps": [RouterGraph, "ASC_CLI_COMMAND", DefineAPIDocs, Injector]
         },
         {
             "provide": "ASC_LOGGER",

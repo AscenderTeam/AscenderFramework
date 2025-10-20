@@ -24,6 +24,10 @@ def _get_parameters(parameters: Mapping[str, inspect.Parameter]) -> Mapping[str,
 
     
     for name, parameter in parameters.items():
+        
+        if name == "self" or name == "cls":
+            continue
+
         default = parameter.default
         annotation = parameter.annotation
         
@@ -59,12 +63,12 @@ def _get_parameters(parameters: Mapping[str, inspect.Parameter]) -> Mapping[str,
             _help = default.documentation
         
         if not default_empty:
-            instance = ParameterInfo(name, action="store", help=_help)
+            instance = ParameterInfo(name, dest=name, action="store", help=_help)
             instance.annotation = annotation
             param_infos[name] = instance
             continue
         
-        instance = ParameterInfo(name, action="store", help=_help)
+        instance = ParameterInfo(name, dest=name, action="store", help=_help)
         instance.annotation = annotation
         param_infos[name] = instance
     

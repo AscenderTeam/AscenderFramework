@@ -2,6 +2,7 @@ import importlib
 from typing import Sequence
 
 from ascender.core._config.asc_config import _AscenderConfig
+from ascender.core._config.interface.runtime import OverrideConfig
 from ascender.core.di.injector import AscenderInjector
 from ascender.core.di.interface.provider import Provider
 
@@ -13,7 +14,7 @@ def create_injector(
     config = _AscenderConfig()
     environment = config.get_environment()
     
-    overrides = environment.overrides
+    overrides = environment.dependency_injection.overrides if environment.dependency_injection else OverrideConfig(enabled=False, injector="ascender.core.di.injector.AscenderInjector")
     
     if overrides.enabled:
         path = overrides.injector or "ascender.core.di.injector.AscenderInjector"

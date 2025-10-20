@@ -81,7 +81,7 @@ def _get_class_parameters(cls: type) -> Mapping[str, ParameterInfo]:
         elif pinfo_meta is not None:
             pi = pinfo_meta
         else:
-            pi = ParameterInfo(name)
+            pi = ParameterInfo(name, dest=name)
 
         # annotation
         pi.annotation = base_type

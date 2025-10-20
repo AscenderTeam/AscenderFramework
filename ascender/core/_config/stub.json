@@ -58,9 +58,12 @@
             "test": {
                 "debug": true,
                 "logging": "warn",
-                "overrides": {
-                    "enabled": true,
-                    "injector": "ascender.core.di.test_injector.TestInjector"
+                "dependencyInjection": {
+                    "overrides": {
+                        "enabled": true,
+                        "injector": "ascender.core.di.test_injector.TestInjector"
+                    }
+                    
                 },
                 "build": {
                     "target": "test",

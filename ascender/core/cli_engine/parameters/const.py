@@ -39,19 +39,13 @@ def ConstantParameter(
     Create a boolean flag parameter for the CLI engine.
     If CLI will get value as `--flag` it will be set to `True`, otherwise it will be set to `False`.
     
-    Parameters
-    ----------
-    default : bool, optional
-        Default value of boolean parameter, by default False
-    description : str | None, optional
-        Description of the parameter, by default None
-    specified : bool, optional
-        If True, the parameter is considered specified and will be set to True when the flag is
-        encountered, by default False
-    flags : list[str] | None, optional
-        List of flags that will be used to trigger this parameter, by default None.
-        If None, the parameter will not have any flags and will not be triggered by CLI.
-        If provided, each flag must start with '--' or '-'.
+    Args:
+        const (Any): The constant value to be used when the flag is provided.
+        default (Any | None, optional): The default value if the flag is not provided. Defaults to UndefinedValue.
+        description (str | None, optional): A brief description of the argument (used for help). Defaults to None.
+        flags (list[str] | None, optional): One or more flag names (e.g., ["--my-flag"]). Defaults to None.
+        dest (str | None, optional): The name of the attribute to be used in the application. Defaults to None.
+        metavar (str | None, optional): The name to be used in usage messages. Defaults to None.
     """
     
     for flag in flags or []:

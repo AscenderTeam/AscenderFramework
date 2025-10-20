@@ -3,9 +3,11 @@ from __future__ import annotations
 from collections import defaultdict
 from inspect import isclass, isfunction, ismethod
 from typing import Any, Callable, ForwardRef, Mapping, MutableMapping, MutableSequence, Sequence, Set, TypeVar, cast, overload
+import warnings
 
 from ascender.core.di.abc.base_injector import Injector
-from ascender.core.di.interface.consts import CIRCULAR, RAISE_NOT_FOUND, CyclicDependency
+from ascender.core.di.forward_ref import DependencyForwardRef
+from ascender.core.di.interface.consts import CIRCULAR, RAISE_NOT_FOUND, CyclicDependency, NOT_YET
 from ascender.core.di.interface.injector import InjectorOptions
 from ascender.core.di.interface.record import ProviderRecord
 from ascender.core.di.none_injector import NoneInjector
@@ -14,6 +16,8 @@ from ascender.core.di.utils.injection_def import injection_def
 from ascender.core.di.utils.providers import for_each_provider, is_factory_provider, is_static_class_provider, is_type_provider, is_value_provider
 
 from .interface.provider import FactoryProvider, Provider, StaticClassProvider
+
+from ascender.core._config.asc_config import _AscenderConfig
 
 
 T = TypeVar("T")
@@ -43,6 +47,8 @@ class AscenderInjector(Injector):
 
         # Handle all specified providers now
         for_each_provider(self.providers, lambda p: self.__process_provider(p))
+        
+        self.configs = _AscenderConfig()
 
     def get(
         self,
@@ -90,7 +96,7 @@ class AscenderInjector(Injector):
         if not is_type_provider(provider):
             multi = provider.get("multi", False)
 
-        return ProviderRecord[Any](None, factory, multi)
+        return ProviderRecord[Any](NOT_YET, factory, multi)
     
     """:internal:"""
     def __provide_to_factory(self, provider: Provider):
@@ -188,6 +194,7 @@ class AscenderInjector(Injector):
         """
         Supplies Injector output with required providers by `token`
         """
+        di_configs = self.configs.get_environment().dependency_injection
         _deps = self.get_factory_def(token, options.get("only_self", False), options.get("skip_self", False))
 
         if _deps is None:
@@ -198,9 +205,17 @@ class AscenderInjector(Injector):
             updated_deps: list[ProviderRecord[Any]] = []
             for dep in _deps:
                 if dep.value is CIRCULAR:
+                    if di_configs:
+                        if di_configs.circularDependencyHandling == "warn":
+                            warnings.warn(f"Circular dependency detected for token: {token}", RuntimeWarning)
+                            dep.value = DependencyForwardRef(self, token)
+                            updated_deps.append(dep)
+                            continue
+                        if di_configs.circularDependencyHandling == "error":
+                            raise CyclicDependency(f"Circular dependency detected for token: {token}")
                     raise CyclicDependency(f"Circular dependency detected for token: {token}")
                 
-                if not dep.value:
+                if dep.value is NOT_YET:
                     dep.value = CIRCULAR
 
                     if dep.factory is not None:
@@ -214,8 +229,18 @@ class AscenderInjector(Injector):
             return [dep.value for dep in updated_deps]
         
         if _deps.value is CIRCULAR:
+            if di_configs:
+                if di_configs.circularDependencyHandling == "warn":
+                    warnings.warn(f"Circular dependency detected for token: {token}", RuntimeWarning)
+                    _deps.value = DependencyForwardRef(self, token)
+                    self.dependencies[token] = set([_deps])
+                    return _deps.value
+                
+                if di_configs.circularDependencyHandling == "error":
+                    raise CyclicDependency(f"Circular dependency detected for token: {token}")
             raise CyclicDependency(f"Circular dependency detected for token: {token}")
-        if not _deps.value:
+        
+        if _deps.value is NOT_YET:
             _deps.value = CIRCULAR
             
             if _deps.factory:

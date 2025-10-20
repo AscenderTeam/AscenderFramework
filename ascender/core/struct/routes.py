@@ -7,6 +7,12 @@ from fastapi.datastructures import Default
 def create_route_decorator(
     method: Literal["GET", "POST", "PUT", "PATCH", "DELETE"]
 ):
+    """
+    Factory function to create route decorators for different HTTP methods.
+
+    Args:
+        method (Literal[&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;PATCH&quot;, &quot;DELETE&quot;]): The HTTP method for the route.
+    """
     def decorator(
         path: str = "/",
         response_model: Any = Default(None),

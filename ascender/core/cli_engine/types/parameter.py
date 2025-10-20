@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from typing import Any
+from typing import Any, Mapping
 
 from ascender.core.cli_engine.types.undefined import UndefinedValue
 
@@ -9,6 +9,7 @@ class ParameterInfo:
         self,
         name_or_flags: str | list[str] | None = None,
         default: Any | None = None,
+        default_factory: Any | None = None,
         action: str | None = None,
         nargs: int | str | None = None,
         const: Any | None = None,
@@ -18,11 +19,11 @@ class ParameterInfo:
         **kwargs: Any,
     ) -> None:
         self.name_or_flags = name_or_flags if isinstance(name_or_flags, list) else [name_or_flags] if name_or_flags else []
-        self.default = default
+        self.default = default if default is not UndefinedValue else (default_factory() if default_factory is not None else UndefinedValue)
         self.action = action
         self.nargs = nargs
         self.const = const
-        self.dest = dest
+        self.dest = dest  # Keep the explicitly provided dest, or None if not provided
         self.metavar = metavar
         self.help = help
         self.kwargs = kwargs
@@ -42,25 +43,46 @@ class ParameterInfo:
         inspected_name: str, 
         parser: ArgumentParser,
         *,
-        doc_string: str | None = None,
-        **kwargs: Any
+        doc_string: str | None = None
     ) -> None:
         """
         Adds the parameter information to the provided ArgumentParser instance.
         """
         if self.name_or_flags is not None:
-            parser.add_argument(
-                *(inspected_name, *self.name_or_flags),
-                default=self.default,
-                required=self.default is UndefinedValue,
-                action=self.action or "store",
-                nargs=self.nargs,
-                const=self.const,
-                dest=self.dest,
-                metavar=self.metavar or inspected_name,
-                help=self.help or doc_string,
-                **self.kwargs
-            )
+            dest = self.dest if self.dest is not None else inspected_name
+
+            # if is psositional argument, remove dest
+            if not any(flag.startswith("-") for flag in self.name_or_flags):
+                dest = None
+            
+            action = self.action
+            if action is None and isinstance(self.default, bool):
+                action = "store_true" if not self.default else "store_false"
+
+            args: Mapping[str, Any] = {
+                "help": self.help or doc_string,
+            }
+            
+            if dest is not None:
+                args["dest"] = dest
+                args["required"] = self.default == UndefinedValue
+            
+            if action in ("store_true", "store_false"):
+                args["action"] = action
+            
+            else:
+                args.update({
+                    "default": self.default,
+                    "action": action or "store",
+                    "metavar": self.metavar or inspected_name,
+                })
+                if self.nargs is not None:
+                    args["nargs"] = self.nargs
+                if self.const is not None:
+                    args["const"] = self.const
+            
+            args.update(self.kwargs)
+            parser.add_argument(*self.name_or_flags, **args)
     
     def __repr__(self) -> str:
         return f"ParameterInfo(name_or_flags={self.name_or_flags}, default={self.default}, action={self.action}, nargs={self.nargs}, const={self.const}, dest={self.dest}, metavar={self.metavar}, help={self.help})"

@@ -2,6 +2,13 @@ from typing import Literal, Optional
 from pydantic import BaseModel, Field
 
 
+class OverrideConfig(BaseModel):
+    enabled: bool = Field(True, description="Whether dependency injection overrides are enabled.")
+    injector: Optional[str] = Field(
+        None, description="Custom injector class to use for dependency injection overrides."
+    )
+
+
 class LoggingRotationConfig(BaseModel):
     enabled: bool = Field(True, description="Whether log rotation is enabled.")
     max_size: str = Field("10MB", description="Maximum size of a log file before rotation.")
@@ -40,6 +47,10 @@ class DependencyInjectionConfig(BaseModel):
     strictMode: bool = Field(True, description="Whether to enforce strict mode for dependency injection.")
     circularDependencyHandling: Literal["warn", "error"] = Field(
         "warn", description="Action to take when circular dependencies are detected."
+    )
+    overrides: OverrideConfig = Field(
+        OverrideConfig(enabled=False, injector="ascender.core.di.injector.AscenderInjector"), 
+        description="Dependency injection settings for this environment."
     )
 
 

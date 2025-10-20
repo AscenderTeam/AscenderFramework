@@ -1,13 +1,13 @@
 import os
-from typing import Iterable, Literal, Mapping, Sequence
+from typing import Iterable, Sequence
 
 from fastapi import FastAPI
 from ascender.abc.middleware import AscenderMiddleware
 from ascender.common.api_docs import DefineAPIDocs
 from ascender.core._config.asc_config import _AscenderConfig
 from ascender.core._config.static_files import configure_staticfile_serving
-from ascender.core.cli.main import BaseCLI, GenericCLI
-from ascender.core.cli.processor import CLI
+from ascender.core.applications.root_injector import RootInjector
+from ascender.core.cli_engine import CLIEngine, BasicCLI, GenericCLI
 from ascender.core.database.engine import DatabaseEngine
 from ascender.core.logger._logger import configure_logger
 from ascender.core.router.graph import RouterGraph
@@ -18,7 +18,7 @@ class Application:
         self,
         router_graph: RouterGraph,
         *,
-        cli_settings: Sequence[BaseCLI | GenericCLI] = [],
+        cli_settings: Sequence[BasicCLI | GenericCLI] = [],
         docs_settings: DefineAPIDocs = DefineAPIDocs(),
         database_settings: DatabaseEngine | None = None,
         middleware_settings: Sequence[AscenderMiddleware] | AscenderMiddleware = []
@@ -28,7 +28,7 @@ class Application:
         self.middleware_settings = middleware_settings if isinstance(middleware_settings, Iterable) else [middleware_settings]
 
         # :internal:
-        self.app = FastAPI(title=self.docs_settings.title, 
+        self.app = FastAPI(title=self.docs_settings.title,  # type: ignore
                            docs_url=self.docs_settings.swagger_url, 
                            redoc_url=self.docs_settings.redoc_url,
                            debug=_AscenderConfig().get_environment().debug,
@@ -39,7 +39,7 @@ class Application:
         
         self.cli_settings = cli_settings
 
-        self.__cli = CLI(self, app_name="AscenderCLI") # type: ignore (temp)
+        self.__cli = CLIEngine(commands=self.cli_settings, usage="ascender <command> [options]", description="🚀 Ascender Framework - Modern Python Web Framework")
         
         self.__handle_application_settings()
         configure_staticfile_serving(self.app)
@@ -51,20 +51,21 @@ class Application:
         for middleware in self.middleware_settings:
             self.app.add_middleware(middleware) # type: ignore
 
-    def __process_cli_apps(self):
+    def is_ok(self) -> bool:
         """
-        Registers and runs all provided CLI commands and groups.
+        Checks if the application has been properly initialized with a root injector.
+
+        Returns
+        -------
+        bool
+            True if the application is properly initialized, False otherwise.
         """
-        for cli_config in self.cli_settings:
-            if isinstance(cli_config, BaseCLI):
-                self.__cli.register_base(cli_config.__class__.__name__.removesuffix("CLI").lower(), cli_config) # Use name of class as first argument of command
-            
-            if isinstance(cli_config, GenericCLI):
-                self.__cli.register_generic(cli_config)
-    
+        return bool(RootInjector()._injector)
+
     def run_cli(self):
-        self.__process_cli_apps()
-        self.__cli.run()
+        # self.__process_cli_apps()
+        # self.__cli.run()
+        return self.__cli()
 
     def launch(self):
         """

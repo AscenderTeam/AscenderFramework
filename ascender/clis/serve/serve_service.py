@@ -4,6 +4,8 @@ from fastapi import FastAPI
 from ascender.common import Injectable
 from ascender.common.api_docs import DefineAPIDocs
 from ascender.core._config.asc_config import _AscenderConfig
+from ascender.core.applications.application import Application
+from ascender.core import inject
 from ascender.core.services import Service
 from watchfiles import run_process
 
@@ -52,11 +54,12 @@ class ServeService(Service):
     def __init__(self, docs_settings: DefineAPIDocs):
         self.docs_settings = docs_settings
 
-    def start_reloader(self, app: FastAPI, host: str, port: int):
+    def start_reloader(self, host: str, port: int):
+        application = inject(Application)
         run_process(os.getcwd(), target=self.start_server,
-                    args=(app, host, port))
+                    args=(application.app, host, port))
 
-    def start_server(self, app: FastAPI, host: str, port: int):
+    def start_server(self, host: str, port: int):
         import uvicorn
         self.runtime_info(host, port)
         # source_path = _AscenderConfig().config.paths.source

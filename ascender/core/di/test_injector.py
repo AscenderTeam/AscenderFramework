@@ -3,6 +3,7 @@ from ascender.core.di.injector import AscenderInjector, T
 from ascender.core.di.interface.consts import RAISE_NOT_FOUND
 from ascender.core.di.interface.injector import InjectorOptions
 from ascender.core.di.interface.provider import Provider
+from ascender.core.di.interface.record import ProviderRecord
 from ascender.core.di.overrider import InjectionOverriderContext, StaticOverrider
 from ascender.core.di.utils.providers import for_each_provider, is_type_provider
 
@@ -36,6 +37,8 @@ class TestInjector(AscenderInjector):
         super().__init__(providers, parent)
         self._test_mode = True  # Indicates that this injector is in test mode
         self._overrode = []
+        
+        self.dependencies[TestInjector].add(ProviderRecord(self))
     
     def mock(self, providers: Sequence[Provider] | None = None) -> InjectionOverriderContext:
         """

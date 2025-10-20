@@ -1,2 +1,2 @@
-class ScopeError(Exception):
+class AscenderScopeError(Exception):
     pass
