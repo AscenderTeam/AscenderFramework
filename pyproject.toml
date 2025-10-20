@@ -8,7 +8,7 @@ packages = [
     { include = "ascender" },
 ]
 include = ["logo.png"]
-repository = "https://github.com/ascender-team/ascenderframework"
+repository = "https://github.com/ascenderteam/ascenderframework"
 homepage = "https://ascender-framework.com"
 
 [tool.poetry.dependencies]
