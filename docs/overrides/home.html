@@ -9,7 +9,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
   <style>
     /* Adjust MkDocs layout for homepage */
     .md-sidebar { display: none !important; }
@@ -17,7 +16,7 @@
     .md-content__inner { margin: 0 !important; padding: 0 !important; }
     .md-content__inner > :not(.ascender-home) { display: none; }
   </style>
-  <link rel="stylesheet" href="{{ 'assets/stylesheets/home.css' | url }}" />
+  {# home.css is loaded globally via mkdocs.yml extra_css #}
 {% endblock %}
 
 {% block content %}
@@ -26,9 +25,5 @@
 
 {% block scripts %}
   {{ super() }}
-  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="{{ 'assets/javascripts/home.js' | url }}"></script>
+  {# AOS, GSAP, particles are loaded globally via main.html; home.js is loaded via mkdocs.yml #}
 {% endblock %}

@@ -1,0 +1,129 @@
+name: 🧩 Bug Report
+description: Report a reproducible bug in the Ascender Framework.
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## ⚠️ Before you submit
+        Make sure you’re using the latest **Ascender Framework** version.
+        Run:
+        ```bash
+        ascender --version
+        ```
+        and include that info below.
+
+  - type: dropdown
+    attributes:
+      label: Affected package (top-level)
+      description: Select the Ascender Framework package related to this bug.
+      options:
+        - core
+        - common
+        - testing
+        - contrib
+        - guards
+        - schematics
+    validations:
+      required: true
+
+  - type: dropdown
+    attributes:
+      label: Subpackage or subsystem (second-level)
+      description: Narrow down the scope (only if applicable).
+      options:
+        - core.applications
+        - core.cli_engine
+        - core.database
+        - core.di
+        - core.logger
+        - core.struct
+        - core.routers
+        - common.injectable
+        - common.dto
+        - common.response
+        - common.http
+        - common.microservices
+        - schematics.controller
+        - schematics.service
+        - schematics.module
+        - schematics.repo
+        - schematics.tests
+        - schematics.guards
+        - N/A
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Description of the bug
+      description: Provide a clear and detailed description of what went wrong and what you expected.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: Write the exact steps or commands to trigger the issue.
+      placeholder: |
+        1. Run `ascender run serve`
+        2. Observe crash after dependency injection setup
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Full Traceback / ASC_LOGGER Output
+      description: Paste the full traceback or ASC_LOGGER logs. Use triple backticks for formatting.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Minimal code snippet
+      description: Include a minimal reproducible example (controller/module/service if applicable).
+      placeholder: |
+        from ascender.core.di import Injectable
+
+        @Injectable()
+        class ExampleService:
+            def run(self):
+                raise Exception("This is a test bug")
+      render: python
+
+  - type: textarea
+    attributes:
+      label: Expected vs Actual Behavior
+      description: Explain what *should* have happened and what *actually* happened.
+
+  - type: checkboxes
+    attributes:
+      label: Affected Environment
+      description: Mark the environments where this bug occurs.
+      options:
+        - label: 🐍 Python 3.11
+        - label: 🐍 Python 3.12
+        - label: 🐍 Python 3.13
+        - label: 💻 macOS
+        - label: 🐧 Linux / WSL
+        - label: 🪟 Windows
+        - label: Docker container
+        - label: CI / GitHub Actions
+        - label: Other
+
+  - type: input
+    attributes:
+      label: Ascender Framework version
+      placeholder: 1.3.0b6
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Anything else that could help diagnose the issue — config files, environment vars, or local setup notes.
+      

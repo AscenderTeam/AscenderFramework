@@ -6,3 +6,10 @@ nav:
   - CLI Engine: cli
   - Microservices: microservices
   - API Reference: api-reference
+
+
+footer:
+  # edit_on_github: true
+  # last_updated: true
+  Terms: meta/terms.md
+  License: meta/license.md
