@@ -4,6 +4,79 @@
   {{ super() }}
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
   <link rel="stylesheet" href="{{ 'assets/stylesheets/custom.css' | url }}" />
+  <style>
+    /* Light theme palette aligned to logo + homepage */
+    [data-md-color-scheme="default"] {
+      --md-primary-fg-color: #7B1FE3;
+      --md-primary-fg-color--light: #A046F0;
+      --md-primary-fg-color--dark: #6413CF;
+      --md-accent-fg-color: #FD8403;
+      --md-accent-fg-color--transparent: rgba(253, 132, 3, 0.12);
+      --md-typeset-a-color: var(--md-primary-fg-color);
+      --md-default-fg-color--light: rgba(28, 30, 33, 0.72);
+      --md-default-fg-color--lighter: rgba(28, 30, 33, 0.54);
+    }
+
+    /* Header: translucent, clean, with subtle glow */
+    [data-md-color-scheme="default"] .md-header {
+      background: rgba(255, 255, 255, 0.86);
+      -webkit-backdrop-filter: saturate(160%) blur(10px);
+      backdrop-filter: saturate(160%) blur(10px);
+      box-shadow: 0 8px 24px rgba(100, 19, 207, 0.06);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    /* Tabs/nav links with gradient active state */
+    [data-md-color-scheme="default"] .md-tabs,
+    [data-md-color-scheme="default"] .md-tabs__inner { background: transparent; }
+
+    [data-md-color-scheme="default"] .md-tabs__link,
+    [data-md-color-scheme="default"] .md-nav__link { color: var(--md-default-fg-color); }
+
+    [data-md-color-scheme="default"] .md-tabs__link--active,
+    [data-md-color-scheme="default"] .md-nav__link--active {
+      color: transparent;
+      background-image: linear-gradient(135deg, #6413CF 0%, #8A2BE2 35%, #FF6A00 80%, #FD8403 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      text-decoration: none;
+      position: relative;
+    }
+
+    [data-md-color-scheme="default"] .md-tabs__link--active::after,
+    [data-md-color-scheme="default"] .md-nav__link--active::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: -6px;
+      margin: 0 auto;
+      width: 36px; height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #6413CF 0%, #FD8403 100%);
+      box-shadow: 0 4px 12px rgba(100, 19, 207, 0.18);
+    }
+
+    /* Search field accent */
+    [data-md-color-scheme="default"] .md-search__form {
+      border: 1px solid rgba(0,0,0,0.08);
+      background: rgba(255,255,255,0.9);
+    }
+    [data-md-color-scheme="default"] .md-search__input:focus {
+      box-shadow: 0 0 0 3px var(--md-accent-fg-color--transparent);
+      border-color: var(--md-accent-fg-color);
+    }
+
+    /* Primary buttons with gradient */
+    [data-md-color-scheme="default"] .md-button--primary {
+      background: linear-gradient(135deg, #7B1FE3 0%, #A046F0 45%, #FD8403 100%);
+      border: none;
+      color: #fff;
+    }
+
+    [data-md-color-scheme="default"] .md-footer { border-top: 1px solid rgba(0,0,0,0.06); }
+    .asc-footer-links { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+    .asc-footer-links a { color: var(--md-typeset-a-color); text-decoration: none; font-weight: 600; }
+    .asc-footer-links a:hover { text-decoration: underline; }
+  </style>
 {% endblock %}
 
 {% block scripts %}
@@ -12,5 +85,12 @@
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    window.ASC_FOOTER_LINKS = {
+      license: "{{ 'meta/license/' | url }}",
+      contributing: "{{ 'meta/contributing/' | url }}",
+      terms: "{{ 'meta/terms/' | url }}"
+    };
+  </script>
   <script src="{{ 'assets/javascripts/custom.js' | url }}"></script>
 {% endblock %}

@@ -3,25 +3,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Homepage loaded, initializing animations...');
     
-    // Initialize AOS (Animate On Scroll)
-    if (typeof AOS !== 'undefined') {
-        AOS.init({
-            duration: 1000,
-            easing: 'ease-out-cubic',
-            once: false,
-            offset: 100,
-            delay: 0,
-            disable: false,
-            anchorPlacement: 'top-bottom'
-        });
-        document.documentElement.classList.add('aos-active');
-        setTimeout(() => AOS.refresh(), 150);
-        window.addEventListener('resize', () => {
-            setTimeout(() => AOS.refreshHard && AOS.refreshHard(), 200);
-        });
-    } else {
-        console.warn('AOS library not loaded');
-    }
+    // AOS is initialized globally in custom.js to avoid double init across instant navigations
 
     // Initialize Particles.js
     if (typeof particlesJS !== 'undefined') {
