@@ -18,15 +18,15 @@ Inspired by NestJS and some parts of other DI frameworks, it combines the simpli
 
 Get started! Learn the basics of framework and explore more advanced features and topics.
 
-- Getting Started: docs/introduction/installation.md
-- Architecture: docs/introduction/overview.md
-- Controllers: docs/controllers/overview.md
-- Validators: docs/essentials/data-validation.md
-- Dependency Injection: docs/di/overview.md
-- CLI Engine: docs/cli/overview.md
-- CLI Command Types: docs/cli/command-types.md
-- Creating CLI Commands: docs/cli/creating-commands.md
-- CLI Registration: docs/cli/registration.md
+- [Getting Started](https://ascender-framework.com/introduction/installation)
+- [Architecture](https://ascender-framework.com/introduction/overview)
+- [Controllers](https://ascender-framework.com/controllers/overview)
+- [Validators](https://ascender-framework.com/essentials/data-validation)
+- [Dependency Injection](https://ascender-framework.com/di/overview)
+- [CLI Engine](https://ascender-framework.com/cli/overview)
+- [CLI Command Types](docs/cli/command-types)
+- [Creating CLI Commands](https://ascender-framework.com/cli/creating-commands)
+- [CLI Registration](https://ascender-framework.com/cli/registration)
 
 
 ## CLI Usage
@@ -35,7 +35,7 @@ Get started! Learn the basics of framework and explore more advanced features an
   - ascender [command]
   - Examples:
     - ascender new --name <project-name> --orm-mode <tortoise|sqlalchemy>
-    - ascender serve
+    - ascender run serve
 
 - Local project CLI wrapper:
   - ascender run [command]
@@ -59,10 +59,6 @@ ascender new --name <project-name> --orm-mode <tortoise|sqlalchemy>
 Run the development server (global):
 ```
 cd <project-name>
-ascender serve
-```
-Or via local wrapper:
-```
 ascender run serve
 ```
 
@@ -78,17 +74,21 @@ ascender run serve
 
 - Unit tests live under src/tests/
 - Run tests via the local wrapper:
-  - ascender run tests
+```
+ascender run tests run
+```
 - Initialize a basic testing setup (to be implemented):
-  - ascender run tests init
-    - Generates src/tests basic tests and pytest.ini
+```
+ascender run tests init
+```
+- src/tests basic tests and pytest.ini will be generated
 
 
 ## Contributing
 
 Contributions are welcome! Please read through our contributing guidelines.
 
-- Guidelines: docs/introduction/next-steps.md
+- [Guidelines](https://ascender-framework.com/meta/terms)
 
 
 ## Need help?
@@ -98,5 +98,5 @@ If you need any help, want to report a bug, improve documentation or contribute,
 
 ## License
 
-This project is licensed under the MIT License (LICENSE).
+This project is licensed under the [MIT License](LICENSE).
 
