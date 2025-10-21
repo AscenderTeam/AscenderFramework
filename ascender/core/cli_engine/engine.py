@@ -76,6 +76,13 @@ class CLIEngine:
                 command_info.add_to_argparse(self.command_subparsers)
 
                 self.command_map[command_name] = command_instance
+                # map aliases to the same instance (forgot and that was pain)
+                aliases = command_info.additional.get("aliases") if hasattr(command_info, "additional") else None
+                if aliases:
+                    if isinstance(aliases, str):
+                        aliases = [aliases]
+                    for alias in aliases:
+                        self.command_map[alias] = command_instance
             
             elif isinstance(command_info, GenericMetadata_):
                 # GenericCLI command
@@ -83,6 +90,13 @@ class CLIEngine:
                 command_info.add_to_argparse(self.command_subparsers)
 
                 self.command_map[command_name] = command_instance
+                # map aliases to the same instance (forgot and that was pain)
+                aliases = command_info.additional.get("aliases") if hasattr(command_info, "additional") else None
+                if aliases:
+                    if isinstance(aliases, str):
+                        aliases = [aliases]
+                    for alias in aliases:
+                        self.command_map[alias] = command_instance
 
     def execute_command(self, command_instance: Any, arguments: Mapping[str, Any]) -> Any:
         """
