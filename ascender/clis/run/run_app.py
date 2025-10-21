@@ -1,17 +1,19 @@
+from argparse import REMAINDER
 import os
 import random
 import subprocess
 import sys
 from ascender.core._config.asc_config import _AscenderConfig
 from ascender.core.cli.application import ContextApplication
-from ascender.core.cli_engine import Command, BasicCLI
+from ascender.core.cli_engine import Command, BasicCLI, Parameter
 
 from rich import print as rprint
 
 
-@Command(name="run", description="Run the Ascender Framework application.", aliases=["r"], help="Lunch the Ascender Framework application including custom CLI commands.")
+@Command(name="run", description="Run the Ascender Framework application.", aliases=["r"], help="Lunch the Ascender Framework application including custom CLI commands.", add_help=False)
 class RunCLI(BasicCLI):
-    _config = {"ignore_unknown_options": True, "allow_extra_args": True}
+    
+    extra: list[str] = Parameter(default_factory=list, names=["extra"], description="Additional arguments to pass to the application.", nargs=REMAINDER)
 
     def __init__(self):
         ...
@@ -19,9 +21,9 @@ class RunCLI(BasicCLI):
     def execute(self):
         os.environ["CLI_MODE"] = "0"
         
-        if " ".join(sys.argv).find("run relax") != -1: return self.get_cow()
+        if "relax" in self.extra: return self.get_cow()
         source = _AscenderConfig().config.paths.source
-        return subprocess.call(f"poetry run python {source}/main.py {' '.join(sys.argv[2:])}", shell=True)
+        return subprocess.call(f"poetry run python {source}/main.py {' '.join(self.extra)}", shell=True)
 
     def get_cow(self):
         relax_replicas = [

@@ -2,7 +2,7 @@ from typing import Sequence
 
 import pytest
 
-from app_module import AppModule
+# from app_module import AppModule
 from ascender.common.api_docs import DefineAPIDocs
 from ascender.core._config.asc_config import _AscenderConfig
 from ascender.core.applications.application import Application
@@ -12,13 +12,14 @@ from ascender.core.di.abc.base_injector import Injector
 from ascender.core.di.interface.provider import Provider
 from ascender.core.router.graph import RouterGraph
 from ascender.core.router.provide import provideRouter
+from ascender.core.struct.module_ref import AscModuleRef
 from ascender.core.utils.module import load_module
 
 
 class AscenderTestLifecycle:
     def __init__(
         self, 
-        app_module: AppModule | None = None, 
+        app_module: type[AscModuleRef] | None = None, 
         providers: list[Provider] | None = None
     ) -> None:
         """
@@ -38,7 +39,6 @@ class AscenderTestLifecycle:
         self.app_module = app_module
         self.providers = providers
         self.configs = _AscenderConfig()
-        self.configs.is_test = True
         self.application = None
 
     def begin_session(self, session: pytest.Session):
