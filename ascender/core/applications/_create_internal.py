@@ -2,6 +2,8 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING
 
+from ascender.clis.tests.tests_app import TestRunnerCLI
+
 from .root_injector import RootInjector
 
 if TYPE_CHECKING:
@@ -36,6 +38,7 @@ def createInternalApplication():
         useCLI(NewCLI),
         useCLI(RunCLI),
         useCLI(VersionCLI),
+        useCLI(TestRunnerCLI),
         {
             "provide": CLIEngine,
             "use_factory": lambda commands: CLIEngine(commands, usage="ascender <command> [options]", description="🚀 Ascender Framework - Modern Python Web Framework"),
