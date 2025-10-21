@@ -75,10 +75,14 @@ class AscHTTPTransport(AsyncBaseTransport):
         return response
 
     async def request_class_interceptors(self, request: Request, class_interceptors: list[Interceptor] | Interceptor):
-        """
-        Handles class interceptors and invokes their `handle_request` methods.
+        """Handle class interceptors and invoke their `handle_request` methods.
 
-        Used during request interception. There's also response interception as well
+        Args:
+            request (Request): The outgoing HTTP request to process.
+            class_interceptors (list[Interceptor] | Interceptor): Interceptor instance(s) returned by the injector.
+
+        Returns:
+            Request: The potentially modified request after applicable interceptors have run.
         """
 
         # Usually, injector returns instance itself if there's only one multi value provider.
@@ -96,10 +100,14 @@ class AscHTTPTransport(AsyncBaseTransport):
         return request
     
     async def response_class_interceptors(self, response: Response, class_interceptors: list[Interceptor] | Interceptor):
-        """
-        Handles class interceptors and invokes their `handle_response` methods.
+        """Handle class interceptors and invoke their `handle_response` methods.
 
-        Used during response interception. There's also request interception as well
+        Args:
+            response (Response): The HTTP response to process.
+            class_interceptors (list[Interceptor] | Interceptor): Interceptor instance(s) returned by the injector.
+
+        Returns:
+            Response: The potentially modified response after applicable interceptors have run.
         """
 
         # Usually, injector returns instance itself if there's only one multi value provider.

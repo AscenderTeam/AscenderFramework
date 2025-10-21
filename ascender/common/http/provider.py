@@ -17,28 +17,20 @@ def provideHTTPClient(
         client_instance: type[HTTPClient] = HTTPClient,
         **additional_configs
 ) -> Provider:
-    """
-    Provides an HTTPClient instance configured with AscHTTPTransport.
+    """Provide a configured HTTPClient instance.
 
-    Parameters
-    ----------
-    base_url : str, optional
-        The base URL for the HTTP client, by default ""
-    interceptors : list[InterceptorFn  |  type[Interceptor]], optional
-        A list of interceptor functions or classes to use with the HTTP client, by default []
-    verify : ssl.SSLContext | str | bool, optional
-        Whether to verify SSL certificates, by default True
-    cert : CertTypes | None, optional
-        The SSL certificate to use, by default None
-    trust_env : bool, optional
-        Whether to trust the system's CA certificates, by default True
-    client_instance : type[HTTPClient], optional
-        The HTTP client class to use, by default HTTPClient
+    Args:
+        base_url (str, optional): The base URL for the HTTP client. Defaults to "".
+        interceptors (list[InterceptorFn | type[Interceptor]], optional): A list of interceptor functions or
+            classes to use with the HTTP client. Defaults to [].
+        verify (ssl.SSLContext | str | bool, optional): Whether to verify SSL certificates. Defaults to True.
+        cert (CertTypes | None, optional): The SSL certificate to use. Defaults to None.
+        trust_env (bool, optional): Whether to trust the system's CA certificates. Defaults to True.
+        client_instance (type[HTTPClient], optional): The HTTP client class to use. Defaults to `HTTPClient`.
+        **additional_configs: Additional keyword arguments forwarded to the HTTP client constructor.
 
-    Returns
-    -------
-    Provider
-        A provider for the HTTP client instance.
+    Returns:
+        Provider: A provider for the HTTP client instance.
     """
     
     client = client_instance(base_url, AscHTTPTransport(

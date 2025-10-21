@@ -31,27 +31,18 @@ class HTTPClient:
         url: str,
         options: HTTPOptions | None = None
     ) -> T:
-        """
-        Send a GET request to a desired endpoint.
+        """Send a GET request to a desired endpoint.
 
-        Parameters
-        ----------
-        url : str
-            The URL to send the request to.
-        _resp : type[T] | T, optional
-            The expected response type, by default dict
-        options : HTTPOptions | None, optional
-            Additional options for the request, by default None
+        Args:
+            _resp (type[T] | T, optional): The expected response type. Defaults to dict.
+            url (str): The URL to send the request to.
+            options (HTTPOptions | None, optional): Additional options for the request. Defaults to None.
 
-        Returns
-        -------
-        T
-            The response from the server.
-        
-        Raises
-        ------
-        httpx.HTTPStatusError
-            If an error occurs during the HTTP request.
+        Returns:
+            T: The response from the server.
+
+        Raises:
+            httpx.HTTPStatusError: If an error occurs during the HTTP request.
         """
         payload_options = {} if not options else options
         response = await self.client.get(url, **cast(HTTPOptions, payload_options))
@@ -66,29 +57,19 @@ class HTTPClient:
         content: Any | BaseModel | None,
         options: HTTPOptions | None = None
     ) -> T:
-        """
-        Send a POST request to a desired endpoint.
+        """Send a POST request to a desired endpoint.
 
-        Parameters
-        ----------
-        url : str
-            The URL to send the request to.
-        _resp : type[T] | T, optional
-            The expected response type, by default dict
-        content : Any | BaseModel | None
-            The content to include in the request body (supports pydantic models), by default None
-        options : HTTPOptions | None, optional
-            Additional options for the request, by default None
+        Args:
+            _resp (type[T] | T, optional): The expected response type. Defaults to dict.
+            url (str): The URL to send the request to.
+            content (Any | BaseModel | None): The content to include in the request body (supports pydantic models).
+            options (HTTPOptions | None, optional): Additional options for the request. Defaults to None.
 
-        Returns
-        -------
-        T
-            The response from the server.
+        Returns:
+            T: The response from the server.
 
-        Raises
-        ------
-        httpx.HTTPStatusError
-            If an error occurs during the HTTP request.
+        Raises:
+            httpx.HTTPStatusError: If an error occurs during the HTTP request.
         """
         payload_options = {} if not options else options
         request_payload = self.__prepare_request_body(content)
@@ -105,29 +86,19 @@ class HTTPClient:
         content: Any | BaseModel | None,
         options: HTTPOptions | None = None
     ) -> T:
-        """
-        Send a PUT request to a desired endpoint.
+        """Send a PUT request to a desired endpoint.
 
-        Parameters
-        ----------
-        url : str
-            The URL to send the request to.
-        _resp : type[T] | T, optional
-            The expected response type, by default dict
-        content : Any | BaseModel | None
-            The content to include in the request body (supports pydantic models), by default None
-        options : HTTPOptions | None, optional
-            Additional options for the request, by default None
+        Args:
+            _resp (type[T] | T, optional): The expected response type. Defaults to dict.
+            url (str): The URL to send the request to.
+            content (Any | BaseModel | None): The content to include in the request body (supports pydantic models).
+            options (HTTPOptions | None, optional): Additional options for the request. Defaults to None.
 
-        Returns
-        -------
-        T
-            The response from the server.
+        Returns:
+            T: The response from the server.
 
-        Raises
-        ------
-        httpx.HTTPStatusError
-            If an error occurs during the HTTP request.
+        Raises:
+            httpx.HTTPStatusError: If an error occurs during the HTTP request.
         """
         payload_options = {} if not options else options
         request_payload = self.__prepare_request_body(content)
@@ -144,29 +115,19 @@ class HTTPClient:
         content: Any | BaseModel | None,
         options: HTTPOptions | None = None
     ) -> T:
-        """
-        Send a PATCH request to a desired endpoint.
-        
-        Parameters
-        ----------
-        url : str
-            The URL to send the request to.
-        _resp : type[T] | T, optional
-            The expected response type, by default dict
-        content : Any | BaseModel | None
-            The content to include in the request body (supports pydantic models), by default None
-        options : HTTPOptions | None, optional
-            Additional options for the request, by default None
-        
-        Returns
-        -------
-        T
-            The response from the server.
+        """Send a PATCH request to a desired endpoint.
 
-        Raises
-        ------
-        httpx.HTTPStatusError
-            If an error occurs during the HTTP request.
+        Args:
+            _resp (type[T] | T, optional): The expected response type. Defaults to dict.
+            url (str): The URL to send the request to.
+            content (Any | BaseModel | None): The content to include in the request body (supports pydantic models).
+            options (HTTPOptions | None, optional): Additional options for the request. Defaults to None.
+
+        Returns:
+            T: The response from the server.
+
+        Raises:
+            httpx.HTTPStatusError: If an error occurs during the HTTP request.
         """
         payload_options = {} if not options else options
         request_payload = self.__prepare_request_body(content)
@@ -182,27 +143,18 @@ class HTTPClient:
         url: str,
         options: HTTPOptions | None = None
     ) -> T:
-        """
-        Send a DELETE request to a desired endpoint.
-        
-        Parameters
-        ----------
-        url : str
-            The URL to send the request to.
-        _resp : type[T] | T, optional
-            The expected response type, by default dict
-        options : HTTPOptions | None, optional
-            Additional options for the request, by default None
-        
-        Returns
-        -------
-        T
-            The response from the server.
-            
-        Raises
-        ------
-        httpx.HTTPStatusError
-            If an error occurs during the HTTP request.
+        """Send a DELETE request to a desired endpoint.
+
+        Args:
+            _resp (type[T] | T, optional): The expected response type. Defaults to dict.
+            url (str): The URL to send the request to.
+            options (HTTPOptions | None, optional): Additional options for the request. Defaults to None.
+
+        Returns:
+            T: The response from the server.
+
+        Raises:
+            httpx.HTTPStatusError: If an error occurs during the HTTP request.
         """
         
         
@@ -220,30 +172,20 @@ class HTTPClient:
         content: Any | BaseModel | None = None,
         options: HTTPOptions | None = None
     ) -> Observable[T]:
-        """
-        Send a streaming request to a desired endpoint.
-        Parameters
-        ----------
-        url : str
-            The URL to send the request to.
-        method : Literal["GET", "POST", "PUT", "DELETE", "PATCH"]
-            The HTTP method to use for the request.
-        _resp : type[T] | T, optional
-            The expected response type, by default dict
-        content : Any | BaseModel | None, optional
-            The content to include in the request body (supports pydantic models), by default None
-        options : HTTPOptions | None, optional
-            Additional options for the request, by default None
-        
-        Returns
-        -------
-        Observable[T]
-            An observable that emits the response from the server.
-        
-        Raises
-        ------
-        httpx.HTTPError
-            If an error occurs during the HTTP request.
+        """Send a streaming request to a desired endpoint.
+
+        Args:
+            _resp (type[T] | T, optional): The expected response type. Defaults to dict.
+            method (Literal["GET", "POST", "PUT", "DELETE", "PATCH"]): The HTTP method to use for the request.
+            url (str): The URL to send the request to.
+            content (Any | BaseModel | None, optional): The content to include in the request body (supports pydantic models). Defaults to None.
+            options (HTTPOptions | None, optional): Additional options for the request. Defaults to None.
+
+        Returns:
+            Observable[T]: An observable that emits the response from the server.
+
+        Raises:
+            httpx.HTTPError: If an error occurs during the HTTP request.
         """
         payload_options = {} if not options else options
         request_payload = self.__prepare_request_body(content)
