@@ -112,7 +112,6 @@ Pull Requests missing information or containing mixed concerns will be closed.
 ### 4.1 General
 
 * Code must be formatted with `black` and `isort`.
-* Use `mypy --strict`.
 * Use explicit imports only. `from x import *` is prohibited.
 * Use full type hints. Bare parameters or return types are not accepted.
 * Maintain SRP (Single Responsibility Principle).
@@ -128,11 +127,15 @@ Pull Requests missing information or containing mixed concerns will be closed.
 * Manual dependency injection (`service = SomeService()`).
   Always use the DI container and decorators.
 * Runtime modifications of providers.
+* Global state mutations.
+* Circular dependencies between modules or services.
+* Violations of module boundaries (e.g., core logic in `schematics`).
+
 
 ### 4.3 Required Practices
 
 * Run `poetry run black . && poetry run isort .` before committing.
-* Write deterministic tests.
+* Write deterministic tests (tests are in `src/tests`).
 * Follow naming conventions:
 
   * Classes: `PascalCase`
@@ -145,17 +148,17 @@ Pull Requests missing information or containing mixed concerns will be closed.
 
 ## 5. TESTING REQUIREMENTS
 
-Ascender Framework uses **Specification Tests** (SpecTests).
+Ascender Framework uses **Pytest Interoperability** (PytestInterop).
 
 ### 5.1 Running Tests
 
 ```bash
-ascender spec-tests start
+ascender tests run -m framework
 ```
 
 ### 5.2 Requirements
 
-* Every new feature must include corresponding SpecTests.
+* Every new feature must include corresponding unittests.
 * Existing tests must pass before submission.
 * Tests must not rely on network or random behavior.
 * CI runs all tests; failing builds are automatically rejected.
@@ -164,11 +167,11 @@ ascender spec-tests start
 
 ## 6. ENVIRONMENT
 
-* Python **3.13+** required.
+* Python **3.11+** required (recommended **3.11** unless changes were made that allow for newer and earlier versions).
 * Dependency management via Poetry only.
-* No third-party DI, ORM, or logging libraries allowed.
-* Linting: `black`, `flake8`, `isort`.
-* Type checking: `mypy --strict`.
+* No third-party DI, (untested) ORM, or logging libraries allowed.
+* Linting: `pyright`, `flake8`, `isort`.
+* Type checking: `pyright`.
 * Supported OS: macOS, Linux, Windows (partial).
 
 ---
@@ -227,6 +230,6 @@ Failure to comply with any rule in this document may result in PR rejection or c
 | ------------------- | ------------------------------------------ |
 | Generate components | `ascender g controller <name>`             |
 | Run server          | `ascender run serve`                       |
-| Run SpecTests       | `ascender run tests run -m framework`      |
+| Run Unittests       | `ascender tests run -m framework`          |
 | Format code         | `poetry run black . && poetry run isort .` |
-| Type check          | `poetry run mypy --strict`                 |
+| Type check          | `poetry run pyright`                       |
