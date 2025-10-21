@@ -28,7 +28,7 @@ class UserRepository:
 
 @AscModule(
     providers=[UserService, UserRepository],
-    Declarations=[],
+    declarations=[],
     imports=[],
     exports=[UserService]
 )
@@ -50,7 +50,7 @@ from .auth_module import AuthModule
         AuthModule,      # Import authentication
     ],
     providers=[UserService],
-    Declarations=[UserController],
+    declarations=[UserController],
     exports=[UserService]  # Export for other modules to use
 )
 class UserModule:
@@ -73,7 +73,7 @@ from .auth.auth_module import AuthModule
         ProductModule,
     ],
     providers=[],
-    Declarations=[],
+    declarations=[],
 )
 class AppModule:
     """Root application module."""
@@ -109,7 +109,7 @@ def create_cache_client():
             "value": 'v1'
         },
     ],
-    Declarations=[UserController],
+    declarations=[UserController],
 )
 class UserModule:
     """User module with custom providers."""
@@ -152,8 +152,8 @@ class AppModule:
 ### Providers
 Define services and dependencies that should be instantiated within the module.
 
-### Declarations
-List of Declarations (Controllers or Guards) that belong to this module and handle HTTP requests or any other hooks if defined.
+### declarations
+List of declarations (Controllers or Guards) that belong to this module and handle HTTP requests or any other hooks if defined.
 
 ### Imports
 Other modules whose exported providers should be available in this module.

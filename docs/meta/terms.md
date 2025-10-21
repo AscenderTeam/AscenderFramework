@@ -13,3 +13,4 @@ This page summarizes the contributing terms and guidelines for participating in 
 See also:
 - [Contributing](../meta/contributing.md)
 - [License](../meta/license.md)
+- [Security](../meta/security.md)

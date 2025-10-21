@@ -57,6 +57,7 @@
         { label: 'License', href: links.license },
         { label: 'Contributing', href: links.contributing },
         { label: 'Terms & Guidelines', href: links.terms },
+        { label: 'Security', href: links.security },
       ];
 
       items.forEach((it, idx) => {

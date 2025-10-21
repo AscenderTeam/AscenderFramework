@@ -13,3 +13,4 @@ footer:
   # last_updated: true
   Terms: meta/terms.md
   License: meta/license.md
+  Security: meta/security.md

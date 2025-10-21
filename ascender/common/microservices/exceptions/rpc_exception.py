@@ -10,15 +10,16 @@ class RPCException(Exception):
         message: str,
         code: int = 500,
         details: str | None = None,
-        metadata: dict[str, Any] = None,
+        metadata: dict[str, Any] | None = None,
     ):
         """
         Ascender RPC Exception for Microservices.
         
-        :param message: Error message (human-readable).
-        :param code: HTTP-like error code (e.g., 400, 500).
-        :param details: Optional additional information.
-        :param metadata: Extra context, such as request ID, service name, or trace info.
+        Args:
+            message (str): Error message.
+            code (int, optional): Error code. Defaults to 500.
+            details (str | None, optional): Additional error details. Defaults to None.
+            metadata (dict[str, Any], optional): Additional metadata. Defaults to None.
         """
         self.message = message
         self.code = code
