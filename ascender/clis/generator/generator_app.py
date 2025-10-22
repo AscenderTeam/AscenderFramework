@@ -43,7 +43,7 @@ class GeneratorCLI(GenericCLI):
     def generate_service(
         self,
         name: str,
-        module: str | None = Parameter(names=["-m", "--module"], description="Module to generate the service in"),
+        module: str | None = Parameter(default=None, names=["-m", "--module"], description="Module to generate the service in"),
     ):
         module_update, file_info = self.create_generator_service.generate_service(name, module)
         rprint(f"[green]{file_info['schematic_type']}[/green] {file_info['file_path']} [cyan]({file_info['write_size']} bytes)[/cyan]")
@@ -54,7 +54,7 @@ class GeneratorCLI(GenericCLI):
     def generate_module(
         self,
         name: str,
-        module: str | None = Parameter(names=["-m", "--module"], description="Module to generate the module in"),
+        module: str | None = Parameter(default=None, names=["-m", "--module"], description="Module to generate the module in"),
     ):
         module_update, file_info = self.create_generator_service.generate_module(name, module)
         rprint(f"[green]{file_info['schematic_type']}[/green] {file_info['file_path']} [cyan]({file_info['write_size']} bytes)[/cyan]")
@@ -68,7 +68,7 @@ class GeneratorCLI(GenericCLI):
         name: str,
         entities: tuple[str] | None = Parameter(None, names=["-e", "--entities"], description="List of entities to include in the repository", nargs="*"),
         orm_mode: str = Parameter("default", names=["--orm-mode"], description="ORM mode to use for the repository"),
-        module: str | None = Parameter(names=["-m", "--module"], description="Module to generate the repository in", default=None)
+        module: str | None = Parameter(default=None, names=["-m", "--module"], description="Module to generate the repository in")
     ):
         repository = self.create_generator_service.generate_repository(
             name, 
@@ -89,7 +89,7 @@ class GeneratorCLI(GenericCLI):
         self,
         name: str,
         guard_type: Literal["single", "parametrized"] = Parameter("single", names=["--type"], description="Type of guard to generate"),
-        module: str | None = Parameter(names=["-m", "--module"], description="Module to generate the guard in", default=None),
+        module: str | None = Parameter(default=None, names=["-m", "--module"], description="Module to generate the guard in"),
         guards: tuple[str] | None = Parameter(None, names=["--guards"], description="List of guards to include", nargs="+", action="extend")
     ):
         guard_update, file_info = self.create_generator_service.generate_guard(

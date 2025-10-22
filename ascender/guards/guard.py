@@ -15,7 +15,6 @@ class Guard(ABC):
     __di_module__: AscModuleRef | None = None
     __declaration_type__: str = "guard"
 
-    @abstractmethod
     def __init__(self):
         """
         For Guard configurations and parameters
