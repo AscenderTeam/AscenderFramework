@@ -23,7 +23,11 @@ class RunCLI(BasicCLI):
         
         if "relax" in self.extra: return self.get_cow()
         source = _AscenderConfig().config.paths.source
-        return subprocess.call(f"poetry run python {source}/main.py {' '.join(self.extra)}", shell=True)
+        try:
+            return subprocess.call(f"poetry run python {source}/main.py {' '.join(self.extra)}", shell=True)
+        except KeyboardInterrupt:
+            rprint("\n[yellow]Exiting ascender run mode...[/yellow]")
+            rprint("\n[cyan]Gracefully shutting down the Ascender application...[/cyan]")
 
     def get_cow(self):
         relax_replicas = [
