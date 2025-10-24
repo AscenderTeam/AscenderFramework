@@ -6,7 +6,7 @@ from ascender.common.microservices.abc.rpc_transport import RPCTransport
 
 class BaseContext(BaseModel):
     """Just a stub object, all contexts should inherited of. Used for detecting contexts during `@MessagePattern`'s callback inspection to detect if it's context or not"""
-    
+
     model_config = {"arbitrary_types_allowed": True}
 
     pattern: str

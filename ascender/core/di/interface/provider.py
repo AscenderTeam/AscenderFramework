@@ -1,4 +1,5 @@
 from typing import Any, Callable, ForwardRef, NotRequired, TypeVar
+
 from typing_extensions import TypedDict
 
 
@@ -8,11 +9,12 @@ class ValueProvider(TypedDict):
 
     It will return value specified in `value` for a token as it's type `type(value)`
     """
+
     provide: type[Any] | str
     """
     An injection token
     """
-    
+
     value: Any
     """
     Value of Value Provider
@@ -28,12 +30,12 @@ class StaticClassProvider(TypedDict):
     """
     Configures `AscenderInjector` to return an instance of `use_class` for a token
     """
-    
+
     use_class: NotRequired[type[Any]]
     """
     Class to instantiate for the `token`. By default it will taken from `type` of `provide`
     """
-    
+
     provide: type[Any] | str
     """
     An injection token
@@ -54,7 +56,7 @@ class FactoryProvider(TypedDict):
     """
     Configures the `AscenderInjector` to return a value by invoking a `use_factory` callable
     """
-    
+
     provide: type[Any] | str
     """
     An injection token, (use instance of `type` or anything)
@@ -69,7 +71,7 @@ class FactoryProvider(TypedDict):
     """
     When set True, it will return a list of instances. Useful for multiple providers
     """
-    
+
     deps: NotRequired[list[Any]]
     """
     A list of tokens to be resolved by the injector
@@ -84,8 +86,4 @@ Creates an instance by invoking `__init__` method of `type`.
 Uses specified `type` as an injectable `token`
 """
 
-Provider = (ValueProvider 
-            | StaticClassProvider 
-            | FactoryProvider 
-            | type[Any]
-            | Any)
+Provider = ValueProvider | StaticClassProvider | FactoryProvider | type[Any] | Any

@@ -1,24 +1,24 @@
 import os
 
 from jinja2 import Environment, FileSystemLoader
+
 from ascender.core.database.types.orm_enum import ORMEnum
 from ascender.schematics.base.create import SchematicsCreator
-from ascender.schematics.utilities.case_filters import kebab_case, pascal_case, snake_case
+from ascender.schematics.utilities.case_filters import (kebab_case,
+                                                        pascal_case,
+                                                        snake_case)
 
 
 class ProjectCreator(SchematicsCreator):
-    def __init__(
-        self,
-        path: str,
-        orm_mode: ORMEnum,
-        standalone: bool
-    ):
+    def __init__(self, path: str, orm_mode: ORMEnum, standalone: bool):
         self.path = path
         self.orm_mode = orm_mode
         self.standalone = standalone
 
         self.base_path = os.path.dirname(os.path.abspath(__file__))
-        self.environment = Environment(loader=FileSystemLoader(f"{self.base_path}/files"))
+        self.environment = Environment(
+            loader=FileSystemLoader(f"{self.base_path}/files")
+        )
         self.save_paths = {
             "main": "src/main.py",
             "bootstrap": "src/bootstrap.py",
@@ -29,7 +29,7 @@ class ProjectCreator(SchematicsCreator):
             "configs": "ascender.json",
             "license": "LICENSE",
             "readme": "README.md",
-            "requirements": "requirements.txt"
+            "requirements": "requirements.txt",
         }
 
         self.templates = {
@@ -40,13 +40,13 @@ class ProjectCreator(SchematicsCreator):
             "gitignore": ".gitignore",
             "configs": "ascender.json.asctpl",
             "settings": "settings.py.asctpl",
-            "readme": "README.md"
+            "readme": "README.md",
         }
 
     def load_template(self, template: str):
-        self.environment.filters['pascal_case'] = pascal_case
-        self.environment.filters['snake_case'] = snake_case
-        self.environment.filters['kebab_case'] = kebab_case
+        self.environment.filters["pascal_case"] = pascal_case
+        self.environment.filters["snake_case"] = snake_case
+        self.environment.filters["kebab_case"] = kebab_case
 
         if not (template := self.templates.get(template, None)):
             return None
@@ -55,11 +55,15 @@ class ProjectCreator(SchematicsCreator):
 
     def post_processing(self, template: str):
         if template == "settings":
-            return {
-                "connection_type": f"{self.orm_mode.value}.asctpl"
-            }
+            return {"connection_type": f"{self.orm_mode.value}.asctpl"}
 
-        return {"projectname": os.path.normpath(self.path).replace("\\", "/").split("/")[-1], "standalone": self.standalone, "orm_mode": self.orm_mode.name}
+        return {
+            "projectname": os.path.normpath(self.path)
+            .replace("\\", "/")
+            .split("/")[-1],
+            "standalone": self.standalone,
+            "orm_mode": self.orm_mode.name,
+        }
 
     def process_template(self, post_processing, template):
         return template.render(**post_processing)
@@ -72,13 +76,13 @@ class ProjectCreator(SchematicsCreator):
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
         # Create the controller file containing rendered data
-        with open(os.path.normpath(save_path), 'w') as f:
+        with open(os.path.normpath(save_path), "w") as f:
             f.write(rendered_template)
 
         return {
             "schematic_type": "CREATE",
             "file_path": os.path.relpath(os.path.normpath(save_path)),
-            "write_size": os.path.getsize(os.path.normpath(save_path))
+            "write_size": os.path.getsize(os.path.normpath(save_path)),
         }
 
     def invoke(self):
@@ -89,7 +93,7 @@ class ProjectCreator(SchematicsCreator):
         for template_name, _ in self.templates.items():
             if template_name == "bootstrap" and self.standalone:
                 continue
-            
+
             if template_name == "app_module" and not self.standalone:
                 continue
 
@@ -98,13 +102,16 @@ class ProjectCreator(SchematicsCreator):
 
             post_processing = self.post_processing(template_name)
             rendered_templates[template_name] = self.process_template(
-                post_processing, template)
+                post_processing, template
+            )
 
         # Defining SAVED templates
         saved_templates: list[dict[str, str]] = []
 
         # Handle templates by creating directories, files and filling them up with rendered template content
         for template_name, rendered_template in rendered_templates.items():
-            saved_templates.append(self.save_finalized(template_name, rendered_template))
+            saved_templates.append(
+                self.save_finalized(template_name, rendered_template)
+            )
 
         return saved_templates

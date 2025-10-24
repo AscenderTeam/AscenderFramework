@@ -9,4 +9,5 @@ def _await(coro: Coroutine):
     loop = asyncio.get_event_loop()
     return loop.run_until_complete(coro)
 
+
 __all__ = ["_await"]

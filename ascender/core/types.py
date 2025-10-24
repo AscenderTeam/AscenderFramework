@@ -1,7 +1,6 @@
-from typing import TypeVar, TypedDict
+from typing import TypedDict, TypeVar
 
 from ascender.core.di.interface.provider import Provider
-
 
 T = TypeVar("T")
 

@@ -21,7 +21,7 @@ class Guard(ABC):
         For Guard configurations and parameters
         """
         ...
-    
+
     @abstractmethod
     def __post_init__(self):
         """
@@ -30,36 +30,46 @@ class Guard(ABC):
         ...
 
     @abstractmethod
-    def can_activate(self):
-        ...
-    
+    def can_activate(self): ...
+
     @final
     def handle_di(self):
         if not self.__di_module__:
-            return RootInjector().existing_injector.inject_factory_def(self.__post_init__)()
-        
+            return RootInjector().existing_injector.inject_factory_def(
+                self.__post_init__
+            )()
+
         di_module = self.__di_module__
-        
+
         # Load module or if it's already loaded then just use it and ignore `RuntimeError: module is already loaded`
         try:
             di_module = load_module(di_module)
         except RuntimeError:
             pass
-        
+
         # Execute `self.__post_init__` method
         self.__di_module__._injector.inject_factory_def(self.__post_init__)()
-    
+
     def __call__(self, executable: Callable[..., None]) -> Any:
         if not getattr(executable, "__cmetadata__", None):
-            executable.__cmetadata__ = {"dependencies": [Depends(self.handle_di), Depends(self.can_activate)]}
-        
+            executable.__cmetadata__ = {
+                "dependencies": [Depends(self.handle_di), Depends(self.can_activate)]
+            }
+
         else:
             if not executable.__cmetadata__.get("dependencies", None):
-                executable.__cmetadata__["dependencies"] = [Depends(self.handle_di), Depends(self.can_activate)]
+                executable.__cmetadata__["dependencies"] = [
+                    Depends(self.handle_di),
+                    Depends(self.can_activate),
+                ]
                 return executable
-            
-            executable.__cmetadata__["dependencies"] = [*executable.__cmetadata__["dependencies"], Depends(self.handle_di), Depends(self.can_activate)]
-        
+
+            executable.__cmetadata__["dependencies"] = [
+                *executable.__cmetadata__["dependencies"],
+                Depends(self.handle_di),
+                Depends(self.can_activate),
+            ]
+
         @wraps(executable)
         async def wrapper(*args, **kwargs):
             return await executable(*args, **kwargs)

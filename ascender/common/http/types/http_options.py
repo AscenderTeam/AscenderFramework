@@ -1,6 +1,8 @@
-from typing import NotRequired, TypedDict
-from httpx._types import QueryParamTypes, HeaderTypes, CookieTypes, AuthTypes, ProxyTypes, TimeoutTypes
 from ssl import SSLContext
+from typing import NotRequired, TypedDict
+
+from httpx._types import (AuthTypes, CookieTypes, HeaderTypes, ProxyTypes,
+                          QueryParamTypes, TimeoutTypes)
 
 
 class HTTPOptions(TypedDict):

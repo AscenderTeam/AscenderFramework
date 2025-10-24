@@ -1,9 +1,10 @@
-from inspect import isclass
 import ssl
+from inspect import isclass
 from typing import Any, cast
-from httpx import AsyncBaseTransport, Request, AsyncHTTPTransport, Response
+
+from httpx import AsyncBaseTransport, AsyncHTTPTransport, Request, Response
+from httpx._config import DEFAULT_LIMITS, Limits
 from httpx._types import CertTypes, ProxyTypes
-from httpx._config import Limits, DEFAULT_LIMITS
 
 from ascender.core.applications.root_injector import RootInjector
 
@@ -28,10 +29,19 @@ class AscHTTPTransport(AsyncBaseTransport):
     ) -> None:
         super().__init__()
         self.interceptors = interceptors
-        self.transport = AsyncHTTPTransport(verify=verify, cert=cert, trust_env=trust_env,
-                                            http1=http1, http2=http2, limits=limits,
-                                            proxy=proxy, uds=uds, local_address=local_address,
-                                            retries=retries, socket_options=socket_options)
+        self.transport = AsyncHTTPTransport(
+            verify=verify,
+            cert=cert,
+            trust_env=trust_env,
+            http1=http1,
+            http2=http2,
+            limits=limits,
+            proxy=proxy,
+            uds=uds,
+            local_address=local_address,
+            retries=retries,
+            socket_options=socket_options,
+        )
 
         self._fn_interceptors: list[InterceptorFn] = []
 
@@ -41,15 +51,18 @@ class AscHTTPTransport(AsyncBaseTransport):
         for interceptor in self.interceptors:
             if isclass(interceptor):
                 if issubclass(cast(type[Interceptor], interceptor), Interceptor):
-                    RootInjector.providers.append({
-                        "provide": "HTTP_INTERCEPTOR",
-                        "use_class": interceptor,
-                        "multi": True
-                    })
+                    RootInjector.providers.append(
+                        {
+                            "provide": "HTTP_INTERCEPTOR",
+                            "use_class": interceptor,
+                            "multi": True,
+                        }
+                    )
                     continue
 
                 raise TypeError(
-                    f"Only classes types that extend `Interceptor` are allowed for HTTP interceptors, but got {interceptor.__name__}")
+                    f"Only classes types that extend `Interceptor` are allowed for HTTP interceptors, but got {interceptor.__name__}"
+                )
 
             self._fn_interceptors.append(interceptor)
 
@@ -58,9 +71,12 @@ class AscHTTPTransport(AsyncBaseTransport):
         modified_request = request
         # Handle class interceptors based on dependency injection
         class_interceptors: list[Interceptor] | Interceptor = RootInjector().get(
-            "HTTP_INTERCEPTOR", not_found_value=[], options={"optional": True})
+            "HTTP_INTERCEPTOR", not_found_value=[], options={"optional": True}
+        )
 
-        modified_request = await self.request_class_interceptors(modified_request, class_interceptors)
+        modified_request = await self.request_class_interceptors(
+            modified_request, class_interceptors
+        )
 
         # Handle function interceptors on they own
         for interceptor_fn in self._fn_interceptors:
@@ -74,7 +90,9 @@ class AscHTTPTransport(AsyncBaseTransport):
 
         return response
 
-    async def request_class_interceptors(self, request: Request, class_interceptors: list[Interceptor] | Interceptor):
+    async def request_class_interceptors(
+        self, request: Request, class_interceptors: list[Interceptor] | Interceptor
+    ):
         """
         Handles class interceptors and invokes their `handle_request` methods.
 
@@ -92,10 +110,12 @@ class AscHTTPTransport(AsyncBaseTransport):
                     continue
 
                 request = await interceptor.handle_request(request)
-        
+
         return request
-    
-    async def response_class_interceptors(self, response: Response, class_interceptors: list[Interceptor] | Interceptor):
+
+    async def response_class_interceptors(
+        self, response: Response, class_interceptors: list[Interceptor] | Interceptor
+    ):
         """
         Handles class interceptors and invokes their `handle_response` methods.
 
@@ -113,7 +133,7 @@ class AscHTTPTransport(AsyncBaseTransport):
                     continue
 
                 response = await interceptor.handle_response(response)
-        
+
         return response
 
     async def aclose(self) -> None:

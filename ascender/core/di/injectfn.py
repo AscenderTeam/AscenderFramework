@@ -5,15 +5,14 @@ from ascender.core.di.interface.consts import RAISE_NOT_FOUND
 from ascender.core.errors.scope_error import ScopeError
 from ascender.core.struct.module_ref import AscModuleRef
 
-
 T = TypeVar("T")
 
 
 def inject(
-    token: type[T] | str, 
+    token: type[T] | str,
     fallback: T | Any | None = None,
     *,
-    scope: type[AscModuleRef] | Literal["root"] = "root"
+    scope: type[AscModuleRef] | Literal["root"] = "root",
 ) -> T:
     """
     Retrieves an instance of the specified token from the dependency injection system.
@@ -61,15 +60,21 @@ def inject(
     """
     if isinstance(scope, str):
         if scope == "root":
-            return RootInjector().existing_injector.get(token, not_found_value=RAISE_NOT_FOUND if not fallback else fallback)
-        
+            return RootInjector().existing_injector.get(
+                token, not_found_value=RAISE_NOT_FOUND if not fallback else fallback
+            )
+
         raise ScopeError(f"Unable to access specified `{scope}` scope")
-    
+
     if not hasattr(scope, "__asc_module__"):
         raise ScopeError(f"Unable to access specified `{scope.__name__}` scope")
-    
+
     if not hasattr(scope, "_injector"):
-        raise RuntimeError(f"Unable to access scope `{scope.__name__}` due to `NotLoadedModule` error!")
-    
+        raise RuntimeError(
+            f"Unable to access scope `{scope.__name__}` due to `NotLoadedModule` error!"
+        )
+
     loaded_injector = scope._injector
-    return loaded_injector.get(token, not_found_value=RAISE_NOT_FOUND if not fallback else fallback)
+    return loaded_injector.get(
+        token, not_found_value=RAISE_NOT_FOUND if not fallback else fallback
+    )

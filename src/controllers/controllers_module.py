@@ -1,5 +1,5 @@
-from ascender.core.utils.repository import provideRepository
 from ascender.core import AscModule
+from ascender.core.utils.repository import provideRepository
 from controllers.main_controller import MainController
 
 
@@ -7,12 +7,8 @@ from controllers.main_controller import MainController
     imports=[
         MainController,
     ],
-    declarations=[
-    ],
+    declarations=[],
     providers=[],
-    exports=[
-        MainController
-    ]
+    exports=[MainController],
 )
-class ControllersModule:
-    ...
+class ControllersModule: ...

@@ -1,7 +1,6 @@
 from inspect import Parameter
 from typing import Any, Generic, TypeVar
 
-
 T = TypeVar("T")
 
 
@@ -10,6 +9,6 @@ class InjectionMetadata(Generic[T]):
         self.token = token
         self.fallback = fallback
         self.type = T
-    
+
     def __repr__(self):
         return f"InjectionMetadata(token={self.token}, fallback={self.fallback}, type={self.type})"

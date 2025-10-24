@@ -1,6 +1,7 @@
 from typing import Any, ForwardRef, cast
 
 from ascender.core.di.utils.providers import is_type_provider
+
 from ..interface.provider import Provider
 
 
@@ -17,7 +18,9 @@ def is_forward_ref(token: Any) -> bool:
     return isinstance(token, (str, ForwardRef))
 
 
-def resolve_dep_forward_ref(token: str | ForwardRef, records: list[type[Any]]) -> type[Any]:
+def resolve_dep_forward_ref(
+    token: str | ForwardRef, records: list[type[Any]]
+) -> type[Any]:
     """
     Resolves dependency forward reference using Dependency records of `AscenderInjector`
 
@@ -39,18 +42,24 @@ def resolve_dep_forward_ref(token: str | ForwardRef, records: list[type[Any]]) -
     elif isinstance(token, str):
         resolved_name = token
     else:
-        raise TypeError(f"Token should be either a forward reference or string, but got {type(token)}")
-    
+        raise TypeError(
+            f"Token should be either a forward reference or string, but got {type(token)}"
+        )
+
     # Resolve the token from the records map
     resolved_type = records_map.get(resolved_name)
 
     if resolved_type is None:
         raise TypeError(f"Token '{resolved_name}' not found in records!")
-    
+
     return resolved_type
 
 
-def resolve_forward_ref(token: str | type[Any] | ForwardRef, globalns: dict[str, Any] | None = None, localns: dict[str, Any] | None = None) -> type[Any] | str:
+def resolve_forward_ref(
+    token: str | type[Any] | ForwardRef,
+    globalns: dict[str, Any] | None = None,
+    localns: dict[str, Any] | None = None,
+) -> type[Any] | str:
     """
     Resolvs forward reference for token.
     If the token is direct type, then it will return it as a direct type
@@ -74,17 +83,17 @@ def resolve_forward_ref(token: str | type[Any] | ForwardRef, globalns: dict[str,
         # Handle forward ref
         try:
             if isinstance(token, ForwardRef):
-                resolved = token._evaluate(globalns, localns)  # type: ignore | Resolve ForwardRef 
+                resolved = token._evaluate(globalns, localns)  # type: ignore | Resolve ForwardRef
             else:  # Assume string-based forward reference
-                resolved = eval(token, globalns, localns) # type: ignore
+                resolved = eval(token, globalns, localns)  # type: ignore
             return cast(type[Any], resolved)
         except Exception as e:
             print(e)
             return str(token)
-    
+
     elif isinstance(token, type):
         return token
-    
+
     else:
         # Raise error for unsupported cases
         raise ValueError(f"Unsupported token type: {type(token)} - {token}")

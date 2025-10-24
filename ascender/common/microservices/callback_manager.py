@@ -1,7 +1,7 @@
 import inspect
 import json
-from logging import Logger
 import traceback
+from logging import Logger
 from typing import Any, Callable, Optional, Tuple, Type, get_args
 
 from pydantic import BaseModel, ValidationError
@@ -10,13 +10,17 @@ from ascender.common import BaseDTO, BaseResponse
 from ascender.common.microservices.abc.context import BaseContext
 from ascender.common.microservices.exceptions.rpc_exception import RPCException
 from ascender.common.microservices.instances.kafka.context import KafkaContext
-from ascender.common.microservices.instances.kafka.event import KafkaEventTransport
+from ascender.common.microservices.instances.kafka.event import \
+    KafkaEventTransport
 from ascender.common.microservices.instances.kafka.rpc import KafkaRPCTransport
 from ascender.common.microservices.instances.redis.context import RedisContext
-from ascender.common.microservices.instances.redis.event import RedisEventTransport
+from ascender.common.microservices.instances.redis.event import \
+    RedisEventTransport
 from ascender.common.microservices.instances.redis.rpc import RedisRPCTransport
 from ascender.common.microservices.instances.transport import TransportInstance
-from ascender.common.microservices.utils.data_parser import parse_data, validate_json, validate_python
+from ascender.common.microservices.utils.data_parser import (parse_data,
+                                                             validate_json,
+                                                             validate_python)
 from ascender.core import inject
 
 
@@ -68,7 +72,9 @@ class CallbackManager:
                 continue
 
             # Fallback: check if the default value has a "context_type" attribute.
-            if param.default != inspect._empty and hasattr(param.default, "context_type"):
+            if param.default != inspect._empty and hasattr(
+                param.default, "context_type"
+            ):
                 return param_name, param.annotation
 
         return None
@@ -92,7 +98,9 @@ class CallbackManager:
                 continue
 
             # Check if the parameter is a subclass of a Pydantic model or DTO.
-            if isinstance(param.annotation, type) and issubclass(param.annotation, (BaseModel, BaseDTO, BaseResponse)):
+            if isinstance(param.annotation, type) and issubclass(
+                param.annotation, (BaseModel, BaseDTO, BaseResponse)
+            ):
                 return param_name, param.annotation
 
             # Otherwise, assume this parameter represents the data.
@@ -100,7 +108,9 @@ class CallbackManager:
 
         return None
 
-    async def handle_rpc_call(self, instance_context: BaseContext, payload: dict[str, Any]) -> None:
+    async def handle_rpc_call(
+        self, instance_context: BaseContext, payload: dict[str, Any]
+    ) -> None:
         """
         Executes an RPC callback and sends the serialized response.
 
@@ -114,7 +124,7 @@ class CallbackManager:
             await instance_context.rpc_transport.raise_exception(
                 instance_context.pattern,
                 f"response-{instance_context.correlation_id}",
-                e
+                e,
             )
             return
         except Exception as e:
@@ -154,9 +164,13 @@ class CallbackManager:
             return False
 
         # Decode the key if it's in bytes.
-        return context.correlation_id.startswith("defer-") or context.correlation_id.startswith("response-")
+        return context.correlation_id.startswith(
+            "defer-"
+        ) or context.correlation_id.startswith("response-")
 
-    async def __call__(self, context: BaseContext, data: Any, metadata: dict[str, Any]) -> None:
+    async def __call__(
+        self, context: BaseContext, data: Any, metadata: dict[str, Any]
+    ) -> None:
         """
         Prepares the payload and executes the callback based on the messaging pattern.
 
@@ -195,11 +209,9 @@ class CallbackManager:
                 # Handle validation errors
                 try:
                     try:
-                        payload[field_name] = validate_json(
-                            decoded_data, field_type)
+                        payload[field_name] = validate_json(decoded_data, field_type)
                     except ValidationError:
-                        payload[field_name] = validate_python(
-                            decoded_data, field_type)
+                        payload[field_name] = validate_python(decoded_data, field_type)
 
                 except ValidationError as e:
                     traceback.print_exc()
@@ -215,14 +227,15 @@ class CallbackManager:
                         "Skipping callback: Expected context type %s, but message broker provided %s based on metadata type '%s'.",
                         expected_context_cls.__name__,
                         type(context).__name__,
-                        metadata.get("transporter", "unknown")
+                        metadata.get("transporter", "unknown"),
                     )
                     return
                 payload[context_field] = context
 
         except Exception as e:
             self.logger.exception(
-                "Error while preparing payload for callback execution: %s", e)
+                "Error while preparing payload for callback execution: %s", e
+            )
             raise
 
         # Route to the appropriate handler based on the messaging pattern.
@@ -232,7 +245,7 @@ class CallbackManager:
                 await context.rpc_transport.raise_exception(
                     context.pattern,
                     f"response-{context.correlation_id}",
-                    raised_exception
+                    raised_exception,
                 )
                 return
             await self.handle_rpc_call(context, payload)
@@ -240,7 +253,9 @@ class CallbackManager:
             if raised_exception:
                 # Log the exception and continue processing
                 self.logger.error(
-                    "Error while preparing payload for event execution: %s", raised_exception)
+                    "Error while preparing payload for event execution: %s",
+                    raised_exception,
+                )
                 return
-            
+
             await self.handle_event_call(payload)

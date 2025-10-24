@@ -1,7 +1,8 @@
-from starlette.middleware.cors import CORSMiddleware
-from ascender.abc.middleware import AscenderMiddleware
-
 import typing
+
+from starlette.middleware.cors import CORSMiddleware
+
+from ascender.abc.middleware import AscenderMiddleware
 
 
 class AscenderCORSMiddleware(AscenderMiddleware):
@@ -23,8 +24,10 @@ class AscenderCORSMiddleware(AscenderMiddleware):
             "allow_credentials": allow_credentials,
             "allow_origin_regex": allow_origin_regex,
             "expose_headers": expose_headers,
-            "max_age": max_age
+            "max_age": max_age,
         }
-    
+
     async def __call__(self, scope, receive, send):
-        return await self.middleware_instance(self.app, **self.middleware_params)(scope, receive, send)
+        return await self.middleware_instance(self.app, **self.middleware_params)(
+            scope, receive, send
+        )

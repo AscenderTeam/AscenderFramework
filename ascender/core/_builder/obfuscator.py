@@ -1,4 +1,5 @@
 import os
+
 import PyInstaller.__main__
 
 
@@ -7,7 +8,7 @@ def obfuscate_project(
     output_dir: str,
     source_dir: str,
     hidden_imports: list[str] = [],
-    metadata_imports: list[str] = []
+    metadata_imports: list[str] = [],
 ):
     """
     Obfuscates a Python project using PyArmor.
@@ -29,26 +30,33 @@ def obfuscate_project(
 
     # Define additional python-packages & metadatas
     _hidden_imports = [f"--hidden-import={package}" for package in hidden_imports]
-    _recursive_metadata = [f"--recursive-copy-metadata={metadata}" for metadata in metadata_imports]
+    _recursive_metadata = [
+        f"--recursive-copy-metadata={metadata}" for metadata in metadata_imports
+    ]
 
     print(_hidden_imports)
     print(_recursive_metadata)
     # Define PyArmor obfuscation options
     options = [
-        source_dir,    # Source directory
-        "--onefile",   # Batch everything into one file
+        source_dir,  # Source directory
+        "--onefile",  # Batch everything into one file
         "--noconfirm",
-        "--recursive-copy-metadata", "tortoise-orm",
-        "--recursive-copy-metadata", "readchar",
-        "--recursive-copy-metadata", "sqlalchemy",
+        "--recursive-copy-metadata",
+        "tortoise-orm",
+        "--recursive-copy-metadata",
+        "readchar",
+        "--recursive-copy-metadata",
+        "sqlalchemy",
         "--hidden-import=pydantic_core",
         "--hidden-import=pydantic.typing",
         "--hidden-import=pydantic",
         "--hidden-import=uvicorn",
-        "--add-data", "ascender.json:ascender.json",
-        "--distpath", output_dir,
+        "--add-data",
+        "ascender.json:ascender.json",
+        "--distpath",
+        output_dir,
         *_hidden_imports,
-        *_recursive_metadata
+        *_recursive_metadata,
     ]
 
     # Run PyArmor obfuscation

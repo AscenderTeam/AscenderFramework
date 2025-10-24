@@ -7,18 +7,17 @@ from ascender.common.microservices.utils.data_parser import parse_data
 
 
 def parse_redis_encodable(
-    correlationId: str | None = None, 
-    data: Any | BaseModel | None = None
+    correlationId: str | None = None, data: Any | BaseModel | None = None
 ) -> bytes:
     """
     Prepares and serializes data into the Ascender framework's Redis message format.
-    
+
     The standardized message format is:
         {
             "key": <provided key>,
             "data": <serialized data>
         }
-    
+
     If `data` is a Pydantic model, it is converted using its built-in JSON dump method.
     Otherwise, the raw data is included (if provided) or defaults to None.
 
@@ -38,10 +37,7 @@ def parse_redis_encodable(
         serialized_data = data if data is not None else None
 
     # Build the payload dictionary in the expected format.
-    payload = {
-        "correlationId": correlationId,
-        "payload": serialized_data
-    }
+    payload = {"correlationId": correlationId, "payload": serialized_data}
 
     # Serialize the payload to a JSON string and then encode it to bytes.
     json_str = parse_data(payload)
@@ -50,12 +46,12 @@ def parse_redis_encodable(
 
 def decode_redis_data(data: bytes | str | int | float | None) -> dict[str, Any]:
     """
-    Decodes data received from Redis pubsub and converts it into the Ascender framework's 
+    Decodes data received from Redis pubsub and converts it into the Ascender framework's
     standardized pubsub message format.
 
     The function accepts data in several formats:
       - If `data` is bytes or a string, it will attempt to decode and parse it as JSON.
-      - If JSON parsing is successful and the resulting object is a dict that contains both 
+      - If JSON parsing is successful and the resulting object is a dict that contains both
         'key' and 'data', it is returned as is.
       - Otherwise, the data is wrapped in a dictionary with 'key' set to None.
 

@@ -1,33 +1,39 @@
 import asyncio
 import json
 import traceback
+from typing import TYPE_CHECKING, Any
 from uuid import uuid4
-from reactivex import Subject, operators as ops, throw, timer
+
+from reactivex import Subject
+from reactivex import operators as ops
+from reactivex import throw, timer
 from reactivex.scheduler.eventloop import AsyncIOScheduler
 
 from ascender.common.microservices.abc.rpc_transport import RPCTransport
 from ascender.common.microservices.exceptions.rpc_exception import RPCException
-from ascender.common.microservices.utils.data_parser import decode_message, parse_data
+from ascender.common.microservices.utils.data_parser import (decode_message,
+                                                             parse_data)
 from ascender.core import inject
-from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from ascender.common.microservices.instances.tcp.context import TCPContext
-    from ascender.common.microservices.instances.tcp.transporter import TCPTransporter
     from ascender.common.microservices.instances.tcp.client import TCPClient
+    from ascender.common.microservices.instances.tcp.context import TCPContext
+    from ascender.common.microservices.instances.tcp.transporter import \
+        TCPTransporter
+
 
 class TCPRPCTransport(RPCTransport):
     def __init__(
-            self, 
-            transport: "TCPTransporter | TCPClient", 
-            writer: asyncio.StreamWriter | None = None
-        ):
+        self,
+        transport: "TCPTransporter | TCPClient",
+        writer: asyncio.StreamWriter | None = None,
+    ):
         super().__init__(transport)
         self.response_subject = Subject()
         self.logger = inject("ASC_LOGGER")
         if transport.__class__.__name__ == "TCPClient":
             self.writer = transport.writer
-        
+
         else:
             self.writer = writer
 
@@ -69,12 +75,13 @@ class TCPRPCTransport(RPCTransport):
             on_error=throw_error,
         )
 
-        self.logger.debug(f"Sending message to {pattern} with correlation ID {correlation_id}")
-        
+        self.logger.debug(
+            f"Sending message to {pattern} with correlation ID {correlation_id}"
+        )
+
         # Send the message
         self.writer.write(message.encode())
         await self.writer.drain()
-
 
         self.logger.info(f"Successfully sent message pattern {pattern}")
         self.logger.debug(f"Now waiting for response from pattern {pattern}")
@@ -83,7 +90,7 @@ class TCPRPCTransport(RPCTransport):
         subscription.dispose()
 
         self.logger.info(f"Received response for pattern {pattern}")
-        
+
         return await response
 
     async def send_nack_request(self, pattern, data, timeout):
@@ -106,8 +113,7 @@ class TCPRPCTransport(RPCTransport):
         observable = self.response_subject.pipe(
             ops.subscribe_on(asyncio_scheduler),
             ops.timeout_with_mapper(
-                timer(timeout),
-                lambda _: throw(TimeoutError("Response timed out."))
+                timer(timeout), lambda _: throw(TimeoutError("Response timed out."))
             ),
             ops.filter(lambda pair: pair[0] == f"response-{correlation_id}"),
             ops.first(),
@@ -120,7 +126,9 @@ class TCPRPCTransport(RPCTransport):
         Sends a response back to the caller.
         (Typically used on the server side via the context's writer.)
         """
-        self.logger.debug(f"Responding on pattern {pattern} with correlation ID {correlation_id}")
+        self.logger.debug(
+            f"Responding on pattern {pattern} with correlation ID {correlation_id}"
+        )
         envelope = {
             "correlationId": correlation_id,
             "pattern": pattern,
@@ -132,8 +140,10 @@ class TCPRPCTransport(RPCTransport):
 
     async def raise_exception(self, pattern, correlation_id, exception):
         if not isinstance(exception, RPCException):
-            raise TypeError(f"Expected RPCException, got {exception.__class__.__name__}")
-        
+            raise TypeError(
+                f"Expected RPCException, got {exception.__class__.__name__}"
+            )
+
         envelope = {
             "correlationId": correlation_id,
             "pattern": pattern,
@@ -149,13 +159,16 @@ class TCPRPCTransport(RPCTransport):
     async def process_response(self, correlation_id, response, **kwargs):
         if not correlation_id:
             return
-        if not (correlation_id.startswith("response-") or correlation_id.startswith("defer-")):
+        if not (
+            correlation_id.startswith("response-")
+            or correlation_id.startswith("defer-")
+        ):
             return
         try:
             decoded = decode_message(response)
         except Exception:
             decoded = response
-        
+
         if isinstance(decoded, dict):
             if RPCException.is_exception(decoded):
                 self.response_subject.on_error(RPCException.from_dict(decoded))
@@ -163,7 +176,9 @@ class TCPRPCTransport(RPCTransport):
 
         self.response_subject.on_next((correlation_id, decoded, kwargs))
 
-    async def listen_for_requests(self, context: "TCPContext", data: Any, metadata: dict) -> None:
+    async def listen_for_requests(
+        self, context: "TCPContext", data: Any, metadata: dict
+    ) -> None:
         """
         For TCP, clients typically do not listen for incoming requests.
         This method is provided for interface compatibility.

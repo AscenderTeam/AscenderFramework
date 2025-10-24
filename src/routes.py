@@ -1,7 +1,7 @@
 from typing import Sequence
+
 from ascender.core.router.interface.route import RouterRoute
 from controllers.main_controller import MainController
-
 
 routes: Sequence[RouterRoute] = [
     {

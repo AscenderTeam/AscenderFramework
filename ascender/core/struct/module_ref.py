@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING, Any, MutableSequence
+
 from ascender.core.di.injector import AscenderInjector
 
 if TYPE_CHECKING:

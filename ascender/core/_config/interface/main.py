@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 
-from .environment import PathsConfig, EnvironmentsConfig
-from .runtime import BuildConfig, LoggingConfig, ServerConfig, FeaturesConfig
+from .environment import EnvironmentsConfig, PathsConfig
+from .runtime import BuildConfig, FeaturesConfig, LoggingConfig, ServerConfig
 
 
 class AscenderConfig(BaseModel):
@@ -11,4 +11,6 @@ class AscenderConfig(BaseModel):
     build: BuildConfig = Field(..., description="Build configuration.")
     server: ServerConfig = Field(..., description="Server configuration.")
     features: FeaturesConfig = Field(..., description="Framework features.")
-    environment: EnvironmentsConfig = Field(..., description="Environment-specific settings.")
+    environment: EnvironmentsConfig = Field(
+        ..., description="Environment-specific settings."
+    )

@@ -5,7 +5,8 @@ from typing import TypeVar
 
 from ascender.common.microservices.abc.transporter import BaseTransporter
 from ascender.common.microservices.instances.redis.context import RedisContext
-from ascender.common.microservices.instances.redis.event import RedisEventTransport
+from ascender.common.microservices.instances.redis.event import \
+    RedisEventTransport
 from ascender.common.microservices.instances.redis.rpc import RedisRPCTransport
 
 T = TypeVar("T")
@@ -41,12 +42,16 @@ class RedisTransporter(BaseTransporter):
         for channels based on the event bus subscriptions.
         """
         from redis.exceptions import ConnectionError
+
         self.is_stopped = False
-        self.publisher = self.redis.from_url(self.redis_url, **self.configs.get("publisher", {}))
+        self.publisher = self.redis.from_url(
+            self.redis_url, **self.configs.get("publisher", {})
+        )
         self.subscriber = self.publisher.pubsub(**self.configs.get("subscriber", {}))
 
         channels = [
-            pattern for pattern in self.event_bus._subscriptions if "*" not in pattern]
+            pattern for pattern in self.event_bus._subscriptions if "*" not in pattern
+        ]
         if channels:
             await self.subscriber.subscribe(*channels)
         try:
@@ -63,7 +68,9 @@ class RedisTransporter(BaseTransporter):
                         continue
 
                     metadata = {
-                        "pattern": channel.decode() if isinstance(channel, bytes) else channel,
+                        "pattern": (
+                            channel.decode() if isinstance(channel, bytes) else channel
+                        ),
                         "transporter": "redis",
                     }
                     try:
@@ -82,7 +89,9 @@ class RedisTransporter(BaseTransporter):
                         pattern=metadata["pattern"],
                         channel=metadata["pattern"],
                     )
-                    await self.event_bus.emit(context, metadata["pattern"], raw_data, metadata)
+                    await self.event_bus.emit(
+                        context, metadata["pattern"], raw_data, metadata
+                    )
                 except Exception:
                     traceback.print_exc()
         except ConnectionError:
@@ -103,6 +112,7 @@ class RedisTransporter(BaseTransporter):
         if not isclass(rtype):
             raise TypeError(f"Unknown transporter instance type {rtype}")
         from redis.asyncio import Redis
+
         if issubclass(rtype, Redis):
             return self.publisher
         raise TypeError(f"Unknown transporter instance type {rtype.__name__}")

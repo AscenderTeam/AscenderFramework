@@ -4,15 +4,14 @@ from ascender.core.applications.root_injector import RootInjector
 from ascender.core.di.interface.provider import Provider
 from ascender.core.struct.module_ref import AscModuleRef
 
-
 T = TypeVar("T")
 
 
 class Injectable:
     def __init__(
-        self, 
+        self,
         provided_in: Literal["root", "any"] | type[AscModuleRef] | None = None,
-        provided_as: Provider | None = None
+        provided_as: Provider | None = None,
     ):
         self.provided_in = provided_in
         self.provider_meta = provided_as
@@ -20,7 +19,7 @@ class Injectable:
     def __call__(self, cls: type[T]) -> type[T]:
         if not self.provided_in:
             return cls
-        
+
         if isinstance(self.provided_in, str):
             if self.provided_in == "root":
                 self._register_in_root(cls)
@@ -35,7 +34,11 @@ class Injectable:
             if "@SELF" in self.provider_meta["provide"]:
                 self.provider_meta["provide"] = cls
 
-        return {"provide": cls, "use_class": cls} if not self.provider_meta else self.provider_meta
+        return (
+            {"provide": cls, "use_class": cls}
+            if not self.provider_meta
+            else self.provider_meta
+        )
 
     def _register_in_root(self, cls: type[T]):
         root_injector = RootInjector()

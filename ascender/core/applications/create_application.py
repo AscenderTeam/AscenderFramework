@@ -1,4 +1,5 @@
 from logging import getLogger
+
 from ascender.clis.builder.build_app import BuildCLI
 from ascender.clis.generator.generator_app import GeneratorCLI
 from ascender.clis.new.new_app import NewCLI
@@ -8,28 +9,28 @@ from ascender.common.api_docs import DefineAPIDocs
 from ascender.core.cli.provider import provideCLI
 from ascender.core.database.engine import DatabaseEngine
 from ascender.core.di.abc.base_injector import Injector
+from ascender.core.di.interface.provider import Provider
 from ascender.core.router.graph import RouterGraph
 from ascender.core.struct.module_ref import AscModuleRef
 from ascender.core.types import IBootstrap
+
 from .application import Application
 from .root_injector import RootInjector
-from ascender.core.di.interface.provider import Provider
 
 
 def createApplication(
-    app_module: type[AscModuleRef] | None = None, 
-    config: IBootstrap | None = None
+    app_module: type[AscModuleRef] | None = None, config: IBootstrap | None = None
 ) -> Application:
     """
     Creates an Application instance based on the provided app module or configuration.
-    
+
     Args:
         app_module: An optional application module implementing AscModuleRef.
         config: An optional list of providers for root-level configuration.
-        
+
     Returns:
         An initialized Application instance.
-    
+
     Raises:
         ValueError: If both `app_module` and `config` are None or specified at the same time.
     """
@@ -47,19 +48,19 @@ def createApplication(
             "provide": Application,
             "use_factory": lambda graph, cli, docs, injector: Application(
                 graph,
-                cli_settings=cli, 
+                cli_settings=cli,
                 docs_settings=docs,
-                database_settings=injector.get(DatabaseEngine, not_found_value=None, options={
-                    "optional": True
-                }),
-                middleware_settings=injector.get("ASC_MIDDLEWARE", not_found_value=[])
+                database_settings=injector.get(
+                    DatabaseEngine, not_found_value=None, options={"optional": True}
+                ),
+                middleware_settings=injector.get("ASC_MIDDLEWARE", not_found_value=[]),
             ),
-            "deps": [RouterGraph, "CLI_INTERFACE", DefineAPIDocs, Injector]
+            "deps": [RouterGraph, "CLI_INTERFACE", DefineAPIDocs, Injector],
         },
         {
             "provide": "ASC_LOGGER",
-            "use_factory": lambda: getLogger("Ascender Framework")
-        }
+            "use_factory": lambda: getLogger("Ascender Framework"),
+        },
     ]
 
     if app_module is None and config is not None:
@@ -76,7 +77,9 @@ def createApplication(
         if not root_injector.injector:
             raise RuntimeError("Root injector is not initialized.")
 
-        app_injector = app_module.__asc_module__.create_module(root_injector.existing_injector)
+        app_injector = app_module.__asc_module__.create_module(
+            root_injector.existing_injector
+        )
         return app_injector._injector.get(Application)  # type: ignore
 
     # Invalid argument combination

@@ -1,14 +1,15 @@
 from __future__ import annotations
 
+import sys
 from types import FunctionType
 from typing import TYPE_CHECKING, Optional, Tuple, Union
-from rich.console import Console
-from rich.table import Table
-from rich.panel import Panel
-from rich.prompt import Prompt, Confirm
-from rich import print as cprint
+
 from readchar import readchar
-import sys
+from rich import print as cprint
+from rich.console import Console
+from rich.panel import Panel
+from rich.prompt import Confirm, Prompt
+from rich.table import Table
 
 if TYPE_CHECKING:
     from ascender.core.applications.application import Application
@@ -21,7 +22,14 @@ class ContextApplication:
         self.console = Console(emoji=emoji)
         self.application = application
 
-    def console_print(self, message: Optional[str] = "", color: Optional[Union[str, Tuple[int]]] = None, table: Optional[Table] = None, panel: Optional[Panel] = None, **kwargs):
+    def console_print(
+        self,
+        message: Optional[str] = "",
+        color: Optional[Union[str, Tuple[int]]] = None,
+        table: Optional[Table] = None,
+        panel: Optional[Panel] = None,
+        **kwargs,
+    ):
         """
         ## Console print
 
@@ -42,7 +50,9 @@ class ContextApplication:
         if panel:
             cprint(panel)
 
-    def console_pause(self, msg: Optional[str] = "Press any key to exit...", key: Optional[str] = None):
+    def console_pause(
+        self, msg: Optional[str] = "Press any key to exit...", key: Optional[str] = None
+    ):
         """
         ## Console pause.
 
@@ -78,9 +88,14 @@ class ContextApplication:
 
         return callback(self, key)
 
-    def console_input(self, msg: Optional[str] = "",
-                      password: bool = False, 
-                      show_default: bool = True, show_choices: bool = True, **kwargs) -> str:
+    def console_input(
+        self,
+        msg: Optional[str] = "",
+        password: bool = False,
+        show_default: bool = True,
+        show_choices: bool = True,
+        **kwargs,
+    ) -> str:
         """
         ## Console input
 
@@ -92,8 +107,15 @@ class ContextApplication:
             show_default (bool, optional): Will be displayed the default value if user ain't going to pass any value. Defaults to True.
             show_choices (bool, optional): Displays choices (Y/n) showing what type of choice can user select. Defaults to True.
         """
-        return Prompt.ask(msg, console=self.console, password=password, show_default=show_default, show_choices=show_choices, **kwargs)
-    
+        return Prompt.ask(
+            msg,
+            console=self.console,
+            password=password,
+            show_default=show_default,
+            show_choices=show_choices,
+            **kwargs,
+        )
+
     def console_confirm(self, msg: Optional[str] = "", **kwargs) -> bool:
         """
         ## Console confirm

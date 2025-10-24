@@ -8,7 +8,6 @@ from ascender.core.di.interface.injector import InjectorOptions
 
 from ..interface.provider import Provider
 
-
 T = TypeVar("T")
 
 
@@ -19,9 +18,7 @@ class Injector(ABC):
         self,
         token: type[T],
         not_found_value: Any | None = RAISE_NOT_FOUND,
-        options: InjectorOptions = {
-            "optional": False
-        }
+        options: InjectorOptions = {"optional": False},
     ) -> T | Any | None:
         """
         Resolves and gets dependency by `token`
@@ -43,9 +40,7 @@ class Injector(ABC):
         self,
         token: str | Any,
         not_found_value: Any | None = RAISE_NOT_FOUND,
-        options: InjectorOptions = {
-            "optional": False
-        }
+        options: InjectorOptions = {"optional": False},
     ) -> Any | None:
         """
         Resolves and gets dependency by `token` specifically as other type then `type` instance or it's passed as a forward reference
@@ -62,13 +57,9 @@ class Injector(ABC):
         """
         ...
 
-    
     def get(
         self,
         token: type[T] | str | Any,
         not_found_value: Any | None = RAISE_NOT_FOUND,
-        options: InjectorOptions = {
-            "optional": False
-        }
-    ) -> T | Any | None:
-        ...
+        options: InjectorOptions = {"optional": False},
+    ) -> T | Any | None: ...

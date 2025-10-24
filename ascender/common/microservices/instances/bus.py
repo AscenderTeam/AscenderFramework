@@ -1,20 +1,24 @@
 import asyncio
 import re
-from typing import Any, Awaitable, Callable, MutableMapping
 import uuid
+from typing import Any, Awaitable, Callable, MutableMapping
+
 from ascender.common.injectable import Injectable
 from ascender.common.microservices.abc.context import BaseContext
 from ascender.common.microservices.abc.event_bus import TransportEventBus
-from ascender.common.microservices.types.consumer_metadata import ConsumerMetadata
+from ascender.common.microservices.types.consumer_metadata import \
+    ConsumerMetadata
 
 
 @Injectable()
 class SubscriptionEventBus(TransportEventBus):
     def __init__(self):
         # Token mapping: topic -> { token: callback, ... }
-        self._subscriptions: MutableMapping[str, dict[str, Callable[[Any, Any], Awaitable[None]]]] = {}
+        self._subscriptions: MutableMapping[
+            str, dict[str, Callable[[Any, Any], Awaitable[None]]]
+        ] = {}
         self.callbacks: list[Callable[[Any, Any], Awaitable[None]]] = []
-    
+
     async def emit(self, context, topic, data, metadata):
         """
         Emits event data into all subscriptions for current topic
@@ -25,7 +29,7 @@ class SubscriptionEventBus(TransportEventBus):
         """
         # List of tasks to execute in parallel
         tasks = []
-        
+
         # Check for wildcards
         for sub_topic, callbacks in self._subscriptions.items():
             if "*" in sub_topic:
@@ -42,7 +46,7 @@ class SubscriptionEventBus(TransportEventBus):
             # Execute all tasks at the same time using `asyncio.gather`
             await asyncio.gather(*tasks, return_exceptions=True)
             tasks = []
-    
+
     def subscribe(self, topic, callback):
         """
         Subscribes to specific types of event
@@ -55,14 +59,17 @@ class SubscriptionEventBus(TransportEventBus):
         # Check if topic not in subscriptions, if not then just add
         if topic not in self._subscriptions:
             self._subscriptions[topic] = {}
-        
+
         # Add token for topic
         self._subscriptions[topic][token] = callback
         return token
-    
-    def subscribe_all(self, callback: Callable[[BaseContext, str, Any, ConsumerMetadata], Awaitable[None]]):
+
+    def subscribe_all(
+        self,
+        callback: Callable[[BaseContext, str, Any, ConsumerMetadata], Awaitable[None]],
+    ):
         self.callbacks.append(callback)
-    
+
     def unsubscribe(self, topic: str, token: str | None = None):
         """
         Unsubscribes from all events
@@ -77,6 +84,6 @@ class SubscriptionEventBus(TransportEventBus):
                 del self._subscriptions[topic][token]
                 if not self._subscriptions[topic]:
                     del self._subscriptions[topic]
-        
+
         else:
             self._subscriptions.pop(topic, None)

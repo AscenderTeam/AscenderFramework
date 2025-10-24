@@ -1,7 +1,7 @@
+from .awaitables.awaitable import _await
 from .client import HTTPClient
 from .provider import provideHTTPClient
-from .types.http_options import HTTPOptions, HeaderTypes
-from .awaitables.awaitable import _await
+from .types.http_options import HeaderTypes, HTTPOptions
 from .types.interceptors import Interceptor, InterceptorFn, InterceptorIn
 
 __all__ = [
@@ -12,5 +12,5 @@ __all__ = [
     "_await",
     "Interceptor",
     "InterceptorFn",
-    "InterceptorIn"
+    "InterceptorIn",
 ]

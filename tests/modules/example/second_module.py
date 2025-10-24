@@ -4,14 +4,11 @@ from tests.modules.example.first_module import FirstModule
 
 
 @AscModule(
-    imports=[FirstModule], # Should import nothing, because FirstModule didn't exported anything
+    imports=[
+        FirstModule
+    ],  # Should import nothing, because FirstModule didn't exported anything
     declarations=[],
-    providers=[
-        ExampleService
-    ],
-    exports=[
-        ExampleService
-    ]
+    providers=[ExampleService],
+    exports=[ExampleService],
 )
-class SecondModule:
-    ...
+class SecondModule: ...

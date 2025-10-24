@@ -1,12 +1,16 @@
 import os
 from typing import Any, TypeVar, get_type_hints
+
 from jinja2 import Environment, FileSystemLoader, Template
+
 from ascender.core._config.asc_config import _AscenderConfig
 from ascender.core.database.types.orm_enum import ORMEnum
 from ascender.schematics.base.create import SchematicsCreator
-from ascender.schematics.utilities.case_filters import kebab_case, pascal_case, snake_case
-from ascender.schematics.utilities.entity_filters import entity_field_type, stripped
-
+from ascender.schematics.utilities.case_filters import (kebab_case,
+                                                        pascal_case,
+                                                        snake_case)
+from ascender.schematics.utilities.entity_filters import (entity_field_type,
+                                                          stripped)
 
 E = TypeVar("E")
 
@@ -17,7 +21,7 @@ class RepositoryCreator(SchematicsCreator):
         name: str,
         entity_imports: dict[str, type[E]],
         orm_mode: ORMEnum,
-        is_root: bool = True
+        is_root: bool = True,
     ):
         self.path_config = _AscenderConfig().config.paths
         self.name = name
@@ -30,19 +34,23 @@ class RepositoryCreator(SchematicsCreator):
         self.save_path = f"{self.path_config.source}/{name.lower()}_repository.py"
 
     def load_template(self):
-        self.environment.filters['pascal_case'] = pascal_case
-        self.environment.filters['snake_case'] = snake_case
-        self.environment.filters['kebab_case'] = kebab_case
-        self.environment.filters['stripped'] = stripped
-        self.environment.filters['field_type'] = entity_field_type
-        
+        self.environment.filters["pascal_case"] = pascal_case
+        self.environment.filters["snake_case"] = snake_case
+        self.environment.filters["kebab_case"] = kebab_case
+        self.environment.filters["stripped"] = stripped
+        self.environment.filters["field_type"] = entity_field_type
+
         if self.orm_mode == ORMEnum.TORTOISE:
-            template = self.environment.get_template("/files/to-repository-record.py.asctpl")
+            template = self.environment.get_template(
+                "/files/to-repository-record.py.asctpl"
+            )
 
             return template
-        
-        template = self.environment.get_template("/files/sa-repository-record.py.asctpl")
-        
+
+        template = self.environment.get_template(
+            "/files/sa-repository-record.py.asctpl"
+        )
+
         return template
 
     def post_processing(self):
@@ -51,16 +59,15 @@ class RepositoryCreator(SchematicsCreator):
 
         upper_section = self.environment.get_template("/files/repository.py.asctpl")
         upper_section = upper_section.render(repository_name=name)
-        
+
         entities = []
         package_imports = {}
 
         for namespace, entity_class in self.entity_imports.items():
             package_imports[namespace] = entity_class.__name__
-            entities.append({
-                "name": entity_class.__name__,
-                "fields": get_type_hints(entity_class)
-            })
+            entities.append(
+                {"name": entity_class.__name__, "fields": get_type_hints(entity_class)}
+            )
 
         return {
             "repository_name": name,
@@ -79,13 +86,13 @@ class RepositoryCreator(SchematicsCreator):
 
         # Create the controller file containing rendered data
         _project_root = os.getcwd()
-        with open(f"{_project_root}/{self.save_path}", 'w') as f:
+        with open(f"{_project_root}/{self.save_path}", "w") as f:
             f.write(rendered_template)
-            
+
         return {
             "schematic_type": "CREATE",
             "file_path": self.save_path,
-            "write_size": os.path.getsize(f"{_project_root}/{self.save_path}")
+            "write_size": os.path.getsize(f"{_project_root}/{self.save_path}"),
         }
 
     def invoke(self):

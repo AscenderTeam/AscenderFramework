@@ -1,4 +1,5 @@
 from typing import Sequence
+
 from ascender.core.di.abc.base_injector import Injector
 from ascender.core.di.injector import AscenderInjector
 from ascender.core.di.interface.provider import Provider
@@ -13,7 +14,7 @@ def provideRouter(routes: Sequence[RouterRoute]) -> Provider:
     return {
         "provide": RouterGraph,
         "use_factory": lambda injector: RouterGraph(injector, routes),
-        "deps": [Injector]
+        "deps": [Injector],
     }
 
 
@@ -24,6 +25,7 @@ def provideRouterFromControllers(module: type[AscModuleRef]) -> Provider:
     Args:
         module (type[AscModuleRef]): An AscModule with controllers in it's declarations
     """
+
     def router_graph_factory(module: type[AscModuleRef], injector: AscenderInjector):
         try:
             module = load_module(module)
@@ -31,11 +33,12 @@ def provideRouterFromControllers(module: type[AscModuleRef]) -> Provider:
             pass
 
         nodes = handle_module_consumers(module, injector)
-        return RouterGraph(injector=injector, graph=[], load_from_nodes=True, _graph_nodes=nodes)
-    
+        return RouterGraph(
+            injector=injector, graph=[], load_from_nodes=True, _graph_nodes=nodes
+        )
 
     return {
         "provide": RouterGraph,
         "use_factory": lambda injector: router_graph_factory(module, injector),
-        "deps": [Injector]
+        "deps": [Injector],
     }

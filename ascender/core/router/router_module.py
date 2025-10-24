@@ -1,4 +1,4 @@
-from typing import Sequence, TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence
 
 from ascender.core.router.interface.route import RouterRoute
 
@@ -7,7 +7,4 @@ if TYPE_CHECKING:
 
 
 def routerForChildren(routes: Sequence[RouterRoute]) -> "Provider":
-    return {
-        "provide": "ROUTER_MODULE",
-        "value": routes
-    }
+    return {"provide": "ROUTER_MODULE", "value": routes}

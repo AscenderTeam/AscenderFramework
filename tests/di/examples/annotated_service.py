@@ -1,4 +1,5 @@
 from typing import Annotated
+
 from ascender.common import Injectable
 from ascender.core.di.inject import Inject
 from ascender.core.services import Service

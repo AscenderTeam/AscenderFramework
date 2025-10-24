@@ -12,7 +12,7 @@ class TortoiseORM:
             app,
             config=self.configuration,
             generate_schemas=True,
-            add_exception_handlers=True
+            add_exception_handlers=True,
         )
 
     async def run_database_cli(self):

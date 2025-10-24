@@ -4,15 +4,13 @@ from typing import Any, Literal, NotRequired, TypedDict, Unpack
 from fastapi.datastructures import Default
 
 
-def create_route_decorator(
-    method: Literal["GET", "POST", "PUT", "PATCH", "DELETE"]
-):
+def create_route_decorator(method: Literal["GET", "POST", "PUT", "PATCH", "DELETE"]):
     def decorator(
         path: str = "/",
         response_model: Any = Default(None),
         status_code: int | None = None,
         tags: list[str | Enum] | None = None,
-        **kwargs
+        **kwargs,
     ):
         path = "" if path == "/" else f"/{path.lstrip('/')}"
 
@@ -23,7 +21,7 @@ def create_route_decorator(
                 "response_model": response_model,
                 "status_code": status_code,
                 "tags": tags,
-                **kwargs
+                **kwargs,
             }
             if not (getattr(func, "__cmetadata__", None)):
                 func.__cmetadata__ = metadata

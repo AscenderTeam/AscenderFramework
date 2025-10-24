@@ -3,10 +3,11 @@ from tests.modules.example.second_module import SecondModule
 
 
 @AscModule(
-    imports=[SecondModule], # Should import nothing, because FirstModule didn't exported anything
+    imports=[
+        SecondModule
+    ],  # Should import nothing, because FirstModule didn't exported anything
     declarations=[],
     providers=[],
-    exports=[]
+    exports=[],
 )
-class ThirdModule:
-    ...
+class ThirdModule: ...

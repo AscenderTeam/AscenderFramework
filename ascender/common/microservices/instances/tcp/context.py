@@ -1,8 +1,11 @@
 import asyncio
+
 from pydantic import BaseModel
+
 from ascender.common.microservices.abc.context import BaseContext
 from ascender.common.microservices.instances.tcp.event import TCPEventTransport
 from ascender.common.microservices.instances.tcp.rpc import TCPRPCTransport
+
 
 class TCPContext(BaseContext):
     # TCP-specific fields.
@@ -19,7 +22,9 @@ class TCPContext(BaseContext):
         return await self.rpc_transport.send_nack_request(pattern, data, timeout)
 
     async def defer_response(self):
-        raise NotImplementedError("TCP transporter does not support deferring responses.")
+        raise NotImplementedError(
+            "TCP transporter does not support deferring responses."
+        )
 
     async def emit(self, pattern: str, data=None, **kwargs):
         """

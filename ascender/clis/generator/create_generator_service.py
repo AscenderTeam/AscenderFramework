@@ -1,12 +1,13 @@
-from importlib import import_module
 import os
 import sys
+from importlib import import_module
 from typing import Any, Literal
+
 from ascender.clis.generator.edit_generator_service import EditGeneratorService
 from ascender.common.injectable import Injectable
 from ascender.core._config.asc_config import _AscenderConfig
-from ascender.core.services import Service
 from ascender.core.database.types.orm_enum import ORMEnum
+from ascender.core.services import Service
 from ascender.schematics.controller.create import ControllerCreator
 from ascender.schematics.guard.create import GuardCreator
 from ascender.schematics.module.create import ModuleCreator
@@ -18,15 +19,12 @@ from ascender.schematics.utilities.namespace_maker import path_to_namespace
 
 @Injectable(provided_in="root")
 class CreateGeneratorService(Service):
-    def __init__(
-        self, 
-        edit_generator_service: EditGeneratorService
-    ):
+    def __init__(self, edit_generator_service: EditGeneratorService):
         self.edit_generator_service = edit_generator_service
         self.config = _AscenderConfig().config
-    
+
     def generate_controller(
-        self, 
+        self,
         name: str,
         standalone: bool,
         prefix: str,
@@ -34,7 +32,7 @@ class CreateGeneratorService(Service):
         module: str | None = None,
     ):
         controller_creator = ControllerCreator(name, standalone, prefix, suffix)
-        
+
         # Creates and also returns information about file state
         file_info = controller_creator.invoke()
 
@@ -44,8 +42,12 @@ class CreateGeneratorService(Service):
         controller_path: str = file_info["file_path"]
 
         # Data for import is collected >_o
-        controller_class_name = pascal_case(post_processing_metadata["controller_name"]) + "Controller"
-        controller_package = path_to_namespace(controller_path, self.config.paths.source)
+        controller_class_name = (
+            pascal_case(post_processing_metadata["controller_name"]) + "Controller"
+        )
+        controller_package = path_to_namespace(
+            controller_path, self.config.paths.source
+        )
 
         # Check if standalone and if not, then add it into module if specified
         module_update = None
@@ -56,18 +58,18 @@ class CreateGeneratorService(Service):
                 package_imports={controller_package: controller_class_name},
                 imports=[],
                 providers=[],
-                declarations=[controller_class_name]
+                declarations=[controller_class_name],
             )
-        
+
         return module_update, file_info
-    
+
     def generate_service(
-        self, 
+        self,
         name: str,
         module: str | None = None,
     ):
         service_creator = ServiceCreator(name, not bool(module))
-        
+
         # Creates and also returns information about file state
         file_info = service_creator.invoke()
 
@@ -77,7 +79,9 @@ class CreateGeneratorService(Service):
         service_path: str = file_info["file_path"]
 
         # Data for import is collected >_o
-        service_class_name = pascal_case(post_processing_metadata["service_name"]) + "Service"
+        service_class_name = (
+            pascal_case(post_processing_metadata["service_name"]) + "Service"
+        )
         service_package = path_to_namespace(service_path, self.config.paths.source)
 
         # Check if standalone and if not, then add it into module if specified
@@ -89,28 +93,26 @@ class CreateGeneratorService(Service):
                 package_imports={service_package: service_class_name},
                 imports=[],
                 declarations=[],
-                providers=[service_class_name]
+                providers=[service_class_name],
             )
-        
+
         return module_update, file_info
-    
-    def generate_module(
-        self, 
-        name: str,
-        module: str | None = None
-    ):
+
+    def generate_module(self, name: str, module: str | None = None):
         module_creator = ModuleCreator(name, imports=[], providers=[], declarations=[])
-        
+
         # Creates and also returns information about file state
         file_info = module_creator.invoke()
-        
+
         post_processing_metadata = module_creator.post_processing()
 
         # Process the post processing metdata to extract useful information about controller
         module_path: str = file_info["file_path"]
 
         # Data for import is collected >_o
-        module_class_name = pascal_case(post_processing_metadata["module_name"]) + "Module"
+        module_class_name = (
+            pascal_case(post_processing_metadata["module_name"]) + "Module"
+        )
         module_package = path_to_namespace(module_path, self.config.paths.source)
 
         module_update = None
@@ -123,17 +125,13 @@ class CreateGeneratorService(Service):
                 },
                 imports=[module_class_name],
                 declarations=[],
-                providers=[]
+                providers=[],
             )
 
         return module_update, file_info
-    
+
     def generate_repository(
-        self,
-        name: str,
-        entities: tuple[str],
-        orm_mode: ORMEnum,
-        module: str
+        self, name: str, entities: tuple[str], orm_mode: ORMEnum, module: str
     ):
         entities_d: dict[str, Any] = {}
 
@@ -154,12 +152,16 @@ class CreateGeneratorService(Service):
                 print(e)
                 # raise ValueError("Entities format validations failed to pass!")
                 raise e
-        
+
         if os.path.exists(os.path.abspath(f"{name.lower()}_repository.py")):
-            return self.edit_generator_service.update_repository(name, entities_d, orm_mode)
-        
-        repository_creator = RepositoryCreator(name, entities_d, orm_mode, not bool(module))
-        
+            return self.edit_generator_service.update_repository(
+                name, entities_d, orm_mode
+            )
+
+        repository_creator = RepositoryCreator(
+            name, entities_d, orm_mode, not bool(module)
+        )
+
         # Creates and also returns information about file state
         file_info = repository_creator.invoke()
 
@@ -169,8 +171,12 @@ class CreateGeneratorService(Service):
         repository_path: str = file_info["file_path"]
 
         # Data for import is collected >_o
-        repository_class_name = pascal_case(post_processing_metadata["repository_name"]) + "Repo"
-        repository_package = path_to_namespace(repository_path, self.config.paths.source)
+        repository_class_name = (
+            pascal_case(post_processing_metadata["repository_name"]) + "Repo"
+        )
+        repository_package = path_to_namespace(
+            repository_path, self.config.paths.source
+        )
 
         # Check if standalone and if not, then add it into module if specified
         module_update = None
@@ -184,21 +190,21 @@ class CreateGeneratorService(Service):
                 },
                 imports=[],
                 providers=[f"provideRepository({repository_class_name})"],
-                declarations=[]
+                declarations=[],
             )
-        
+
         return module_update, file_info
-    
+
     def generate_guard(
         self,
         name: str,
         guard_type: Literal["single", "parametrized"] = "single",
         guards: list[str] = [],
-        module: str | None = None
+        module: str | None = None,
     ):
         guard_creator = GuardCreator(name, guard_type, guards)
-        
-         # Creates and also returns information about file state
+
+        # Creates and also returns information about file state
         file_info = guard_creator.invoke()
 
         post_processing_metadata = guard_creator.post_processing()
@@ -221,7 +227,7 @@ class CreateGeneratorService(Service):
                 },
                 imports=[],
                 providers=[],
-                declarations=[guard_class_name]
+                declarations=[guard_class_name],
             )
 
         return module_update, file_info

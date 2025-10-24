@@ -1,5 +1,6 @@
 import os
 
+
 def path_to_namespace(path: str, base_dir: str | None = None):
     """
     Converts a file system path to a Python package namespace.
@@ -17,7 +18,9 @@ def path_to_namespace(path: str, base_dir: str | None = None):
     if base_dir:
         base_dir = os.path.normpath(base_dir)
         if normalized_path.startswith(base_dir):
-            normalized_path = normalized_path[len(base_dir) + 1 :]  # +1 to remove the separator
+            normalized_path = normalized_path[
+                len(base_dir) + 1 :
+            ]  # +1 to remove the separator
 
     namespace = os.path.splitext(normalized_path)[0].replace(os.path.sep, ".")
 

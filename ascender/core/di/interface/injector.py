@@ -3,6 +3,7 @@ from typing import NotRequired, TypedDict
 
 class InjectorOptions(TypedDict):
     """Type of the options argument to `inject`"""
+
     optional: NotRequired[bool]
     """Use optional injection, and return `None` if the requested token is not found."""
     skip_self: NotRequired[bool]

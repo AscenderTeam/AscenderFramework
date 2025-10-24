@@ -1,5 +1,6 @@
 from rich import print as cprint
 
+
 class DeclaredBaseCliIsNotDefined(Exception):
     def __init__(self, cli_name: str) -> None:
         self.cli_name = cli_name
@@ -22,8 +23,10 @@ class IncorrectCommandArgument(Exception):
         self.inc_attr_value = attribute_value
 
     def __str__(self) -> str:
-        cprint(f"""
+        cprint(
+            f"""
 [bold red]Usage:[/bold red]
     [bold green]{self.command_name}[/bold green] [bold red]{self.inc_attr_value}[/bold red] [VALUE]
-""")
+"""
+        )
         return f"Incorrect command argument. Command '{self.command_name}' has no attribute for {self.inc_attr_value}"

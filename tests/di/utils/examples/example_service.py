@@ -4,5 +4,4 @@ from ascender.core.services import Service
 
 @Injectable()
 class ExampleService(Service):
-    def __init__(self):
-        ...
+    def __init__(self): ...

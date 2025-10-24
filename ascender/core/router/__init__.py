@@ -1,11 +1,12 @@
 from .interface.route import RouterRoute
 from .provide import provideRouter, provideRouterFromControllers
-from .router_module import routerForChildren
 from .router import RouterNode
+from .router_module import routerForChildren
 
 __all__ = [
     "RouterNode",
     "RouterRoute",
-    "provideRouter", "provideRouterFromControllers",
+    "provideRouter",
+    "provideRouterFromControllers",
     "routerForChildren",
 ]

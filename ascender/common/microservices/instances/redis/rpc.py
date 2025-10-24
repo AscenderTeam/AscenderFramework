@@ -1,22 +1,31 @@
 import asyncio
 import json
 import traceback
+from typing import TYPE_CHECKING, Any
 from uuid import uuid4
-from reactivex import Subject, operators as ops, throw, timer
+
+from reactivex import Subject
+from reactivex import operators as ops
+from reactivex import throw, timer
 from reactivex.scheduler.eventloop import AsyncIOScheduler
 
 from ascender.common.microservices.abc.rpc_transport import RPCTransport
 from ascender.common.microservices.exceptions.rpc_exception import RPCException
-from ascender.common.microservices.utils.data_parser import decode_message, parse_data
-from ascender.common.microservices.utils.defer_mapping import kafka_defer  # (reuse defer mapper)
-from ascender.common.microservices.utils.redis_tools import parse_redis_encodable
+from ascender.common.microservices.utils.data_parser import (decode_message,
+                                                             parse_data)
+from ascender.common.microservices.utils.defer_mapping import \
+    kafka_defer  # (reuse defer mapper)
+from ascender.common.microservices.utils.redis_tools import \
+    parse_redis_encodable
 from ascender.core import inject
-from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from ascender.common.microservices.instances.redis.context import RedisContext
-    from ascender.common.microservices.instances.redis.transporter import RedisTransporter
-    from ascender.common.microservices.instances.redis.client import RedisClient
+    from ascender.common.microservices.instances.redis.client import \
+        RedisClient
+    from ascender.common.microservices.instances.redis.context import \
+        RedisContext
+    from ascender.common.microservices.instances.redis.transporter import \
+        RedisTransporter
 
 
 class RedisRPCTransport(RPCTransport):
@@ -53,7 +62,7 @@ class RedisRPCTransport(RPCTransport):
             ops.timeout_with_mapper(
                 timer(timeout),
                 kafka_defer(timeout, correlation_id),
-                throw(TimeoutError("Response timed out."))
+                throw(TimeoutError("Response timed out.")),
             ),
             ops.filter(lambda pair: pair[0] == f"response-{correlation_id}"),
             ops.first(),
@@ -63,7 +72,9 @@ class RedisRPCTransport(RPCTransport):
             on_error=throw_error,
         )
 
-        self.logger.debug(f"Sending message to {pattern} with correlation ID {correlation_id}")
+        self.logger.debug(
+            f"Sending message to {pattern} with correlation ID {correlation_id}"
+        )
         await self.transport.publisher.publish(pattern, message)
         self.logger.info(f"Successfully sent message pattern {pattern}")
         self.logger.debug(f"Now waiting for response from pattern {pattern}")
@@ -89,7 +100,7 @@ class RedisRPCTransport(RPCTransport):
             ops.timeout_with_mapper(
                 timer(timeout),
                 kafka_defer(timeout, correlation_id),
-                throw(TimeoutError("Response timed out."))
+                throw(TimeoutError("Response timed out.")),
             ),
             ops.filter(lambda pair: pair[0] == f"response-{correlation_id}"),
             ops.first(),
@@ -98,7 +109,9 @@ class RedisRPCTransport(RPCTransport):
         return observable
 
     async def defer(self, pattern: str, correlation_id: str):
-        self.logger.debug(f"Deferring response for pattern {pattern} with correlation ID {correlation_id}")
+        self.logger.debug(
+            f"Deferring response for pattern {pattern} with correlation ID {correlation_id}"
+        )
         payload = {
             "correlationId": f"defer-{correlation_id}",
             "payload": "defer",
@@ -107,7 +120,9 @@ class RedisRPCTransport(RPCTransport):
         await self.transport.publisher.publish(pattern, message)
 
     async def send_response(self, pattern, correlation_id, response):
-        self.logger.debug(f"Responding on pattern {pattern} with correlation ID {correlation_id}")
+        self.logger.debug(
+            f"Responding on pattern {pattern} with correlation ID {correlation_id}"
+        )
         try:
             message = parse_redis_encodable(correlation_id, response.decode())
             await self.transport.publisher.publish(pattern, message)
@@ -116,7 +131,9 @@ class RedisRPCTransport(RPCTransport):
 
     async def raise_exception(self, pattern, correlation_id, exception):
         if not isinstance(exception, RPCException):
-            raise TypeError(f"Expected RPCException, got {exception.__class__.__name__}")
+            raise TypeError(
+                f"Expected RPCException, got {exception.__class__.__name__}"
+            )
         payload = {
             "correlationId": correlation_id,
             "payload": json.dumps(exception.to_dict()),
@@ -127,7 +144,10 @@ class RedisRPCTransport(RPCTransport):
     async def process_response(self, correlation_id, response, **kwargs):
         if not correlation_id:
             return
-        if not (correlation_id.startswith("response-") or correlation_id.startswith("defer-")):
+        if not (
+            correlation_id.startswith("response-")
+            or correlation_id.startswith("defer-")
+        ):
             return
         try:
             decoded = decode_message(response)
@@ -139,7 +159,9 @@ class RedisRPCTransport(RPCTransport):
                 return
         self.response_subject.on_next((correlation_id, decoded, kwargs))
 
-    async def listen_for_requests(self, context: "RedisContext", data: Any, metadata: dict) -> None:
+    async def listen_for_requests(
+        self, context: "RedisContext", data: Any, metadata: dict
+    ) -> None:
         if metadata.get("transporter") != "redis":
             return
         await self.process_response(context.correlation_id, data, **metadata)

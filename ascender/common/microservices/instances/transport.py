@@ -1,6 +1,8 @@
 import asyncio
+
 from ascender.common.injectable import Injectable
 from ascender.common.microservices.instances.bus import SubscriptionEventBus
+
 from ..types.transport import Transport
 
 
@@ -17,9 +19,11 @@ class TransportInstance:
         self.transport = transport
         self.event_bus = event_bus
         self.with_client_proxy = with_client_proxy
-        
+
         # Initiate transporter
-        self.transporter = transport['transport'].value(self, self.event_bus, transport['options'])
+        self.transporter = transport["transport"].value(
+            self, self.event_bus, transport["options"]
+        )
 
     async def startup(self):
         asyncio.create_task(self.transporter.listen())

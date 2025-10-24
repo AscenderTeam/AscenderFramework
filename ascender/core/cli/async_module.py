@@ -25,6 +25,7 @@ class CoroCLI:
             finally:
                 if self.is_tortoise:
                     from tortoise import Tortoise
+
                     loop.run_until_complete(Tortoise.close_connections())
                 loop.close()
 

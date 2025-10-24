@@ -1,18 +1,28 @@
-import json
 import asyncio
-from ascender.common.microservices.abc.event_transport import EventTransport
-from ascender.common.microservices.utils.data_parser import parse_data
+import json
 from typing import TYPE_CHECKING
 
+from ascender.common.microservices.abc.event_transport import EventTransport
+from ascender.common.microservices.utils.data_parser import parse_data
+
 if TYPE_CHECKING:
-    from ascender.common.microservices.instances.tcp.transporter import TCPTransporter
     from ascender.common.microservices.instances.tcp.client import TCPClient
+    from ascender.common.microservices.instances.tcp.transporter import \
+        TCPTransporter
+
 
 class TCPEventTransport(EventTransport):
-    def __init__(self, transport: "TCPClient | TCPTransporter",
-            writer: asyncio.StreamWriter | None = None):
+    def __init__(
+        self,
+        transport: "TCPClient | TCPTransporter",
+        writer: asyncio.StreamWriter | None = None,
+    ):
         super().__init__(transport)
-        self.writer = writer if transport.__class__.__name__ == "TCPTransporter" else transport.writer
+        self.writer = (
+            writer
+            if transport.__class__.__name__ == "TCPTransporter"
+            else transport.writer
+        )
 
     async def send_event(self, pattern, data=None, **kwargs):
         envelope = {

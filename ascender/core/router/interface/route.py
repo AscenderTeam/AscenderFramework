@@ -7,7 +7,7 @@ from ascender.guards.paramguard import ParamGuard
 
 
 class RouterRoute(TypedDict):
-    
+
     path: str
     """
     Path of route, paths are specified in next format: `{path_name}`. Will be applied to all routes of controller.

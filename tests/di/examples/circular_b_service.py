@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
+
 from ascender.common import Injectable
 from ascender.core.services import Service
 

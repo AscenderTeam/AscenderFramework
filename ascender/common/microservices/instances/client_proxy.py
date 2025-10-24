@@ -16,26 +16,28 @@ class ClientProxy:
 
         # Define all transports
         self.__define_transports()
-    
+
     def __define_transports(self):
         match self.transport.transport["transport"]:
             case Transports.KAFKA:
-                from .kafka.rpc import KafkaRPCTransport
                 from .kafka.event import KafkaEventTransport
+                from .kafka.rpc import KafkaRPCTransport
+
                 self.rpc_transport = KafkaRPCTransport(self.transport)
                 self.event_transport = KafkaEventTransport(self.transport)
-            
+
             case Transports.REDIS:
-                from .redis.rpc import RedisRPCTransport
                 from .redis.event import RedisEventTransport
+                from .redis.rpc import RedisRPCTransport
+
                 self.rpc_transport = RedisRPCTransport(self.transport)
                 self.event_transport = RedisEventTransport(self.transport)
-            
+
     async def send(
-        self, 
+        self,
         pattern: str,
         data: Any | BaseDTO | BaseResponse | None = None,
-        timeout: float = 20.0
+        timeout: float = 20.0,
     ) -> Any | None:
         """
         Sends message pattern request and waits for result, then returns it.
@@ -49,12 +51,12 @@ class ClientProxy:
             Any: Response data
         """
         return await self.rpc_transport.send_request(pattern, data, timeout)
-    
+
     async def send_as_observable(
         self,
         pattern: str,
         data: Any | BaseDTO | BaseResponse | None = None,
-        timeout: float = 5.0
+        timeout: float = 5.0,
     ) -> Observable[Any]:
         """
         Sends message pattern request and returns RxPY (Reactivex) observable object.
@@ -65,12 +67,9 @@ class ClientProxy:
             timeout (float, optional): Response timeout in seconds. Defaults to 5.0.
         """
         return await self.rpc_transport.send_nack_request(pattern, data, timeout)
-    
+
     async def emit(
-        self,
-        pattern: str,
-        data: Any | BaseDTO | BaseResponse | None = None,
-        **kwargs
+        self, pattern: str, data: Any | BaseDTO | BaseResponse | None = None, **kwargs
     ):
         """
         Emit event to the broker without pairing and waiting for response.
@@ -80,12 +79,9 @@ class ClientProxy:
             data (Any | BaseDTO | BaseResponse | None, optional): Data payload if there is. Defaults to None.
         """
         return await self.event_transport.send_event(pattern, data, **kwargs)
-    
+
     async def emit_wait(
-        self,
-        pattern: str,
-        data: Any | BaseDTO | BaseResponse | None = None,
-        **kwargs
+        self, pattern: str, data: Any | BaseDTO | BaseResponse | None = None, **kwargs
     ):
         """
         Emits event to the broker while waiting for result of broker.

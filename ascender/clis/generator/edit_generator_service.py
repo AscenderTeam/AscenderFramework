@@ -1,9 +1,10 @@
 import os
 from pathlib import Path
 from typing import Any
+
 from ascender.common.injectable import Injectable
-from ascender.core.services import Service
 from ascender.core.database.types.orm_enum import ORMEnum
+from ascender.core.services import Service
 from ascender.schematics.module.edit import ModuleEditor
 from ascender.schematics.repository.edit import RepositoryEditor
 from ascender.schematics.utilities.case_filters import pascal_case
@@ -11,14 +12,9 @@ from ascender.schematics.utilities.case_filters import pascal_case
 
 @Injectable(provided_in="root")
 class EditGeneratorService(Service):
-    def __init__(self):
-        ...
+    def __init__(self): ...
 
-    def get_module_path(
-        self,
-        name: str,
-        path: os.PathLike | str
-    ):
+    def get_module_path(self, name: str, path: os.PathLike | str):
         # Use os.path.join for cross-platform compatibility
         module_path = Path(path, f"{name}_module.py").relative_to(os.getcwd())
 
@@ -48,15 +44,15 @@ class EditGeneratorService(Service):
             package_imports=package_imports,
             imports=imports,
             providers=providers,
-            declarations=declarations
+            declarations=declarations,
         )
         return module_editor.invoke()
 
     def update_repository(
-            self,
-            name: str,
-            entities: dict[str, Any],
-            orm_mode: ORMEnum,
+        self,
+        name: str,
+        entities: dict[str, Any],
+        orm_mode: ORMEnum,
     ):
         repository_editor = RepositoryEditor(name, entities, orm_mode)
 

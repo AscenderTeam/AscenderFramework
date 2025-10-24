@@ -1,8 +1,10 @@
-from inspect import Parameter, signature
-from typing import List, Dict, Set, Any, cast
 from collections import defaultdict
+from inspect import Parameter, signature
+from typing import Any, Dict, List, Set, cast
 
-from ascender.core.di.utils.providers import is_factory_provider, is_static_class_provider, is_value_provider
+from ascender.core.di.utils.providers import (is_factory_provider,
+                                              is_static_class_provider,
+                                              is_value_provider)
 
 from ..interface.provider import FactoryProvider, Provider, StaticClassProvider
 
@@ -19,7 +21,9 @@ def extract_dependencies_from_class(cls: type) -> List[Any]:
             if param.annotation != Parameter.empty:
                 deps.append(param.annotation)
             else:
-                raise ValueError(f"Parameter '{name}' in {cls} lacks a type annotation.")
+                raise ValueError(
+                    f"Parameter '{name}' in {cls} lacks a type annotation."
+                )
     return deps
 
 

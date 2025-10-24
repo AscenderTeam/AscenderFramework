@@ -9,7 +9,6 @@ from ascender.common.microservices.instances.tcp.context import TCPContext
 from ascender.common.microservices.instances.tcp.event import TCPEventTransport
 from ascender.common.microservices.instances.tcp.rpc import TCPRPCTransport
 
-
 T = TypeVar("T")
 
 
@@ -27,7 +26,9 @@ class TCPTransporter(BaseTransporter):
         # self.rpc_transport = TCPRPCTransport(self)
         # self.event_transport = TCPEventTransport(self)
 
-    async def handle_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+    async def handle_client(
+        self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter
+    ):
         remote_addr = writer.get_extra_info("peername")
         try:
             while True:
@@ -70,8 +71,10 @@ class TCPTransporter(BaseTransporter):
         """
         print("Running server...")
         self.is_stopped = False
-        self.server = await asyncio.start_server(self.handle_client, self.host, self.port)
-        
+        self.server = await asyncio.start_server(
+            self.handle_client, self.host, self.port
+        )
+
         async with self.server:
             await self.server.serve_forever()
 

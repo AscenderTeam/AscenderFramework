@@ -12,11 +12,21 @@ class DefineAPIDocs:
         redoc_url: str = "/redoc",
     ):
         self.config = _AscenderConfig().config
-        self.title = title if title else self.config.project.get("name", "Ascender Framework API")
-        self.description = description if description else self.config.project.get("description", "An API project powered by Ascender Framework")
+        self.title = (
+            title
+            if title
+            else self.config.project.get("name", "Ascender Framework API")
+        )
+        self.description = (
+            description
+            if description
+            else self.config.project.get(
+                "description", "An API project powered by Ascender Framework"
+            )
+        )
         self.swagger_url = swagger_url
         self.redoc_url = redoc_url
-    
+
     def update_instance(self, app: FastAPI):
         app.docs_url = self.swagger_url
         app.redoc_url = self.redoc_url

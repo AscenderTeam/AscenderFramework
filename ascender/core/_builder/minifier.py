@@ -1,8 +1,11 @@
 import os
+
 from python_minifier import minify
 
 
-def minify_project(project_name: str, output_dir: str, source_dir: str, strip_comments: bool):
+def minify_project(
+    project_name: str, output_dir: str, source_dir: str, strip_comments: bool
+):
     """
     Minifies a Python project using python_minifier.
 
@@ -38,18 +41,18 @@ def minify_project(project_name: str, output_dir: str, source_dir: str, strip_co
                 output_file = os.path.join(target_dir, file)
 
                 # Read the source file
-                with open(input_file, 'r') as f:
+                with open(input_file, "r") as f:
                     code = f.read()
 
                 # Minify the code
                 minified_code = minify(
                     code,
                     remove_literal_statements=strip_comments,  # Removes docstrings
-                    remove_annotations=True, # Removes annotations
+                    remove_annotations=True,  # Removes annotations
                 )
 
                 # Write the minified code to the output file
-                with open(output_file, 'w') as f:
+                with open(output_file, "w") as f:
                     f.write(minified_code)
 
     return output_dir

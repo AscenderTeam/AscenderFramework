@@ -1,9 +1,10 @@
 import json
 from typing import Any, Type, TypeVar
 
-from pydantic import BaseModel, ValidationError, TypeAdapter
+from pydantic import BaseModel, TypeAdapter, ValidationError
 
 T = TypeVar("T")
+
 
 def validate_json(json_data: str, expected_type: Type[T]) -> T:
     """
@@ -28,9 +29,9 @@ def validate_json(json_data: str, expected_type: Type[T]) -> T:
     """
     if issubclass(expected_type, BaseModel):
         result = expected_type.model_validate_json(json_data)
-        
+
         return result
-    
+
     # Validate and convert the data to the expected type
     result = TypeAdapter(expected_type).validate_json(json_data)
 
@@ -60,9 +61,9 @@ def validate_python(obj: Any, expected_type: Type[T]) -> T:
     """
     if issubclass(expected_type, BaseModel):
         result = expected_type.model_validate(obj)
-        
+
         return result
-    
+
     # Validate and convert the data to the expected type
     result = TypeAdapter(expected_type).validate_python(obj)
 
@@ -81,17 +82,17 @@ def parse_data(data: BaseModel | Any) -> str:
     """
     if isinstance(data, BaseModel):
         return data.model_dump_json()
-    
+
     return json.dumps(data)
 
 
 def decode_message(response: bytes | str | dict | None) -> Any:
     """
     Decode a message that may be provided as bytes, a JSON string, or already as a dict.
-    
+
     Args:
         response: The raw response.
-        
+
     Returns:
         A JSON-decoded object if possible; otherwise, the original response.
     """

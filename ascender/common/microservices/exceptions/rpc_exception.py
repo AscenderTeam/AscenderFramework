@@ -14,7 +14,7 @@ class RPCException(Exception):
     ):
         """
         Ascender RPC Exception for Microservices.
-        
+
         :param message: Error message (human-readable).
         :param code: HTTP-like error code (e.g., 400, 500).
         :param details: Optional additional information.
@@ -35,7 +35,7 @@ class RPCException(Exception):
             "details": self.details,
             "metadata": self.metadata,
         }
-    
+
     @classmethod
     def from_dict(cls, _dict: dict) -> Self:
         """Serialize RPCException from dict"""
@@ -43,7 +43,7 @@ class RPCException(Exception):
             message=_dict["error"],
             code=_dict["code"],
             details=_dict["details"],
-            metadata=_dict["metadata"]
+            metadata=_dict["metadata"],
         )
 
     @staticmethod
@@ -52,7 +52,7 @@ class RPCException(Exception):
 
         if required_keys.issubset(_dict):
             return True
-        
+
         return False
 
     @classmethod
@@ -61,23 +61,17 @@ class RPCException(Exception):
             message=f"Validation Error | {err.title}",
             code=422,
             details=err.json(),
-            metadata={
-                "err_count": err.error_count()
-            }
+            metadata={"err_count": err.error_count()},
         )
-    
+
     @classmethod
     def from_json_err(cls, err: JSONDecodeError) -> Self:
         return cls(
             message="Internal Validation Error",
             code=500,
             details=err.msg,
-            metadata={
-                "colno": err.colno,
-                "lineno": err.lineno,
-                "doc": err.doc
-            }
+            metadata={"colno": err.colno, "lineno": err.lineno, "doc": err.doc},
         )
-    
+
     def __str__(self):
         return f"\n{self.message}\n\n{self.details or ''}"

@@ -1,11 +1,14 @@
 import json
-from ascender.common.microservices.abc.event_transport import EventTransport
-from ascender.common.microservices.utils.data_parser import parse_data
 from typing import TYPE_CHECKING
 
+from ascender.common.microservices.abc.event_transport import EventTransport
+from ascender.common.microservices.utils.data_parser import parse_data
+
 if TYPE_CHECKING:
-    from ascender.common.microservices.instances.redis.client import RedisClient
-    from ascender.common.microservices.instances.redis.transporter import RedisTransporter
+    from ascender.common.microservices.instances.redis.client import \
+        RedisClient
+    from ascender.common.microservices.instances.redis.transporter import \
+        RedisTransporter
 
 
 class RedisEventTransport(EventTransport):

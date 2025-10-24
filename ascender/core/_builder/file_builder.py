@@ -1,15 +1,15 @@
-from datetime import datetime
 import json
 import os
 import shutil
+from datetime import datetime
 
 
 def build_file_manager(
-    project_name: str, 
-    output_dir: str, 
-    version: str, 
-    source_dir: str | None = None, 
-    static_dir: str | None = None
+    project_name: str,
+    output_dir: str,
+    version: str,
+    source_dir: str | None = None,
+    static_dir: str | None = None,
 ):
     """
     Build File Manager for building all source and required files to run built Ascender Framework.
@@ -34,16 +34,16 @@ def build_file_manager(
     build_metadata = {
         "is_build": True,
         "build_time": datetime.now().isoformat(),
-        "build_version": version
+        "build_version": version,
     }
 
     with open(f"{output_dir}/build_metadata.json", "w") as f:
         f.write(json.dumps(build_metadata))
-    
+
     if source_dir:
         shutil.copytree(source_dir, output_dir, dirs_exist_ok=True)
-    
+
     if static_dir:
         shutil.copytree(static_dir, output_dir, dirs_exist_ok=True)
-    
+
     return output_dir

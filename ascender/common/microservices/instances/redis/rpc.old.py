@@ -1,21 +1,28 @@
 import asyncio
 import json
-from logging import Logger
 import traceback
+from logging import Logger
 from typing import TYPE_CHECKING, Any
 from uuid import uuid4
-from ascender.common.microservices.abc.rpc_transport import RPCTransport
-from reactivex import Subject, interval, operators as ops, throw, timer, Observable
+
+from reactivex import Observable, Subject, interval
+from reactivex import operators as ops
+from reactivex import throw, timer
 from reactivex.scheduler.eventloop import AsyncIOScheduler
 
+from ascender.common.microservices.abc.rpc_transport import RPCTransport
 from ascender.common.microservices.exceptions.rpc_exception import RPCException
-from ascender.common.microservices.utils.data_parser import decode_message, parse_data, validate_json
+from ascender.common.microservices.utils.data_parser import (decode_message,
+                                                             parse_data,
+                                                             validate_json)
 from ascender.common.microservices.utils.defer_mapping import kafka_defer
-from ascender.common.microservices.utils.redis_tools import decode_redis_data, parse_redis_encodable
+from ascender.common.microservices.utils.redis_tools import (
+    decode_redis_data, parse_redis_encodable)
 from ascender.core import inject
 
 if TYPE_CHECKING:
-    from ascender.common.microservices.instances.transport import TransportInstance
+    from ascender.common.microservices.instances.transport import \
+        TransportInstance
 
 
 class RedisRPCTransport(RPCTransport):
@@ -64,27 +71,32 @@ class RedisRPCTransport(RPCTransport):
 
         subscription = self.response_subject.pipe(
             ops.subscribe_on(asyncio_scheduler),
-            ops.timeout_with_mapper(timer(timeout), kafka_defer(
-                timeout, correlation_id), throw(TimeoutError("Response timed out."))),
+            ops.timeout_with_mapper(
+                timer(timeout),
+                kafka_defer(timeout, correlation_id),
+                throw(TimeoutError("Response timed out.")),
+            ),
             ops.filter(lambda pair: pair[0] == f"response-{correlation_id}"),
             ops.first(),
             ops.map(lambda pair: pair[1]),
-        ).subscribe(
-            on_next=define_response,
-            on_error=throw_error
-        )
+        ).subscribe(on_next=define_response, on_error=throw_error)
 
         self.logger.debug(
-            f"[yellow] ASCENDER MICROSERVICES [/] | Sending message to [cyan]{pattern}[/] with correlation ID [green]{correlation_id}[/]")
-        subscribers = await self.transport.producer.publish(pattern.encode(), parse_redis_encodable(correlation_id, data))
+            f"[yellow] ASCENDER MICROSERVICES [/] | Sending message to [cyan]{pattern}[/] with correlation ID [green]{correlation_id}[/]"
+        )
+        subscribers = await self.transport.producer.publish(
+            pattern.encode(), parse_redis_encodable(correlation_id, data)
+        )
 
         # INFO LOG
         self.logger.info(
-            f"[yellow] ASCENDER MICROSERVICES [/] | Successfully sent message pattern [bold cyan]{pattern}[/] to the message broker")
+            f"[yellow] ASCENDER MICROSERVICES [/] | Successfully sent message pattern [bold cyan]{pattern}[/] to the message broker"
+        )
 
         # DEBUG LOG
         self.logger.debug(
-            f"Now waiting for response from message pattern {pattern} from consumer side")
+            f"Now waiting for response from message pattern {pattern} from consumer side"
+        )
 
         # Wait for the response
         await response_received.wait()
@@ -93,7 +105,8 @@ class RedisRPCTransport(RPCTransport):
 
         # INFO LOG
         self.logger.info(
-            f"Received response from consumer message pattern handler {pattern}")
+            f"Received response from consumer message pattern handler {pattern}"
+        )
 
         # Return the response from request
         return await response
@@ -102,7 +115,7 @@ class RedisRPCTransport(RPCTransport):
         """
         Sends request without waiting for response.
 
-        Instead it returns Reactivex observable object with 
+        Instead it returns Reactivex observable object with
         """
         asyncio_scheduler = AsyncIOScheduler(asyncio.get_event_loop())
         correlation_id = str(uuid4())
@@ -110,40 +123,50 @@ class RedisRPCTransport(RPCTransport):
         data = parse_data(data)
 
         # Send request
-        await self.transport.producer.publish(pattern, parse_redis_encodable(correlation_id, data))
+        await self.transport.producer.publish(
+            pattern, parse_redis_encodable(correlation_id, data)
+        )
 
         # Subscribe to the event response
         observable = self.response_subject.pipe(
             ops.subscribe_on(asyncio_scheduler),
-            ops.timeout_with_mapper(timer(timeout), kafka_defer(
-                timeout, correlation_id), throw(TimeoutError("Response timed out."))),
+            ops.timeout_with_mapper(
+                timer(timeout),
+                kafka_defer(timeout, correlation_id),
+                throw(TimeoutError("Response timed out.")),
+            ),
             ops.filter(lambda pair: pair[0] == f"response-{correlation_id}"),
             ops.first(),
-            ops.map(lambda pair: pair[1])
+            ops.map(lambda pair: pair[1]),
         )
 
         return observable
 
-    async def defer(
-        self,
-        pattern: str,
-        correlation_id: str
-    ):
+    async def defer(self, pattern: str, correlation_id: str):
         """
         Defers the response correlation of the RPC Transport.
         """
         self.logger.debug(
-            f"Requesting consumer side to defer response, and prolong the timeout at the pattern {pattern}")
-        await self.transport.producer.publish(pattern, parse_redis_encodable(key=f"defer-{correlation_id}"))
+            f"Requesting consumer side to defer response, and prolong the timeout at the pattern {pattern}"
+        )
+        await self.transport.producer.publish(
+            pattern, parse_redis_encodable(key=f"defer-{correlation_id}")
+        )
 
     async def send_response(self, pattern, correlation_id, response):
         self.logger.debug(
-            f"Responding to RPC channel using correlation ID {correlation_id} and pattern {pattern}")
+            f"Responding to RPC channel using correlation ID {correlation_id} and pattern {pattern}"
+        )
 
-        await self.transport.producer.publish(pattern, parse_redis_encodable(correlation_id, json.loads(response.decode())))
+        await self.transport.producer.publish(
+            pattern,
+            parse_redis_encodable(correlation_id, json.loads(response.decode())),
+        )
 
     async def process_response(self, correlation_id, response, **kwargs):
-        if not correlation_id.startswith("response-") and not correlation_id.startswith("defer-"):
+        if not correlation_id.startswith("response-") and not correlation_id.startswith(
+            "defer-"
+        ):
             return
 
         response = decode_message(response)
@@ -157,11 +180,16 @@ class RedisRPCTransport(RPCTransport):
     async def raise_exception(self, pattern, correlation_id, exception):
         if not isinstance(exception, RPCException):
             raise TypeError(
-                f"Expected type `RPCException` but got {exception.__class__.__name__}")
+                f"Expected type `RPCException` but got {exception.__class__.__name__}"
+            )
 
-        await self.transport.producer.publish(pattern, parse_redis_encodable(key=correlation_id, data=exception.to_dict()))
+        await self.transport.producer.publish(
+            pattern, parse_redis_encodable(key=correlation_id, data=exception.to_dict())
+        )
 
-    async def listen_for_requests(self, instance: "TransportInstance", data: bytes, metadata: dict[str, Any]):
+    async def listen_for_requests(
+        self, instance: "TransportInstance", data: bytes, metadata: dict[str, Any]
+    ):
         if metadata["type"] != "redis":
             return
 

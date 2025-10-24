@@ -1,4 +1,5 @@
 from typing import Any, Sequence
+
 from ascender.core.cli.main import BaseCLI, GenericCLI
 from ascender.core.di.interface.provider import Provider
 

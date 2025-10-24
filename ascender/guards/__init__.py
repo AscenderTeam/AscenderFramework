@@ -1,5 +1,5 @@
 from .guard import Guard
-from .use_guards import UseGuards
 from .paramguard import ParamGuard
+from .use_guards import UseGuards
 
 __all__ = ["Guard", "UseGuards", "ParamGuard"]

@@ -1,4 +1,5 @@
 from typing import Callable, Generic, TypeVar
+
 from pydantic import BaseModel
 
 T = TypeVar("T")
@@ -10,7 +11,7 @@ def serialize_tortoise_model(pydantic_model: type[T], db_entity: E, **custom_fie
     serialized_data = {
         key: value
         for key, value in db_entity.__dict__.items()
-        if not callable(value) and not key.startswith('_')
+        if not callable(value) and not key.startswith("_")
     }
 
     # Include custom fields in the serialized data
@@ -52,7 +53,8 @@ class Serializer(Generic[T, E]):
 
         if _model is None:
             raise ValueError(
-                "Model method serialize() cannot be 'None'! Expected dict or entity")
+                "Model method serialize() cannot be 'None'! Expected dict or entity"
+            )
 
         return serialize_tortoise_model(self.pd_model, _model, **self.values)
 
@@ -60,15 +62,21 @@ class Serializer(Generic[T, E]):
 class QuerySetSerializer(Generic[E, T]):
 
     @staticmethod
-    def base_serialize_queryset(pd_model: type[T], entities: E,
-                                func: Callable[[E], dict] = serialize_values_default):
+    def base_serialize_queryset(
+        pd_model: type[T],
+        entities: E,
+        func: Callable[[E], dict] = serialize_values_default,
+    ):
         for item in entities:
             ser = Serializer(pd_model, item, **func(item))
             yield ser()
 
     @staticmethod
-    def serialize_queryset(serializer: Serializer[T, E], entities: E,
-                           func: Callable[[E], dict] = serialize_values_default):
+    def serialize_queryset(
+        serializer: Serializer[T, E],
+        entities: E,
+        func: Callable[[E], dict] = serialize_values_default,
+    ):
         for item in entities:
             ser = serializer(item, **func(item))
             yield ser()

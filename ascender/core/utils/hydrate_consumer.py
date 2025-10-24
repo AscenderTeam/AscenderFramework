@@ -5,12 +5,13 @@ from ascender.core.struct.module_ref import AscModuleRef
 from ascender.guards.guard import Guard
 from ascender.guards.paramguard import ParamGuard
 
-
 """:internal:"""
+
+
 def foreach_consumers(
     module: AscModuleRef,
-    consumers: Sequence[type[ControllerRef | Guard | ParamGuard]], 
-    fn: Callable[[type[ControllerRef | Guard | ParamGuard]], None]
+    consumers: Sequence[type[ControllerRef | Guard | ParamGuard]],
+    fn: Callable[[type[ControllerRef | Guard | ParamGuard]], None],
 ):
     """
     Iterates over all declaration consumers of module.

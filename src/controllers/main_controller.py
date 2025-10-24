@@ -9,7 +9,7 @@ from ascender.core import Controller, Get
 )
 class MainController:
     def __init__(self): ...
-    
+
     @Get()
     async def main_endpoint(self):
         return "main works!"

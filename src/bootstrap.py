@@ -9,7 +9,6 @@ from ascender.core.types import IBootstrap
 from routes import routes
 from settings import DATABASE_CONNECTION
 
-
 appBootstrap: IBootstrap = {
     "providers": [
         {
@@ -17,6 +16,6 @@ appBootstrap: IBootstrap = {
             "value": DefineAPIDocs(swagger_url="/docs", redoc_url="/redoc"),
         },
         provideRouter(routes),
-        provideDatabase(ORMEnum.SQLALCHEMY, DATABASE_CONNECTION)
+        provideDatabase(ORMEnum.SQLALCHEMY, DATABASE_CONNECTION),
     ]
 }
