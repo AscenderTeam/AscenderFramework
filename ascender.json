@@ -14,7 +14,7 @@
     "logging": {
         "level": "info",
         "file": "ascender.log",
-        "console_format": "rich",
+        "console_format": "json",
         "file_format": "json",
         "console": true,
         "rotation": {
