@@ -1,32 +1,35 @@
+from argparse import REMAINDER
 import os
 import random
 import subprocess
 import sys
 from ascender.core._config.asc_config import _AscenderConfig
 from ascender.core.cli.application import ContextApplication
-from ascender.core.cli.main import BaseCLI
+from ascender.core.cli_engine import Command, BasicCLI, Parameter
+
+from rich import print as rprint
 
 
-class RunCLI(BaseCLI):
-    _config = {"ignore_unknown_options": True, "allow_extra_args": True}
+@Command(name="run", description="Run the Ascender Framework application.", aliases=["r"], help="Lunch the Ascender Framework application including custom CLI commands.", add_help=False)
+class RunCLI(BasicCLI):
+    
+    extra: list[str] = Parameter(default_factory=list, names=["extra"], description="Additional arguments to pass to the application.", nargs=REMAINDER)
 
     def __init__(self):
         ...
 
-    def callback(
-        self,
-        ctx: ContextApplication
-    ):
+    def execute(self):
         os.environ["CLI_MODE"] = "0"
         
-        if " ".join(sys.argv).find("run relax") != -1: return self.get_cow(ctx)
+        if "relax" in self.extra: return self.get_cow()
         source = _AscenderConfig().config.paths.source
-        return subprocess.call(f"poetry run python {source}/main.py {' '.join(sys.argv[2:])}", shell=True)
+        try:
+            return subprocess.call(f"poetry run python {source}/main.py {' '.join(self.extra)}", shell=True)
+        except KeyboardInterrupt:
+            rprint("\n[yellow]Exiting ascender run mode...[/yellow]")
+            rprint("\n[cyan]Gracefully shutting down the Ascender application...[/cyan]")
 
-    def get_cow(
-        self,
-        ctx: ContextApplication
-    ):
+    def get_cow(self):
         relax_replicas = [
             "Take a deep breath. The bugs will fix themselves... maybe.",
             "Debugging is like being the detective in a crime movie where you are also the murderer.",
@@ -47,4 +50,4 @@ class RunCLI(BaseCLI):
                 ||----w |
                 ||     ||
 """
-        ctx.console_print(f"\"{random.choice(relax_replicas)}\"\n{cow}")
+        rprint(f"\"{random.choice(relax_replicas)}\"\n{cow}")

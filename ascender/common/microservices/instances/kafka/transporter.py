@@ -12,7 +12,14 @@ T = TypeVar("T")
 
 
 class KafkaTransporter(BaseTransporter):
+    """
+    Kafka Transporter implementation working on ascender framework's default request correlation model.
     
+    Supports both RPC and Event message patterns.
+
+    Raises:
+        TypeError: If the requested underlying transporter instance type is unknown.
+    """
     is_stopped: bool = True
 
     def __init__(self, instance, event_bus, configs = ...):

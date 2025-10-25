@@ -22,10 +22,19 @@ copyright: Copyright &copy; 2024 - 2025 Ascender Team
 theme:
   name: material
   logo: assets/logo.svg
+  custom_dir: docs/overrides
   features:
     - content.code.copy
     - content.code.select
     - content.code.annotate
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
 
   palette:
     - media: "(prefers-color-scheme)"
@@ -34,8 +43,8 @@ theme:
         name: Switch to light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: indigo
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/toggle-switch
         name: Switch to dark mode
@@ -53,9 +62,31 @@ theme:
   icon:
     logo: logo
 
+extra:
+  generator: false
+
 plugins:
   - search
   - awesome-pages
+  - mkdocstrings:
+      enabled: true
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: false
+            show_root_heading: true
+            show_root_full_path: false
+            heading_level: 2
+            members_order: source
+            show_signature_annotations: true
+            separate_signature: true
+            show_if_no_docstring: false
+            inherited_members: false
+          import:
+            - https://docs.python.org/3/objects.inv
+            - https://docs.pydantic.dev/latest/objects.inv
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -78,3 +109,9 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra_css:
+  - assets/stylesheets/home.css
+
+extra_javascript:
+  - assets/javascripts/home.js

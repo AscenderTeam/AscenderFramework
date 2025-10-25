@@ -1,0 +1,46 @@
+name: 🚀 Feature Request
+description: Suggest a new feature, decorator, or component improvement.
+title: "[Feature]: "
+labels: ["enhancement"]
+
+body:
+  - type: dropdown
+    attributes:
+      label: Target package
+      options:
+        - core
+        - common
+        - testing
+        - contrib
+        - guards
+        - schematics
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Problem or context
+      description: Explain what problem this feature solves or improves.
+      placeholder: Dependency injection is currently too strict when using dynamic modules.
+
+  - type: textarea
+    attributes:
+      label: Proposed solution or API design
+      description: Describe your proposed API or behavior.
+      placeholder: |
+        Example:
+        ```python
+        @Injectable(lazy=True)
+        class LazyService:
+            ...
+        ```
+
+  - type: textarea
+    attributes:
+      label: Alternatives considered
+      description: Any other approaches you tried or considered?
+
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Reference related issues, discussions, or specs if relevant.

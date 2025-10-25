@@ -1,9 +1,9 @@
 # Anatomy of Controllers
 
 !!! tip
-    Make sure you've already read the [Essentials Guide](/essentials/controllers) about controllers before getting started with this page
+    Make sure you've already read the [Essentials Guide](../essentials/controllers.md) about controllers before getting started with this page
 
-As described earlier in [Essentials Guide](/essentials/controllers) to define controller you have to:
+As described earlier in [Essentials Guide](../essentials/controllers.md) to define controller you have to:
 
 - Use the framework-specific decorator @Controller() above the Python class of the controller.
 - The controller class should contain methods wrapped by HTTP Method-specific decorators to define route endpoints

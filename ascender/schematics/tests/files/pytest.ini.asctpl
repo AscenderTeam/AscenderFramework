@@ -1,0 +1,9 @@
+[pytest]
+testpaths = {{ path }}
+python_files = {{ python_files | default("test_*") }}.py
+python_classes = {{ python_classes | default("Test* *Tests") }}
+python_functions = {{ python_functions | default("test_*") }}
+addopts = -v --tb=short --disable-warnings
+log_cli = {{ log_cli | default("true") }}
+log_level = {{ log_level | default("INFO") }}
+asyncio_mode = {{ asyncio_mode | default("auto") }}

@@ -91,10 +91,10 @@ __all__ = ["routes"]
 This example demonstrates how to define routes connecting base paths to controllers, with metadata for OpenAPI documentation and schema inclusion.
 
 !!! tip
-    Read more about router graph and Ascender Framework routes [here](/stub-link/for-now/)
+    Read more about router graph and Ascender Framework routes in [Controllers Overview](../controllers/overview.md)
 
 
 !!! tip
-    Want to know more about Ascender Framework's controllers? See the [advanced Controller's guide](/stub-link/for-now/)
+    Want to know more about Ascender Framework's controllers? See the [Controllers Overview](../controllers/overview.md)
 
 

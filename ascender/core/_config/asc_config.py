@@ -12,6 +12,7 @@ class _AscenderConfig:
     _instance: Self | None = None
     config: AscenderConfig
     is_built: bool = False
+    is_test: bool = False
 
     def __new__(cls) -> Self:
         if not cls._instance:
@@ -21,6 +22,9 @@ class _AscenderConfig:
         return cls._instance
     
     def get_environment(self):
+        if self.is_test:
+            return self.config.environment.environments["test"]
+        
         if not self.is_built:
             return self.config.environment.environments[self.config.environment.default]
         

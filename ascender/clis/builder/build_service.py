@@ -6,7 +6,7 @@ from ascender.core._builder.file_builder import build_file_manager
 from ascender.core._builder.minifier import minify_project
 from ascender.core._builder.obfuscator import obfuscate_project
 from ascender.core._config.asc_config import _AscenderConfig
-from ascender.core.cli.application import ContextApplication
+from rich import print as rprint
 
 
 @Injectable(provided_in="root")
@@ -19,26 +19,33 @@ class BuildService(Service):
         os.environ["CLI_MODE"] = "0"
         return _AscenderConfig().config
 
-    def start_build(self, ctx: ContextApplication):
+    def start_build(self):
         configs = self.get_configs()
         build_configs = configs.build
-        
-        self.build_message_service.display_start_message(ctx, configs.project["name"])
+
+        # display start message using rich print
+        rprint(f"[green]INFO[/green] Building {configs.project['name']} - Ascender Framework Project")
+        rprint("[cyan]Preparing configuration files for build[/cyan]")
 
         if build_configs.obfuscate:
-            self.build_message_service.display_obfuscation_start(ctx)
+            rprint("[green]INFO[/] [yellow]`Obfuscation` detected in `ascender.json`[/]")
+            rprint("[green]INFO[/] Using [cyan bold]PyInstaller[/] to build project...")
+            rprint("[green]INFO[/] Using [cyan bold]PyInstaller[/] to build project...")
             self.build_file_manager(False)
 
             obfuscate_project(
                 configs.project["name"], configs.paths.output, configs.paths.source, configs.build.packages, configs.build.importMetadata
             )
 
-            self.build_message_service.display_obfuscation_finished(ctx, f"{configs.paths.output}/{configs.project['name']}")
-            self.build_message_service.display_obfuscated_instructions(ctx)
+            rprint("[green]INFO[/] [cyan]Obfuscation finished, build has been completed...[cyan]")
+            rprint(f"[green]INFO[/] [cyan]Build distribution is available in {configs.paths.output}/{configs.project['name']}[cyan]")
+            # display_obfuscated_instructions had no implementation in the message service, skipping.
             return
 
         if build_configs.minify:
-            self.build_message_service.display_minification_start(ctx)
+            rprint("[green]INFO[/] [yellow]`minify` detected in `ascender.json`[/]")
+            rprint("[green]INFO[/] Using [cyan bold]python-minifier[/] to build project...")
+            rprint("[green]INFO[/] Using [cyan bold]python-minifier[/] to build project...")
             self.build_file_manager(False)
             minify_project(
                 configs.project["name"], 
@@ -46,11 +53,12 @@ class BuildService(Service):
                 configs.paths.source, 
                 build_configs.stripComments
             )
-            self.build_message_service.display_minification_finished(ctx, f"{configs.paths.output}/{configs.project['name']}")
+            rprint("[green]INFO[/] [cyan]Minification finished, build has been completed...[cyan]")
+            rprint(f"[green]INFO[/] [cyan]Build distribution is available in {configs.paths.output}/{configs.project['name']}[cyan]")
             return
         
         self.build_file_manager(True)
-        self.build_message_service.display_finish_message(ctx, f"{configs.paths.output}/{configs.project['name']}")
+        rprint(f"[yellow]Classic build has been finished, check out {configs.paths.output}/{configs.project['name']}...[/]")
 
     def build_file_manager(self, use_source: bool = True):
         configs = self.get_configs()

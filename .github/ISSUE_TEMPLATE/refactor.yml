@@ -1,0 +1,54 @@
+name: ♻️ Refactor Proposal
+description: Suggest improvements to structure, architecture, or performance.
+title: "[Refactor]: "
+labels: ["refactor"]
+
+body:
+  - type: dropdown
+    attributes:
+      label: Target module
+      options:
+        - core.applications
+        - core.cli_engine
+        - core.database
+        - core.di
+        - core.logger
+        - core.struct
+        - core.routers
+        - common.injectable
+        - common.dto
+        - common.response
+        - common.http
+        - common.microservices
+        - schematics.controller
+        - schematics.service
+        - schematics.module
+        - schematics.repo
+        - schematics.tests
+        - schematics.guards
+        - other
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Current behavior or limitation
+      description: What’s wrong or hard to maintain about the current structure?
+
+  - type: textarea
+    attributes:
+      label: Suggested improvement
+      description: Describe your refactor plan or structural proposal.
+      placeholder: |
+        Move `AscenderInjector` initialization out of `core.applications`
+        and into a separate bootstrap file to decouple the runtime.
+
+  - type: checkboxes
+    attributes:
+      label: Expected impact
+      options:
+        - label: Simpler architecture
+        - label: Improved readability
+        - label: Performance optimization
+        - label: Compatibility with Python 3.13+
+        - label: Other

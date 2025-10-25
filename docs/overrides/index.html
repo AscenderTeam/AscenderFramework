@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ascender Framework - Modern, Powerful API Framework</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gradient-primary: linear-gradient(135deg, #FD0100 0%, #ED0189 25%, #DA04F6 50%, #7872FA 75%, #02FEEE 100%);
+            --gradient-secondary: linear-gradient(90deg, #6413CF 0%, #FD8403 100%);
+            --gradient-accent: linear-gradient(135deg, #FD0100 0%, #0BA3C8 100%);
+            --bg-dark: #0a0a0f;
+            --bg-card: #16161f;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-animated {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-animated::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(253, 1, 0, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(2, 254, 238, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(218, 4, 246, 0.08) 0%, transparent 50%);
+            animation: bgFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(50px, 100px) rotate(120deg); }
+            66% { transform: translate(-50px, 50px) rotate(240deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* Header */
+        header {
+            padding: 40px 0;
+            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 15, 0.8);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        nav {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-accent);
+            transition: width 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--text-primary);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 32px;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-badge span {
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero h1 {
+            font-size: 80px;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 8s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: 24px;
+            color: var(--text-secondary);
+            margin-bottom: 48px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--gradient-accent);
+            color: white;
+            box-shadow: 0 8px 32px rgba(253, 1, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 48px rgba(253, 1, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 64px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: var(--gradient-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 24px;
+        }
+
+        .feature-card:nth-child(2) .feature-icon {
+            background: var(--gradient-secondary);
+        }
+
+        .feature-card:nth-child(3) .feature-icon {
+            background: var(--gradient-primary);
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Advantages Section */
+        .advantages {
+            padding: 100px 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(253, 1, 0, 0.03) 50%, transparent 100%);
+        }
+
+        .advantages-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .advantages-list {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .advantage-item {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .advantage-number {
+            min-width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--gradient-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 20px;
+        }
+
+        .advantage-content h4 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .advantage-content p {
+            color: var(--text-secondary);
+        }
+
+        .advantages-visual {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .code-snippet {
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 24px;
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+
+        .code-line {
+            display: block;
+        }
+
+        .code-keyword {
+            color: #FD8403;
+        }
+
+        .code-function {
+            color: #02FEEE;
+        }
+
+        .code-decorator {
+            color: #DA04F6;
+        }
+
+        .code-string {
+            color: #7872FA;
+        }
+
+        .code-comment {
+            color: #6413CF;
+        }
+
+        /* Quick Links Section */
+        .quick-links {
+            padding: 100px 0;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .link-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-card::after {
+            content: '→';
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .link-card:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateX(8px);
+        }
+
+        .link-card:hover::after {
+            opacity: 1;
+            right: 32px;
+        }
+
+        .link-card h4 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .link-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 0;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .copyright {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .advantages-content {
+                grid-template-columns: 1fr;
+                gap: 48px;
+            }
+
+            .hero h1 {
+                font-size: 60px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 24px;
+            }
+
+            .hero {
+                padding: 80px 0;
+            }
+
+            .hero h1 {
+                font-size: 48px;
+            }
+
+            .hero-subtitle {
+                font-size: 18px;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .features-grid,
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                gap: 16px;
+                font-size: 14px;
+            }
+
+            .section-title {
+                font-size: 36px;
+            }
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in:nth-child(1) { animation-delay: 0.1s; }
+        .fade-in:nth-child(2) { animation-delay: 0.2s; }
+        .fade-in:nth-child(3) { animation-delay: 0.3s; }
+        .fade-in:nth-child(4) { animation-delay: 0.4s; }
+        .fade-in:nth-child(5) { animation-delay: 0.5s; }
+        .fade-in:nth-child(6) { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <div class="bg-animated"></div>
+
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <svg class="logo-img" viewBox="0 0 417 344" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M188.99 29.9669L332.156 313.609" stroke="url(#paint0_linear_1_10)" stroke-width="59" stroke-linecap="round"/>
+                        <path d="M30 239C123.333 192.213 251.667 142.827 380 213.007" stroke="url(#paint1_linear_1_10)" stroke-width="59" stroke-linecap="round"/>
+                        <path d="M51.904 313.609L188.834 29.9669" stroke="url(#paint2_linear_1_10)" stroke-width="59" stroke-linecap="round"/>
+                        <defs>
+                            <linearGradient id="paint0_linear_1_10" x1="190.5" y1="15" x2="346" y2="337.5" gradientUnits="userSpaceOnUse">
+                                <stop offset="0.180143" stop-color="#FD0100"/>
+                                <stop offset="0.91" stop-color="#0BA3C8"/>
+                            </linearGradient>
+                            <linearGradient id="paint1_linear_1_10" x1="18.3333" y1="214.307" x2="380" y2="214.307" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#6413CF"/>
+                                <stop offset="1" stop-color="#FD8403"/>
+                            </linearGradient>
+                            <linearGradient id="paint2_linear_1_10" x1="228.676" y1="16.4431" x2="66.0954" y2="353.217" gradientUnits="userSpaceOnUse">
+                                <stop offset="0.06" stop-color="#FD0100"/>
+                                <stop offset="0.375" stop-color="#ED0189"/>
+                                <stop offset="0.55519" stop-color="#DA04F6"/>
+                                <stop offset="0.71" stop-color="#7872FA"/>
+                                <stop offset="1" stop-color="#02FEEE"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="logo-text">Ascender</div>
+                </div>
+                <nav>
+                    <a href="#features">Features</a>
+                    <a href="#advantages">Why Ascender</a>
+                    <a href="#docs">Documentation</a>
+                    <a href="https://github.com/ascenderteam/ascenderframework" target="_blank">GitHub</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-badge">
+                    <span>✨ The Modern Python API Framework</span>
+                </div>
+                <h1>Build Powerful APIs<br>At Lightning Speed</h1>
+                <p class="hero-subtitle">
+                    Ascender Framework combines the simplicity of Python with the robust architecture of modern web frameworks.
+                    Inspired by NestJS, powered by FastAPI.
+                </p>
+                <div class="hero-cta">
+                    <a href="introduction/installation.md" class="btn btn-primary">Get Started</a>
+                    <a href="introduction/overview.md" class="btn btn-secondary">View Documentation</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <h2 class="section-title">Core Features</h2>
+                <div class="features-grid">
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">🚀</div>
+                        <h3>Lightning Fast Development</h3>
+                        <p>Built on FastAPI for exceptional performance. Write less boilerplate, focus on building features that matter.</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">💉</div>
+                        <h3>Powerful Dependency Injection</h3>
+                        <p>Enterprise-grade DI system inspired by NestJS. Build scalable, testable, and maintainable applications.</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Type-Safe & Validated</h3>
+                        <p>Full type safety with Pydantic validation. Catch errors early and ship with confidence.</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">🛠️</div>
+                        <h3>Comprehensive CLI</h3>
+                        <p>Powerful CLI tools for scaffolding, development, and testing. Generate boilerplate in seconds.</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">🔌</div>
+                        <h3>ORM Integration</h3>
+                        <p>Seamless integration with Tortoise ORM and SQLAlchemy. Choose your favorite ORM.</p>
+                    </div>
+                    <div class="feature-card fade-in">
+                        <div class="feature-icon">🧪</div>
+                        <h3>Testing Made Easy</h3>
+                        <p>Built-in testing utilities and mocking support. Write tests that actually make sense.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="advantages" class="advantages">
+            <div class="container">
+                <h2 class="section-title">Why Choose Ascender?</h2>
+                <div class="advantages-content">
+                    <div class="advantages-list">
+                        <div class="advantage-item">
+                            <div class="advantage-number">01</div>
+                            <div class="advantage-content">
+                                <h4>Modular Architecture</h4>
+                                <p>Organize your code into reusable modules. Scale your application without chaos.</p>
+                            </div>
+                        </div>
+                        <div class="advantage-item">
+                            <div class="advantage-number">02</div>
+                            <div class="advantage-content">
+                                <h4>Developer Experience First</h4>
+                                <p>Intuitive APIs, excellent documentation, and helpful CLI tools make development a joy.</p>
+                            </div>
+                        </div>
+                        <div class="advantage-item">
+                            <div class="advantage-number">03</div>
+                            <div class="advantage-content">
+                                <h4>Production Ready</h4>
+                                <p>Battle-tested patterns, comprehensive error handling, and performance optimizations out of the box.</p>
+                            </div>
+                        </div>
+                        <div class="advantage-item">
+                            <div class="advantage-number">04</div>
+                            <div class="advantage-content">
+                                <h4>Microservices Support</h4>
+                                <p>Built with microservices in mind. Scale horizontally with ease.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="advantages-visual">
+                        <div class="code-snippet">
+<span class="code-line"><span class="code-decorator">@Controller</span>(<span class="code-string">"/users"</span>)</span>
+<span class="code-line"><span class="code-keyword">class</span> <span class="code-function">UserController</span>:</span>
+<span class="code-line">    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(self, service: UserService):</span>
+<span class="code-line">        self.service = service</span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-decorator">@Get</span>(<span class="code-string">"/"</span>)</span>
+<span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">get_users</span>(self):</span>
+<span class="code-line">        <span class="code-keyword">return</span> <span class="code-keyword">await</span> self.service.find_all()</span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-decorator">@Post</span>(<span class="code-string">"/"</span>)</span>
+<span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">create_user</span>(self, dto: CreateUserDto):</span>
+<span class="code-line">        <span class="code-keyword">return</span> <span class="code-keyword">await</span> self.service.create(dto)</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-comment"># Clean, intuitive, powerful</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="docs" class="quick-links">
+            <div class="container">
+                <h2 class="section-title">Explore Documentation</h2>
+                <div class="links-grid">
+                    <a href="introduction/overview.md" class="link-card">
+                        <h4>Getting Started</h4>
+                        <p>Learn the basics and set up your first project</p>
+                    </a>
+                    <a href="controllers/overview.md" class="link-card">
+                        <h4>Controllers</h4>
+                        <p>Handle HTTP requests and define your API routes</p>
+                    </a>
+                    <a href="di/overview.md" class="link-card">
+                        <h4>Dependency Injection</h4>
+                        <p>Master the powerful DI system</p>
+                    </a>
+                    <a href="essentials/data-validation.md" class="link-card">
+                        <h4>Validation</h4>
+                        <p>Validate and transform incoming data</p>
+                    </a>
+                    <a href="cli/overview.md" class="link-card">
+                        <h4>CLI Tools</h4>
+                        <p>Use the command-line interface effectively</p>
+                    </a>
+                    <a href="api-reference/index.md" class="link-card">
+                        <h4>API Reference</h4>
+                        <p>Complete API documentation and examples</p>
+                    </a>
+                    <a href="api-reference/testing.md" class="link-card">
+                        <h4>Testing</h4>
+                        <p>Write comprehensive tests for your application</p>
+                    </a>
+                    <a href="api-reference/database.md" class="link-card">
+                        <h4>Database</h4>
+                        <p>Work with databases using ORM integrations</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://github.com/ascenderteam/ascenderframework">GitHub</a>
+                <a href="introduction/overview.md">Documentation</a>
+                <a href="api-reference/index.md">API Reference</a>
+                <a href="https://github.com/ascenderteam/ascenderframework/issues">Issues</a>
+                <a href="introduction/next-steps.md">Contributing</a>
+            </div>
+            <div class="copyright">
+                Copyright © 2024 - 2025 Ascender Team. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

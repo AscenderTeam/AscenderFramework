@@ -4,3 +4,4 @@ nav:
   - dependency-injection.md
   - http-client.md
   - next-steps.md
+  - testing.md

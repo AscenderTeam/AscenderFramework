@@ -35,7 +35,7 @@ def is_type_provider(provider: Provider) -> bool:
     ) and isinstance(provider, (type, ForwardRef))
 
 
-def for_each_provider(providers: Iterable, fn: Callable[[Provider], None]):
+def for_each_provider(providers: Iterable[Provider], fn: Callable[[Provider], None]):
     for provider in providers:
         if isinstance(provider, list):
             for_each_provider(provider, fn)

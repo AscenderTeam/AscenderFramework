@@ -9,6 +9,11 @@ from ascender.common.microservices.types.transport import Transports
 
 
 class ClientProxy:
+    """
+    Represents a client proxy object for sending messages, emitting events to receivers on the other side.
+
+    NOTE: Some transports may not support all features. For more information, refer to the documentation of each transport ([Kafka](#kafkatransporter), [Redis](#redistransporter) and [TCP](#tcptransporter)).
+    """
     def __init__(self, transport: TransportInstance):
         self.transport = transport
         self.rpc_transport = None

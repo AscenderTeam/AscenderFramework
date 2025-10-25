@@ -2,7 +2,7 @@
 
 
 <p align="center">
-<img src="logo.png" height="150px" />
+<img src="https://github.com/AscenderTeam/AscenderFramework/blob/main/logo.png?raw=true" height="150px" />
 <br>
 <em>
 Ascender Framework is a powerful, FastAPI-based framework designed to streamline the development of web applications. <br>
@@ -10,7 +10,7 @@ Inspired by NestJS and some parts of other DI frameworks, it combines the simpli
 </p>
 
 <p align="center">
-    <a href="https://framework.ascender.space">Official Website</a>
+    <a href="https://ascender-framework.com">Official Website</a>
 </p>
 
 
@@ -18,55 +18,85 @@ Inspired by NestJS and some parts of other DI frameworks, it combines the simpli
 
 Get started! Learn the basics of framework and explore more advanced features and topics.
 
-- [Getting Started](https://framework.ascender.space/introduction/installation)
-- [Architecture](https://framework.ascender.space/introduction/overview)
-- [Controllers](https://framework.ascender.space/essentials/controllers)
-- [Validators](https://framework.ascender.space/essentials/data-validation)
-- [Modular Design](https://framework.ascender.space/essentials/dependency-injection)
+- [Getting Started](https://ascender-framework.com/introduction/installation)
+- [Architecture](https://ascender-framework.com/introduction/overview)
+- [Controllers](https://ascender-framework.com/controllers/overview)
+- [Validators](https://ascender-framework.com/essentials/data-validation)
+- [Dependency Injection](https://ascender-framework.com/di/overview)
+- [CLI Engine](https://ascender-framework.com/cli/overview)
+- [CLI Command Types](docs/cli/command-types)
+- [Creating CLI Commands](https://ascender-framework.com/cli/creating-commands)
+- [CLI Registration](https://ascender-framework.com/cli/registration)
 
-### Advanced level
 
-- [Database](https://framework.ascender.space/tutorials/databases)
-- [Providers](https://framework.ascender.space/di/dependency-providers)
-- [Custom CLI](https://framework.ascender.space/cli/custom)
-- [API](https://framework.ascender.space/api-references)
+## CLI Usage
+
+- Global CLI (tooling):
+  - ascender [command]
+  - Examples:
+    - ascender new --name <project-name> --orm-mode <tortoise|sqlalchemy>
+    - ascender run serve
+
+- Local project CLI wrapper:
+  - ascender run [command]
+  - Wraps project entrypoints and CLI scripts (shorter than invoking Python directly)
+  - Examples:
+    - ascender run serve
+    - ascender run tests
+    - ascender run tests init  # scaffolds basic tests and pytest.ini (planned)
 
 
 ## Getting Started
 
-Install Ascender Framework (with it's CLI) globally:
+Install Ascender Framework (with its CLI) globally:
 ```
 pip install ascender-framework
 ```
-Initialize project workspace:
+Initialize a project workspace:
 ```
 ascender new --name <project-name> --orm-mode <tortoise|sqlalchemy>
 ```
-Run the first development server:
+Run the development server (global):
 ```
 cd <project-name>
-ascender serve
-```
-or use local CLI:
-```
 ascender run serve
 ```
 
+
 ## Project Structure
 
-- `bootstrap.py`: For framework and server configuration.
-- `controllers/`: Contains the controllers with main controller.
-- `start.py`: Contains initialization and bootstrap entrypoint for entire application.
+- src/bootstrap.py: Framework and server configuration
+- src/controllers/: Your controllers (e.g., main controller)
+- start.py: Initialization/bootstrap entrypoint for the application
+
+
+## Testing
+
+- Unit tests live under src/tests/
+- Run tests via the local wrapper:
+```
+ascender run tests run
+```
+- Initialize a basic testing setup (to be implemented):
+```
+ascender run tests init
+```
+- src/tests basic tests and pytest.ini will be generated
+
 
 ## Contributing
 
-Contributions are welcome! Please read through our [contributing guidelines](https://framework.ascender.space/guidelines/contributions).
+Contributions are welcome! Please read through our contributing guidelines.
 
-## Need a help?
+- [Guidelines](https://ascender-framework.com/meta/terms)
 
-If you need any help, report bug, improve documentation or contribute, please read our guidelines for [contributing](CONTRIBUTING.md) and then head out into issues of this repository.
+
+## Need help?
+
+If you need any help, want to report a bug, improve documentation or contribute, please open an issue in this repository after reading the guidelines.
+
 
 ## License
 
-This project is licensed under the [GNU General Public License v3.0](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
 

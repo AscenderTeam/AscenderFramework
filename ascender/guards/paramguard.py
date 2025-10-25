@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from functools import wraps
 from typing import final
 from typing import Any, Callable
@@ -11,33 +10,31 @@ from ascender.core.utils.module import load_module
 
 
 class ParamGuard:
-    __di_module__: AscModuleRef = None
+    __di_module__: AscModuleRef | None = None
     __declaration_type__: str = "guard"
     
-    @abstractmethod
     def __init__(self):
         ...
     
-    @abstractmethod
     def __post_init__(self):
         ...
 
     @final
     def handle_di(self):
         if not self.__di_module__:
-            RootInjector().injector.inject_factory_def(self.__post_init__)()
+            RootInjector().injector.inject_factory_def(self.__post_init__)() # type: ignore
             return
         
         di_module = self.__di_module__
         
         # Load module or if it's already loaded then just use it and ignore `RuntimeError: module is already loaded`
         try:
-            di_module = load_module(di_module)
+            di_module = load_module(di_module) # type: ignore
         except RuntimeError:
             pass
         
         # Execute `self.__post_init__` method
-        self.__di_module__._injector.inject_factory_def(self.__post_init__)()
+        self.__di_module__._injector.inject_factory_def(self.__post_init__)() # type: ignore
 
     def _define_dependencies(self, executable: Callable[..., None]):
         """
@@ -78,6 +75,6 @@ class ParamGuard:
 
         @wraps(executable)
         async def wrapper(*args, **kwargs):
-            return await _updatedfunc(*args, **kwargs)
+            return await _updatedfunc(*args, **kwargs) # type: ignore
 
         return wrapper

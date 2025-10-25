@@ -1,0 +1,6 @@
+nav:
+  - Overview: overview.md
+  - Command Types: command-types.md
+  - Creating Commands: creating-commands.md
+  - Command Registration: registration.md
+  - Examples: examples.md
