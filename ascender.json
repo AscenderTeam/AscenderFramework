@@ -1,7 +1,7 @@
 {
     "project": {
         "name": "ascender-framework",
-        "version": "2.0",
+        "version": "2.0.4",
         "description": "A backend project powered by Ascender Framework"
     },
     "paths": {
@@ -14,8 +14,8 @@
     "logging": {
         "level": "info",
         "file": "ascender.log",
-        "console_format": "json",
-        "file_format": "json",
+        "console_format": "rich",
+        "file_format": "rich",
         "console": true,
         "rotation": {
             "enabled": true,
