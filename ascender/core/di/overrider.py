@@ -9,7 +9,7 @@ class InjectionOverriderContext:
         self.token: Token[Provider | None] | None = None
         self.providers = providers
     
-    def __aenter__(self) -> Self:
+    def __enter__(self) -> Self:
         self.token = StaticOverrider.override(self.providers)
         return self
     
@@ -31,8 +31,8 @@ class InjectionOverriderContext:
         
         StaticOverrider.reset(self.token)
         self.token = StaticOverrider.override(self.providers)
-    
-    def __aexit__(self, exc_type, exc_val, exc_tb) -> Literal[False]:
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> Literal[False]:
         StaticOverrider.reset(self.token)
         return False
 
