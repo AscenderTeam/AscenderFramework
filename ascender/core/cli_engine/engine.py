@@ -158,7 +158,6 @@ class CLIEngine:
         else:
             raise TypeError(f"Unknown command type: {type(command_instance)}")
 
-
     def parse_and_execute(self, argv: list[str] | None = None) -> Any:
         """
         Parse command line arguments and execute the appropriate command.
