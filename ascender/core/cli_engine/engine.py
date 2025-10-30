@@ -152,14 +152,11 @@ class CLIEngine:
             subcommand_args = {k: v for k, v in arguments.items() if k in handler_info.parameters}
             
             method = getattr(command_instance, handler_info._functionname)
-            if iscoroutinefunction(method):
-                return asyncio.run(call_parsed_method(method, subcommand_args))
 
             return call_parsed_method(method, subcommand_args)
         
         else:
             raise TypeError(f"Unknown command type: {type(command_instance)}")
-
 
     def parse_and_execute(self, argv: list[str] | None = None) -> Any:
         """
