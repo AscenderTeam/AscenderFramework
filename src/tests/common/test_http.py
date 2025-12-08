@@ -11,7 +11,7 @@ async def test_file_upload():
     resp = await http.post(
         url="http://httpbin.org/post",
         content=FormData(
-        file=FileData(
+            file=FileData(
                 filename="test.txt", 
                 content=b"Hello, World!", 
                 content_type="text/plain"
