@@ -36,6 +36,18 @@ The HTTP API provides utilities for making HTTP requests and handling HTTP-relat
       show_source: false
       members_order: source
 
+::: ascender.common.http.FormData
+    options:
+      show_root_heading: true
+      show_source: false
+      members_order: source
+
+::: ascender.common.http.FileData
+    options:
+      show_root_heading: true
+      show_source: false
+      members_order: source
+
 ## See Also
 
 - [HTTP Client Guide](../http/client.md) - Comprehensive HTTP client guide
