@@ -3,7 +3,7 @@ from typing import Awaitable, Callable
 from httpx import Request, Response
 
 InterceptorIn = Request
-InterceptorFn = Awaitable[Callable[[Request], Request]]
+InterceptorFn = Callable[[Request], Awaitable[Request]]
 
 
 class Interceptor(ABC):
