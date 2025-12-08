@@ -1,3 +1,5 @@
+from .types.file import FileData
+from .types.formdata import FormData
 from .client import HTTPClient
 from .provider import provideHTTPClient
 from .types.http_options import HTTPOptions, HeaderTypes
@@ -12,5 +14,7 @@ __all__ = [
     "_await",
     "Interceptor",
     "InterceptorFn",
-    "InterceptorIn"
+    "InterceptorIn",
+    "FormData",
+    "FileData"
 ]

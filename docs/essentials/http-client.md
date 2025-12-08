@@ -72,10 +72,37 @@ providers = [
 
 ## Streaming responses
 
-The `stream` method returns an RxPY `Observable` for consuming streamed data such as server-sent events.
+The `stream` method returns an RxPY `Observable` for consuming streamed data such as server-sent events by default. Pass `as_observable=False` to get the raw async context manager and read chunks manually.
 
 ```python title="stream.py"
 stream = http.stream(dict, method="GET", url="/events")
 stream.subscribe(on_next=lambda chunk: print(chunk))
+
+# manual streaming
+async with http.stream(dict, method="GET", url="/events", as_observable=False) as resp:
+    async for line in resp.aiter_text():
+        print(line)
 ```
 
+## Form data and file uploads
+
+Ascender introduces **FormData** - a unified payload builder that accepts both **plain string fields** and **file-like values** without needing
+`data= / files= / json=` separation like HTTPX or Requests.
+
+If the payload of `FormData` contains at least one `FileData`, the request automatically
+becomes `multipart/form-data`. Otherwise, it is encoded as form fields.
+
+```python title="examples/form_data.py"
+from ascender.common.http import FormData, FileData
+
+form = FormData(
+    description="My upload",
+    attachment=FileData(
+        filename="report.pdf",
+        content=open("report.pdf", "rb").read(),
+        content_type="application/pdf",
+    ),
+)
+
+await http.post(url="/upload", content=form)
+```
