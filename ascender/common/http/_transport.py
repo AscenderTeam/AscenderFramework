@@ -58,7 +58,7 @@ class AscHTTPTransport(AsyncBaseTransport):
         modified_request = request
         # Handle class interceptors based on dependency injection
         class_interceptors: list[Interceptor] | Interceptor = RootInjector().get(
-            "HTTP_INTERCEPTOR", not_found_value=[], options={"optional": True})
+            "HTTP_INTERCEPTOR", not_found_value=[], options={"optional": True}) # type: ignore
 
         modified_request = await self.request_class_interceptors(modified_request, class_interceptors)
 
