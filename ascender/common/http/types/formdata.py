@@ -8,7 +8,23 @@ from ascender.common.http.types.file import FileData
 
 
 class FormData:
+    """A form data container for HTTP multipart/form-data requests.
+    
+    This class provides an interface similar to the JavaScript FormData API for building
+    multipart form data. It supports string values and file uploads via FileData.
+    
+    Note:
+        UploadFile values cannot be passed directly to the constructor. They must be added
+        using the append() or set() methods, which handle the conversion to FileData internally.
+    """
+    
     def __init__(self, **entries: str | FileData) -> None:
+        """Initialize FormData with key-value pairs.
+        
+        Args:
+            **entries: Key-value pairs where values can be strings or FileData objects.
+                Note: UploadFile values are not accepted here. Use append() or set() instead.
+        """
         self.fields = entries
     
     def append_from_dto(self, data: BaseModel) -> None:
