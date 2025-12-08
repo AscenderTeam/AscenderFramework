@@ -1,7 +1,7 @@
 {
     "project": {
         "name": "Ascender Framework",
-        "version": "1.3.0-b6",
+        "version": "2.0.4",
         "description": "A backend project powered by Ascender Framework"
     },
     "paths": {
