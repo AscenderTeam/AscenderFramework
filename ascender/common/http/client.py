@@ -1,9 +1,12 @@
-from contextlib import _GeneratorContextManager
-from threading import Thread
-from typing import Any, Literal, TypeVar, cast
-from httpx import AsyncClient, Response, stream
+import asyncio
+import json
+from contextlib import _AsyncGeneratorContextManager
+from typing import Any, Literal, TypeVar, cast, overload
+from httpx import AsyncClient, Response
 from pydantic import BaseModel
 from reactivex import create, Observer, abc, Observable
+
+from ascender.common.http.types.formdata import FormData
 
 from ._transport import AscHTTPTransport
 from .types.http_options import HTTPOptions
@@ -54,7 +57,7 @@ class HTTPClient:
         _resp: type[T] | T = dict,
         *,
         url: str,
-        content: Any | BaseModel | None,
+        content: Any | BaseModel | FormData | None,
         options: HTTPOptions | None = None
     ) -> T:
         """Send a POST request to a desired endpoint.
@@ -83,7 +86,7 @@ class HTTPClient:
         _resp: type[T] | T = dict,
         *,
         url: str,
-        content: Any | BaseModel | None,
+        content: Any | BaseModel | FormData | None,
         options: HTTPOptions | None = None
     ) -> T:
         """Send a PUT request to a desired endpoint.
@@ -112,7 +115,7 @@ class HTTPClient:
         _resp: type[T] | T = dict,
         *,
         url: str,
-        content: Any | BaseModel | None,
+        content: Any | BaseModel | FormData | None,
         options: HTTPOptions | None = None
     ) -> T:
         """Send a PATCH request to a desired endpoint.
@@ -163,15 +166,42 @@ class HTTPClient:
 
         return cast(T, self.__handle_response(_resp, response=response))
 
+    @overload
     def stream(
         self,
         _resp: type[T] | T = dict,
         *,
         method: Literal["GET", "POST", "PUT", "DELETE", "PATCH"],
         url: str,
-        content: Any | BaseModel | None = None,
-        options: HTTPOptions | None = None
+        content: Any | BaseModel | FormData | None = None,
+        options: HTTPOptions | None = None,
+        as_observable: Literal[True] = True,
     ) -> Observable[T]:
+        ...
+
+    @overload
+    def stream(
+        self,
+        _resp: type[T] | T = dict,
+        *,
+        method: Literal["GET", "POST", "PUT", "DELETE", "PATCH"],
+        url: str,
+        content: Any | BaseModel | FormData | None = None,
+        options: HTTPOptions | None = None,
+        as_observable: Literal[False],
+    ) -> _AsyncGeneratorContextManager[Response]:
+        ...
+
+    def stream(
+        self,
+        _resp: type[T] | T = dict,
+        *,
+        method: Literal["GET", "POST", "PUT", "DELETE", "PATCH"],
+        url: str,
+        content: Any | BaseModel | FormData | None = None,
+        options: HTTPOptions | None = None,
+        as_observable: bool = True,
+    ) -> Observable[T] | _AsyncGeneratorContextManager[Response]:
         """Send a streaming request to a desired endpoint.
 
         Args:
@@ -180,9 +210,10 @@ class HTTPClient:
             url (str): The URL to send the request to.
             content (Any | BaseModel | None, optional): The content to include in the request body (supports pydantic models). Defaults to None.
             options (HTTPOptions | None, optional): Additional options for the request. Defaults to None.
+            as_observable (bool, optional): When True (default), returns an Observable; when False, returns an async context manager for manual streaming.
 
         Returns:
-            Observable[T]: An observable that emits the response from the server.
+            Observable[T] | _AsyncGeneratorContextManager[Response]: Stream subscription helper or the raw streaming context manager.
 
         Raises:
             httpx.HTTPError: If an error occurs during the HTTP request.
@@ -190,9 +221,12 @@ class HTTPClient:
         payload_options = {} if not options else options
         request_payload = self.__prepare_request_body(content)
 
-        resposne = stream(method, url, **request_payload, **cast(HTTPOptions, payload_options)) # type: ignore
+        response_ctx = self.client.stream(method, url, **request_payload, **cast(HTTPOptions, payload_options)) # type: ignore
         
-        return create(cast(abc.Subscription[T], self.__handle_streaming(_resp, response=resposne)))
+        if not as_observable:
+            return response_ctx
+
+        return create(cast(abc.Subscription[T], self.__handle_streaming(_resp, response=response_ctx)))
 
     def __prepare_request_body(
         self,
@@ -203,25 +237,52 @@ class HTTPClient:
 
         if isinstance(content, BaseModel):
             return {"json": cast(BaseModel, content).model_dump(mode="json")}
-
+        
+        if isinstance(content, FormData):
+            return content._construct()
+        
         return {"json": content}
 
     def __handle_streaming(
         self,
         _resp: type[T] | T = dict,
         *,
-        response: _GeneratorContextManager[Response]
+        response: _AsyncGeneratorContextManager[Response]
     ):
         def observable_response(observer: Observer[T], _):
-            def handle_request():
-                with response as item:
-                    for line in item.iter_text():
-                        observer.on_next(cast(T, line))
-                    
-                    observer.on_completed()
+            async def handle_request():
+                try:
+                    async with response as item:
+                        async for line in item.aiter_text():
+                            parsed = self.__parse_stream_chunk(_resp, line)
+                            observer.on_next(parsed)
 
-            Thread(target=handle_request).start()
+                    observer.on_completed()
+                except Exception as exc:
+                    observer.on_error(exc)
+
+            asyncio.create_task(handle_request())
         return observable_response
+
+    def __parse_stream_chunk(self, _resp: type[T] | T, chunk: str) -> T:
+        if isinstance(_resp, BaseModel):
+            return cast(T, type(_resp).model_validate_json(chunk))
+
+        if isinstance(_resp, type) and issubclass(_resp, BaseModel):
+            return cast(T, cast(type[BaseModel], _resp).model_validate_json(chunk))
+
+        try:
+            data = json.loads(chunk)
+        except Exception:
+            return cast(T, chunk)
+
+        if isinstance(_resp, type):
+            try:
+                return cast(T, _resp(data))  # type: ignore[arg-type]
+            except Exception:
+                return cast(T, data)
+
+        return cast(T, data)
 
     def __handle_response(
         self,

@@ -13,6 +13,8 @@
     "logging": {
         "level": "debug",
         "file": "logs/ascender.log",
+        "console_format": "rich",
+        "file_format": "rich",
         "console": true,
         "rotation": {
             "enabled": true,

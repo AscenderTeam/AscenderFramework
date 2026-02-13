@@ -19,9 +19,9 @@ class LoggingConfig(BaseModel):
     level: Literal["debug", "info", "warn", "error", "critical"] = Field("info", description="Logging level.")
     file: Optional[str] = Field(None, description="Path to the log file.")
     console: bool = Field(True, description="Whether to enable console logging.")
-    rotation: Optional[LoggingRotationConfig] = Field(
-        None, description="Log rotation settings."
-    )
+    console_format: Literal["rich", "json"] = Field("rich", description="Console log format.")
+    file_format: Literal["rich", "json"] = Field("json", description="File log format.")
+    rotation: Optional[LoggingRotationConfig] = Field(None, description="Log rotation settings.")
 
 
 class BuildConfig(BaseModel):
@@ -49,7 +49,7 @@ class DependencyInjectionConfig(BaseModel):
         "warn", description="Action to take when circular dependencies are detected."
     )
     overrides: OverrideConfig = Field(
-        OverrideConfig(enabled=False, injector="ascender.core.di.injector.AscenderInjector"), 
+        OverrideConfig(enabled=False, injector="ascender.core.di.injector.AscenderInjector"),
         description="Dependency injection settings for this environment."
     )
 
@@ -59,4 +59,3 @@ class FeaturesConfig(BaseModel):
     runtimeMonitoring: bool = Field(True, description="Whether to enable runtime monitoring.")
     autoMigrations: bool = Field(False, description="Whether to enable automatic migrations.")
     staticFileServing: bool = Field(True, description="Whether to enable serving of static files.")
-

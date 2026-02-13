@@ -2,3 +2,4 @@ nav:
   - overview.md
   - controller-types.md
   - controller-routes.md
+  - controller-hooks.md
