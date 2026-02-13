@@ -2,7 +2,7 @@ import asyncio
 import json
 import traceback
 from inspect import isclass
-from typing import TypeVar
+from typing import TypeVar, cast
 
 from ascender.common.microservices.abc.transporter import BaseTransporter
 from ascender.common.microservices.instances.tcp.context import TCPContext
@@ -60,15 +60,14 @@ class TCPTransporter(BaseTransporter):
                 # Create a TCPContext that includes the writer.
                 context = TCPContext(
                     correlation_id=correlation_id,
-                    is_event=not bool(correlation_id),
+                    is_event=correlation_id is None,
                     rpc_transport=TCPRPCTransport(self, writer=writer),
                     event_transport=TCPEventTransport(self, writer=writer),
                     pattern=pattern,
                     remote_addr=str(remote_addr),
                 )
-                print(message)
                 # Pass the received message to the event bus.
-                await self.event_bus.emit(context, pattern, payload, metadata)
+                await self.event_bus.emit(context, pattern, payload, metadata)  # type: ignore[arg-type]
         except Exception:
             traceback.print_exc()
         finally:
@@ -101,4 +100,6 @@ class TCPTransporter(BaseTransporter):
         """
         if not isclass(rtype):
             raise TypeError(f"Unknown transporter instance type {rtype}")
-        return self.server  # For example, to inspect server properties.
+        if self.server is None:
+            raise RuntimeError("TCP server is not running")
+        return cast(T, self.server)

@@ -1,6 +1,6 @@
 from inspect import isclass
 import traceback
-from typing import TypeVar
+from typing import TypeVar, cast
 
 from ascender.common.microservices.abc.transporter import BaseTransporter
 from ascender.common.microservices.instances.kafka.context import KafkaContext
@@ -62,14 +62,20 @@ class KafkaTransporter(BaseTransporter):
                     "transporter": "kafka"
                 }
                 correlation_id = next((value.decode('utf-8') for key, value in metadata["headers"] if key == "correlationId"), None)
-                context: KafkaContext = KafkaContext(
-                    correlation_id=correlation_id, 
-                    is_event=bool(correlation_id),
+                context = KafkaContext(
+                    correlation_id=correlation_id,
+                    is_event=correlation_id is None,
                     rpc_transport=self.rpc_transport,
                     event_transport=self.event_transport,
-                    **metadata
+                    pattern=metadata["pattern"],
+                    partition=metadata["partition"],
+                    offset=metadata["offset"],
+                    key=metadata["key"],
+                    timestamp=metadata["timestamp"],
+                    timestamp_type=metadata["timestamp_type"] or 0,
+                    headers=list(metadata["headers"]),
                 )
-                await self.event_bus.emit(context, message.topic, message.value, metadata)
+                await self.event_bus.emit(context, message.topic, message.value, metadata)  # type: ignore[arg-type]
             except Exception as e:
                 traceback.print_exc()
     
@@ -92,9 +98,9 @@ class KafkaTransporter(BaseTransporter):
             raise TypeError(f"Unknown transporter instance type {rtype}")
         
         if issubclass(rtype, AIOKafkaProducer):
-            return self.producer
+            return cast(T, self.producer)
         
         if issubclass(rtype, AIOKafkaConsumer):
-            return self.consumer
+            return cast(T, self.consumer)
         
         raise TypeError(f"Unknown transporter instance type {rtype.__name__}")

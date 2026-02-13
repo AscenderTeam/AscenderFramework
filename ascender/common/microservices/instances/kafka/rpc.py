@@ -1,5 +1,4 @@
 import asyncio
-import json
 from logging import Logger
 import traceback
 from typing import TYPE_CHECKING, Any
@@ -10,7 +9,12 @@ from reactivex.scheduler.eventloop import AsyncIOScheduler
 
 from ascender.common.microservices.exceptions.rpc_exception import RPCException
 from ascender.common.microservices.instances.kafka.metadata import KafkaMetadata
-from ascender.common.microservices.utils.data_parser import decode_message, parse_data
+from ascender.common.microservices.types import AckStatus, RequestType
+from ascender.common.microservices.utils.frames import (
+    decode_incoming_frame,
+    normalize_correlation_id,
+    serialize_frame,
+)
 from ascender.common.microservices.utils.defer_mapping import kafka_defer
 from ascender.core import inject
 
@@ -51,7 +55,11 @@ class KafkaRPCTransport(RPCTransport):
         response = asyncio.Future()  # Use Future for proper async response handling
         response_received = asyncio.Event()
 
-        data = parse_data(data).encode()
+        frame_payload = serialize_frame(
+            request_type=RequestType.CALL,
+            payload=data,
+            correlation_id=correlation_id,
+        ).encode()
 
         # Subscription to the event response
         def define_response(resp: Any | None):
@@ -70,7 +78,7 @@ class KafkaRPCTransport(RPCTransport):
             ops.subscribe_on(asyncio_scheduler),
             ops.timeout_with_mapper(timer(timeout), kafka_defer(
                 timeout, correlation_id), throw(TimeoutError("Response timed out."))),
-            ops.filter(lambda pair: pair[0] == f"response-{correlation_id}"),
+            ops.filter(lambda pair: pair[0] == correlation_id),
             ops.first(),
             ops.map(lambda pair: pair[1])
         ).subscribe(
@@ -81,7 +89,11 @@ class KafkaRPCTransport(RPCTransport):
         self.logger.debug(
             f"[yellow] ASCENDER MICROSERVICES [/] | Sending message to [cyan]{pattern}[/] with correlation ID [green]{correlation_id}[/]")
         
-        await self.transport.producer.send(topic=pattern, headers=[( "correlationId", correlation_id.encode() )], value=data)
+        await self.transport.producer.send(
+            topic=pattern,
+            headers=[("correlationId", correlation_id.encode())],
+            value=frame_payload,
+        )
         # INFO LOG
         self.logger.info(
             f"[yellow] ASCENDER MICROSERVICES [/] | Successfully sent message pattern [bold cyan]{pattern}[/] to the message broker")
@@ -111,17 +123,25 @@ class KafkaRPCTransport(RPCTransport):
         asyncio_scheduler = AsyncIOScheduler(asyncio.get_event_loop())
         correlation_id = str(uuid4())
 
-        data = parse_data(data).encode()
+        frame_payload = serialize_frame(
+            request_type=RequestType.CALL,
+            payload=data,
+            correlation_id=correlation_id,
+        ).encode()
 
         # Send request
-        await self.transport.producer.send(pattern, value=data, headers=[( "correlationId", correlation_id.encode() )])
+        await self.transport.producer.send(
+            pattern,
+            value=frame_payload,
+            headers=[("correlationId", correlation_id.encode())],
+        )
 
         # Subscribe to the event response
         observable = self.response_subject.pipe(
             ops.subscribe_on(asyncio_scheduler),
             ops.timeout_with_mapper(timer(timeout), kafka_defer(
                 timeout, correlation_id), throw(TimeoutError("Response timed out."))),
-            ops.filter(lambda pair: pair[0] == f"response-{correlation_id}"),
+            ops.filter(lambda pair: pair[0] == correlation_id),
             ops.first(),
             ops.map(lambda pair: pair[1])
         )
@@ -137,37 +157,71 @@ class KafkaRPCTransport(RPCTransport):
         Defers the response correlation of the RPC Transport.
         """
         self.logger.debug(f"[yellow] ASCENDER MICROSERVICES [/] | Requesting consumer side to defer response, and prolong the timeout at the pattern {pattern}")
-        await self.transport.producer.send(pattern, value=b"defer", headers=[("correlationId", f"defer-{correlation_id}".encode())])
+        defer_payload = serialize_frame(
+            request_type=RequestType.ACK,
+            payload={"defer": True},
+            correlation_id=correlation_id,
+            ack_status=AckStatus.DEFER,
+        ).encode()
+        await self.transport.producer.send(
+            topic="_rpc:response",
+            value=defer_payload,
+            headers=[("correlationId", correlation_id.encode())],
+        )
 
     async def send_response(self, pattern, correlation_id, response):
         self.logger.debug(
             f"[yellow] ASCENDER MICROSERVICES [/] | Responding to RPC channel using correlation ID {correlation_id} and pattern {pattern}")
-        await self.transport.producer.send(pattern, response, headers=[("correlationId", correlation_id.encode())])
+        frame_payload = serialize_frame(
+            request_type=RequestType.ACK,
+            payload=response,
+            correlation_id=correlation_id,
+            ack_status=AckStatus.OK,
+        ).encode()
+        await self.transport.producer.send(pattern, frame_payload, headers=[("correlationId", correlation_id.encode())])
 
     async def raise_exception(self, pattern, correlation_id, exception):
         if not isinstance(exception, RPCException):
             raise TypeError(f"Expected type `RPCException` but got {exception.__class__.__name__}")
         
-        await self.transport.producer.send(pattern, json.dumps(exception.to_dict()).encode(), headers=[("correlationId", correlation_id.encode())])
+        frame_payload = serialize_frame(
+            request_type=RequestType.ACK,
+            payload=exception.to_dict(),
+            correlation_id=correlation_id,
+            ack_status=AckStatus.ERROR,
+        ).encode()
+        await self.transport.producer.send(pattern, frame_payload, headers=[("correlationId", correlation_id.encode())])
 
     async def process_response(self, correlation_id, response, **kwargs):
         if not correlation_id:
             return
-        
-        if not correlation_id.startswith("response-") and not correlation_id.startswith("defer-"):
+
+        frame = decode_incoming_frame(
+            response,
+            correlation_id=correlation_id,
+            default_type=RequestType.ACK,
+        )
+
+        normalized_id = normalize_correlation_id(frame.correlation_id)
+        if frame.request_type != RequestType.ACK or normalized_id is None:
             return
-        
-        response = decode_message(response)
-        
-        if isinstance(response, dict):
-            if RPCException.is_exception(response):
-                self.response_subject.on_error(RPCException.from_dict(response))
-                return
-            
-        self.response_subject.on_next((correlation_id, decode_message(response), kwargs))
+
+        metadata = dict(kwargs)
+        metadata["ackStatus"] = frame.ack_status
+
+        if frame.ack_status == AckStatus.ERROR:
+            if isinstance(frame.payload, dict) and RPCException.is_exception(frame.payload):
+                self.response_subject.on_error(RPCException.from_dict(frame.payload))
+            else:
+                self.response_subject.on_error(RPCException(str(frame.payload)))
+            return
+
+        self.response_subject.on_next((normalized_id, frame.payload, metadata))
 
     async def listen_for_requests(self, context: "KafkaContext", data: Any, metadata: KafkaMetadata):
         # print(context, data, metadata)
         if metadata["transporter"] != "kafka":
+            return
+        if not context.correlation_id:
             return
         await self.process_response(context.correlation_id, data, **metadata)

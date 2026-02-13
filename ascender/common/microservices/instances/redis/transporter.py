@@ -77,20 +77,20 @@ class RedisTransporter(BaseTransporter):
                     try:
                         envelope = json.loads(data)
                         correlation_id = envelope.get("correlationId")
-                        raw_data = envelope.get("payload", data)
                     except Exception:
                         correlation_id = None
-                        raw_data = data
+
+                    payload = data
 
                     context = RedisContext(
                         correlation_id=correlation_id,
-                        is_event=not bool(correlation_id),
+                        is_event=correlation_id is None,
                         rpc_transport=self.rpc_transport,
                         event_transport=self.event_transport,
                         pattern=metadata["pattern"],
                         channel=metadata["pattern"],
                     )
-                    await self.event_bus.emit(context, metadata["pattern"], raw_data, metadata)
+                    await self.event_bus.emit(context, metadata["pattern"], payload, metadata)  # type: ignore[arg-type]
                 except Exception:
                     traceback.print_exc()
         except ConnectionError:
@@ -112,5 +112,5 @@ class RedisTransporter(BaseTransporter):
             raise TypeError(f"Unknown transporter instance type {rtype}")
         from redis.asyncio import Redis
         if issubclass(rtype, Redis):
-            return self.publisher
+            return self.publisher # type: ignore
         raise TypeError(f"Unknown transporter instance type {rtype.__name__}")

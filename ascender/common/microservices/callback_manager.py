@@ -1,22 +1,12 @@
 import inspect
-import json
 from logging import Logger
-import traceback
-from typing import Any, Callable, Optional, Tuple, Type, get_args
+from typing import Any, Callable
 
-from pydantic import BaseModel, ValidationError
-
-from ascender.common import BaseDTO, BaseResponse
 from ascender.common.microservices.abc.context import BaseContext
 from ascender.common.microservices.exceptions.rpc_exception import RPCException
-from ascender.common.microservices.instances.kafka.context import KafkaContext
-from ascender.common.microservices.instances.kafka.event import KafkaEventTransport
-from ascender.common.microservices.instances.kafka.rpc import KafkaRPCTransport
-from ascender.common.microservices.instances.redis.context import RedisContext
-from ascender.common.microservices.instances.redis.event import RedisEventTransport
-from ascender.common.microservices.instances.redis.rpc import RedisRPCTransport
-from ascender.common.microservices.instances.transport import TransportInstance
-from ascender.common.microservices.utils.data_parser import parse_data, validate_json, validate_python
+from ascender.common.microservices.types import RequestType
+from ascender.common.microservices.utils.frames import decode_incoming_frame
+from ascender.common.microservices.utils.handler_signature import HandlerSignaturePlan
 from ascender.core import inject
 
 
@@ -42,63 +32,7 @@ class CallbackManager:
         self.callback = callback
         self.callback_signature = inspect.signature(callback)
         self.logger: Logger = inject("ASC_LOGGER")
-
-    def get_context_info(self) -> Optional[Tuple[str, Type[BaseContext]]]:
-        """
-        Inspects the callback's signature to extract context parameter information.
-
-        It looks for parameters that either use Annotated metadata or have a default value
-        with an attribute "context_type". Returns the parameter name and the expected context type.
-
-        :return: A tuple (parameter_name, context_type) if a context parameter is found; otherwise, None.
-        """
-        for param_name, param in self.callback_signature.parameters.items():
-            # Skip typical self/cls parameters.
-            if param_name in ("self", "cls"):
-                continue
-            if param.annotation == inspect._empty:
-                continue
-
-            # Check for Annotated metadata.
-            if hasattr(param.annotation, "__metadata__"):
-                metadata = param.annotation.__metadata__
-                if metadata and hasattr(metadata[0], "context_type"):
-                    # Return the parameter name and the first argument in Annotated (the actual type)
-                    return param_name, get_args(param.annotation)[0]
-                continue
-
-            # Fallback: check if the default value has a "context_type" attribute.
-            if param.default != inspect._empty and hasattr(param.default, "context_type"):
-                return param_name, param.annotation
-
-        return None
-
-    def get_data_field(self) -> Optional[Tuple[str, Any]]:
-        """
-        Inspects the callback's signature to extract the data parameter information.
-
-        The method skips parameters marked with metadata (assumed to be context parameters)
-        and prioritizes parameters whose type is a Pydantic model, DTO, or response type.
-        If no Pydantic model is found, it will simply return the first non-context parameter.
-
-        :return: A tuple (parameter_name, parameter_type) representing the data field, or None if not found.
-        """
-        for param_name, param in self.callback_signature.parameters.items():
-            if param_name in ("self", "cls"):
-                continue
-
-            # Skip parameters that have metadata (assumed to be reserved for context).
-            if hasattr(param.annotation, "__metadata__"):
-                continue
-
-            # Check if the parameter is a subclass of a Pydantic model or DTO.
-            if isinstance(param.annotation, type) and issubclass(param.annotation, (BaseModel, BaseDTO, BaseResponse)):
-                return param_name, param.annotation
-
-            # Otherwise, assume this parameter represents the data.
-            return param_name, param.annotation
-
-        return None
+        self.signature_plan = HandlerSignaturePlan(callback)
 
     async def handle_rpc_call(self, instance_context: BaseContext, payload: dict[str, Any]) -> None:
         """
@@ -108,25 +42,31 @@ class CallbackManager:
         :param payload: A dictionary containing the validated payload for the callback.
         """
         instance_context.is_event = False
+        if instance_context.correlation_id is None:
+            raise ValueError("RPC calls must include a correlation id")
+
         try:
             response = await self.callback(**payload)
-        except RPCException as e:
+        except RPCException as exc:
             await instance_context.rpc_transport.raise_exception(
-                instance_context.pattern,
-                f"response-{instance_context.correlation_id}",
-                e
+                pattern="_rpc:response",
+                correlation_id=instance_context.correlation_id,
+                exception=exc,
             )
             return
-        except Exception as e:
-            self.logger.error("Unexpected error during RPC call: %s", e)
-            raise
+        except Exception as exc:
+            self.logger.exception("Unexpected error during RPC call: %s", exc)
+            await instance_context.rpc_transport.raise_exception(
+                pattern="_rpc:response",
+                correlation_id=instance_context.correlation_id,
+                exception=RPCException(str(exc), code=500),
+            )
+            return
 
-        # Serialize the response to JSON and send it using the RPC transport.
-        serialized_response = parse_data(response).encode()
         await instance_context.rpc_transport.send_response(
             pattern="_rpc:response",
-            correlation_id=f"response-{instance_context.correlation_id}",
-            response=serialized_response,
+            correlation_id=instance_context.correlation_id,
+            response=response,
         )
 
     async def handle_event_call(self, payload: dict[str, Any]) -> None:
@@ -147,13 +87,12 @@ class CallbackManager:
 
         If the "key" in metadata starts with "defer-" or "response-", the callback will not be executed.
 
-        :param metadata: The metadata dictionary from the message broker.
-        :return: True if the callback should be ignored; otherwise, False.
+        This method remains for backwards compatibility while the new frame model
+        is being fully rolled out across transports.
         """
         if not context.correlation_id:
             return False
 
-        # Decode the key if it's in bytes.
         return context.correlation_id.startswith("defer-") or context.correlation_id.startswith("response-")
 
     async def __call__(self, context: BaseContext, data: Any, metadata: dict[str, Any]) -> None:
@@ -175,72 +114,42 @@ class CallbackManager:
         """
         self.logger.debug("Executing callback: %s", self.callback)
 
-        # Skip processing if the metadata indicates this is a deferred or response message.
+        frame = decode_incoming_frame(
+            data,
+            correlation_id=context.correlation_id,
+            default_type=RequestType.EVENT if self.is_event else RequestType.CALL,
+        )
+
+        if frame.request_type == RequestType.ACK:
+            self.logger.debug("Ignoring ACK frame for pattern %s", context.pattern)
+            return
+
         if self._should_ignore(context):
             return
 
         try:
-            payload: dict[str, Any] = {}
-
-            context_info = self.get_context_info()
-            data_field_info = self.get_data_field()
-
-            raised_exception = None
-
-            # Validate and assign the data field.
-            if data_field_info is not None:
-                field_name, field_type = data_field_info
-                # Decode if necessary.
-                decoded_data = data.decode() if isinstance(data, bytes) else data
-                # Handle validation errors
-                try:
-                    try:
-                        payload[field_name] = validate_json(
-                            decoded_data, field_type)
-                    except ValidationError:
-                        payload[field_name] = validate_python(
-                            decoded_data, field_type)
-
-                except ValidationError as e:
-                    traceback.print_exc()
-                    raised_exception = RPCException.from_validation_err(e)
-
-            # Generate and assign the context if the callback expects it.
-
-            if context_info is not None:
-                context_field, expected_context_cls = context_info
-                # Verify that the generated context matches the expected type.
-                if not isinstance(context, expected_context_cls):
-                    self.logger.debug(
-                        "Skipping callback: Expected context type %s, but message broker provided %s based on metadata type '%s'.",
-                        expected_context_cls.__name__,
-                        type(context).__name__,
-                        metadata.get("transporter", "unknown")
-                    )
-                    return
-                payload[context_field] = context
-
-        except Exception as e:
-            self.logger.exception(
-                "Error while preparing payload for callback execution: %s", e)
-            raise
-
-        # Route to the appropriate handler based on the messaging pattern.
-        if not self.is_event:
-            if raised_exception:
-                # Respond with `RPCException` to the producer
+            payload = await self.signature_plan.resolve_payload(context, frame.payload)
+        except RPCException as exc:
+            if not self.is_event and context.correlation_id:
                 await context.rpc_transport.raise_exception(
-                    context.pattern,
-                    f"response-{context.correlation_id}",
-                    raised_exception
+                    pattern="_rpc:response",
+                    correlation_id=context.correlation_id,
+                    exception=exc,
                 )
-                return
+            else:
+                self.logger.error("RPC validation error for event %s: %s", context.pattern, exc)
+            return
+        except Exception as exc:
+            self.logger.exception("Error while preparing payload for callback execution: %s", exc)
+            if not self.is_event and context.correlation_id:
+                await context.rpc_transport.raise_exception(
+                    pattern="_rpc:response",
+                    correlation_id=context.correlation_id,
+                    exception=RPCException(str(exc), code=500),
+                )
+            return
+
+        if not self.is_event:
             await self.handle_rpc_call(context, payload)
         else:
-            if raised_exception:
-                # Log the exception and continue processing
-                self.logger.error(
-                    "Error while preparing payload for event execution: %s", raised_exception)
-                return
-            
             await self.handle_event_call(payload)

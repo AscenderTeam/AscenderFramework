@@ -21,7 +21,7 @@ class RPCTransport(ABC):
     def __init__(self, transport: "BaseTransporter | ClientProxy"):
         self.transport = transport
         self.event_bus = self.transport.event_bus
-        self.event_bus.subscribe("_rpc:response", self.listen_for_requests)
+        self.event_bus.subscribe("_rpc:response", self.listen_for_requests)  # type: ignore[arg-type]
     
     @abstractmethod
     async def send_request(
@@ -52,7 +52,7 @@ class RPCTransport(ABC):
         ...
     
     @abstractmethod
-    async def send_response(self, pattern: str, correlation_id: str, response: bytes) -> None:
+    async def send_response(self, pattern: str, correlation_id: str, response: Any) -> None:
         """Send a response back to the caller, using the correlation id to route it."""
         ...
 
