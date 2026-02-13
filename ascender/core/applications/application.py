@@ -1,3 +1,4 @@
+from ascender.core.services import LifecycleService
 import os
 from typing import Iterable, Sequence
 
@@ -11,6 +12,7 @@ from ascender.core.cli_engine import CLIEngine, BasicCLI, GenericCLI
 from ascender.core.database.engine import DatabaseEngine
 from ascender.core.logger._logger import configure_logger
 from ascender.core.router.graph import RouterGraph
+from ascender.core.errors.lifecycle_error import LifecycleError
 
 
 class Application:
@@ -67,6 +69,28 @@ class Application:
         # self.__cli.run()
         return self.__cli()
 
+    def start_lifecycle(self):
+        raw_providers = RootInjector().get("LIFECYCLE_TOKENS", None, options={"optional": True}) or []
+
+        providers = []
+        for p in raw_providers:
+            if isinstance(p, list):
+                providers.extend(p)
+            else:
+                providers.append(p)
+
+        if not providers:
+            return
+        
+        for provider in providers:
+            service = RootInjector().get(provider, not_found_value=None, options={"optional": True})
+            if service is None:
+                raise LifecycleError(f"Lifecycle service {provider} not found")
+            
+            if isinstance(service, LifecycleService):
+                self.app.add_event_handler("startup", service.on_startup)
+                self.app.add_event_handler("shutdown", service.on_shutdown)
+
     def launch(self):
         """
         Launches application in server-mode and builds up fastapi enforcing Uvicorn to handle server part
@@ -81,6 +105,7 @@ class Application:
     def __call__(self):
         # # Enviornment configuration
         environment = _AscenderConfig().get_environment()
+        self.start_lifecycle()
         # # Configure logger
         logger = configure_logger(_AscenderConfig().config.logging)
         logger.setLevel(environment.logging.upper())

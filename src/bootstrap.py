@@ -1,7 +1,6 @@
+from services.lifecycle_test_service import LifecycleTestService
+from ascender.core import provideLifecycle
 from ascender.common.api_docs import DefineAPIDocs
-from ascender.common.http.provider import provideHTTPClient
-from ascender.common.microservices.provider import provideMicroservices
-from ascender.common.microservices.types.transport import Transports
 from ascender.core.database.provider import provideDatabase
 from ascender.core.database.types.orm_enum import ORMEnum
 from ascender.core.router.provide import provideRouter
@@ -17,6 +16,8 @@ appBootstrap: IBootstrap = {
             "value": DefineAPIDocs(swagger_url="/docs", redoc_url="/redoc"),
         },
         provideRouter(routes),
-        provideDatabase(ORMEnum.SQLALCHEMY, DATABASE_CONNECTION)
+        provideDatabase(ORMEnum.SQLALCHEMY, DATABASE_CONNECTION),
+        # LifecycleTestService,
+        provideLifecycle(tokens=[LifecycleTestService])
     ]
 }
