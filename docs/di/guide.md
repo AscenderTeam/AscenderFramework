@@ -134,3 +134,23 @@ graph TD
   end
   C --> H(DogController)
 ```
+
+## Lazy Service Initialization & Lifecycle
+
+Sometimes you may have services that need to run initialization logic (e.g., connecting to a message broker, starting a background task) but are not injected into any other component. Since Ascender's DI is lazy by default, these services would never be instantiated.
+
+To solve this, you can use the `provideLifecycle` helper to explicitly register services for lifecycle management.
+
+```py title="src/bootstrap.py"
+from ascender.core.applications.lifecycle import provideLifecycle
+from src.services.message_broker import MessageBrokerService
+
+appBootstrap: IBootstrap = {
+    "providers": [
+        # ... other providers
+        provideLifecycle([MessageBrokerService]),
+    ]
+}
+```
+
+The `provideLifecycle` function takes a list of tokens (services) and ensures they are initialized during application startup, even if not injected elsewhere. You can use it multiple times in the root provider list.
