@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block htmltitle %}
+  <title>Ascender Framework - Modern, Powerful API Framework</title>
+{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* Adjust MkDocs layout for homepage */
+    .md-sidebar { display: none !important; }
+    .md-content { max-width: 100% !important; margin: 0 !important; }
+    .md-content__inner { margin: 0 !important; padding: 0 !important; }
+    .md-content__inner > :not(.ascender-home) { display: none; }
+  </style>
+  {# home.css is loaded globally via mkdocs.yml extra_css #}
+{% endblock %}
+
+{% block content %}
+  {% include "partials/home-content.html" %}
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  {# AOS, GSAP, particles are loaded globally via main.html; home.js is loaded via mkdocs.yml #}
+{% endblock %}

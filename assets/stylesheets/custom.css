@@ -1,0 +1,5 @@
+/* Global tweaks shared across the docs site */
+html:not(.aos-active) [data-aos] {
+  opacity: 1 !important;
+  transform: none !important;
+}

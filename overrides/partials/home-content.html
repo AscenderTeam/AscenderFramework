@@ -1,0 +1,155 @@
+<div class="ascender-home">
+    <div id="particles-bg" class="particles-bg"></div>
+    <div class="bg-animated"></div>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">
+                <span>✨ The Modern Python API Framework</span>
+            </div>
+            <h1 class="hero-title">Build Powerful APIs<br>At Lightning Speed</h1>
+            <p class="hero-subtitle">
+                Ascender Framework combines the simplicity of Python with the robust architecture of modern web frameworks.
+                Inspired by NestJS, powered by FastAPI.
+            </p>
+            <div class="hero-cta">
+                <a href="{{ 'introduction/installation/' | url }}" class="btn btn-primary">Get Started</a>
+                <a href="{{ 'introduction/overview/' | url }}" class="btn btn-secondary">View Documentation</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Core Features</h2>
+            <div class="features-grid">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Lightning Fast Development</h3>
+                    <p>Built on FastAPI for exceptional performance. Write less boilerplate, focus on building features that matter.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon">💉</div>
+                    <h3>Powerful Dependency Injection</h3>
+                    <p>Enterprise-grade DI system inspired by NestJS. Build scalable, testable, and maintainable applications.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Type-Safe & Validated</h3>
+                    <p>Full type safety with Pydantic validation. Catch errors early and ship with confidence.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon">🛠️</div>
+                    <h3>Comprehensive CLI</h3>
+                    <p>Powerful CLI tools for scaffolding, development, and testing. Generate boilerplate in seconds.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon">🔌</div>
+                    <h3>ORM Integration</h3>
+                    <p>Seamless integration with Tortoise ORM and SQLAlchemy. Choose your favorite ORM.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-icon">🧪</div>
+                    <h3>Testing Made Easy</h3>
+                    <p>Built-in testing utilities and mocking support. Write tests that actually make sense.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="advantages" class="advantages">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Why Choose Ascender?</h2>
+            <div class="advantages-content">
+                <div class="advantages-list">
+                    <div class="advantage-item" data-aos="fade-right" data-aos-delay="100">
+                        <div class="advantage-number">01</div>
+                        <div class="advantage-content">
+                            <h4>Modular Architecture</h4>
+                            <p>Organize your code into reusable modules. Scale your application without chaos.</p>
+                        </div>
+                    </div>
+                    <div class="advantage-item" data-aos="fade-right" data-aos-delay="200">
+                        <div class="advantage-number">02</div>
+                        <div class="advantage-content">
+                            <h4>Developer Experience First</h4>
+                            <p>Intuitive APIs, excellent documentation, and helpful CLI tools make development a joy.</p>
+                        </div>
+                    </div>
+                    <div class="advantage-item" data-aos="fade-right" data-aos-delay="300">
+                        <div class="advantage-number">03</div>
+                        <div class="advantage-content">
+                            <h4>Production Ready</h4>
+                            <p>Battle-tested patterns, comprehensive error handling, and performance optimizations out of the box.</p>
+                        </div>
+                    </div>
+                    <div class="advantage-item" data-aos="fade-right" data-aos-delay="400">
+                        <div class="advantage-number">04</div>
+                        <div class="advantage-content">
+                            <h4>Microservices Support</h4>
+                            <p>Built with microservices in mind. Scale horizontally with ease.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="advantages-visual" data-aos="fade-left" data-aos-delay="200">
+                    <div class="code-snippet">
+<span class="code-line"><span class="code-decorator">@Controller</span>(<span class="code-string">"/users"</span>)</span>
+<span class="code-line"><span class="code-keyword">class</span> <span class="code-function">UserController</span>:</span>
+<span class="code-line">    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(self, service: UserService):</span>
+<span class="code-line">        self.service = service</span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-decorator">@Get</span>(<span class="code-string">"/"</span>)</span>
+<span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">get_users</span>(self):</span>
+<span class="code-line">        <span class="code-keyword">return</span> <span class="code-keyword">await</span> self.service.find_all()</span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-decorator">@Post</span>(<span class="code-string">"/"</span>)</span>
+<span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">create_user</span>(self, dto: CreateUserDto):</span>
+<span class="code-line">        <span class="code-keyword">return</span> <span class="code-keyword">await</span> self.service.create(dto)</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-comment"># Clean, intuitive, powerful</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="docs" class="quick-links">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Explore Documentation</h2>
+            <div class="links-grid">
+                <a href="{{ 'introduction/overview/' | url }}" class="link-card" data-aos="zoom-in" data-aos-delay="100">
+                    <h4>Getting Started</h4>
+                    <p>Learn the basics and set up your first project</p>
+                </a>
+                <a href="{{ 'controllers/overview/' | url }}" class="link-card" data-aos="zoom-in" data-aos-delay="150">
+                    <h4>Controllers</h4>
+                    <p>Handle HTTP requests and define your API routes</p>
+                </a>
+                <a href="{{ 'di/overview/' | url }}" class="link-card" data-aos="zoom-in" data-aos-delay="200">
+                    <h4>Dependency Injection</h4>
+                    <p>Master the powerful DI system</p>
+                </a>
+                <a href="{{ 'essentials/data-validation/' | url }}" class="link-card" data-aos="zoom-in" data-aos-delay="250">
+                    <h4>Validation</h4>
+                    <p>Validate and transform incoming data</p>
+                </a>
+                <a href="{{ 'cli/overview/' | url }}" class="link-card" data-aos="zoom-in" data-aos-delay="300">
+                    <h4>CLI Tools</h4>
+                    <p>Use the command-line interface effectively</p>
+                </a>
+                <a href="{{ 'api-reference/index/' | url }}" class="link-card" data-aos="zoom-in" data-aos-delay="350">
+                    <h4>API Reference</h4>
+                    <p>Complete API documentation and examples</p>
+                </a>
+                <a href="{{ 'api-reference/testing/' | url }}" class="link-card" data-aos="zoom-in" data-aos-delay="400">
+                    <h4>Testing</h4>
+                    <p>Write comprehensive tests for your application</p>
+                </a>
+                <a href="{{ 'api-reference/database/' | url }}" class="link-card" data-aos="zoom-in" data-aos-delay="450">
+                    <h4>Database</h4>
+                    <p>Work with databases using ORM integrations</p>
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
