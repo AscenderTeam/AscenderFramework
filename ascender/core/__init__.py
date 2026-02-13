@@ -15,12 +15,13 @@ from .di.injectfn import inject
 from .di.abc.base_injector import Injector
 from .di.test_injector import TestInjector
 from .struct.module import AscModule
-from .services import Service
+from .services import Service, LifecycleService
 from .repositories import Repository, IdentityRepository
 
 from .database import AppDBContext
 
 from .applications.application import Application
+from .applications.lifecycle import provideLifecycle
 
 from . import cli_engine
 
@@ -43,5 +44,7 @@ __all__ = [
     "Repository",
     "IdentityRepository",
     "ControllerDecoratorHook",
+    "LifecycleService",
+    "provideLifecycle",
     *cli_engine.__all__
 ] # type: ignore
