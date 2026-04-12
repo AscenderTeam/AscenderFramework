@@ -13,7 +13,7 @@ homepage = "https://ascender-framework.com"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.14"
-fastapi = "<=0.115"
+fastapi = "^0.135.3"
 python-dotenv = "^1.0.0"
 uvicorn = ">=0.25"
 rich = "^13.6.0"
