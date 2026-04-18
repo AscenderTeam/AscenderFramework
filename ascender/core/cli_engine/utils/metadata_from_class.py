@@ -42,16 +42,8 @@ def _annotations_from_class(cls: type) -> Dict[str, Any]:
     Collects field annotations across MRO (base -> subclass), excluding ClassVar.
     Subclass entries override base ones.
     """
-    out: Dict[str, Any] = {}
-    for base in reversed(cls.__mro__):
-        if base is object:
-            continue
-        ann = getattr(base, "__annotations__", {}) or {}
-        for name, tp in ann.items():
-            if get_origin(tp) is ClassVar:
-                continue
-            out[name] = tp
-    return out
+    hints = inspect.get_annotations(cls, eval_str=True)
+    return {name: tp for name, tp in hints.items() if get_origin(tp) is not ClassVar}
 
 
 def _get_class_parameters(cls: type) -> Mapping[str, ParameterInfo]:

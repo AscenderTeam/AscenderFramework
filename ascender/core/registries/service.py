@@ -45,7 +45,7 @@ class ServiceRegistry:
             obj_args = inspect.signature(obj).parameters
         
         else:
-            obj_args = obj.__class__.__annotations__
+            obj_args = inspect.get_annotations(obj.__class__, eval_str=True)
         
         args = {}
         for name, abstract in obj_args.items():

@@ -74,7 +74,12 @@ class RedisRPCTransport(RPCTransport):
         return await response
 
     async def send_nack_request(self, pattern, data, timeout):
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            
         asyncio_scheduler = AsyncIOScheduler(loop)
         correlation_id = str(uuid4())
         payload = {
