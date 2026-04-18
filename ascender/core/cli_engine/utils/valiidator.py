@@ -29,7 +29,7 @@ def parse_value(value, annotation):
 
 # 🧩 Step 3: class-based attribute setter
 def set_parsed_attr(command_instance, key: str, value):
-    hints = getattr(command_instance.__class__, '__annotations__', {})
+    hints = inspect.get_annotations(command_instance.__class__, eval_str=True)
     annotation = hints.get(key, str)
     parsed_value = parse_value(value, annotation)
     setattr(command_instance, key, parsed_value)
