@@ -1,8 +1,10 @@
 from __future__ import annotations
+
 import os
 from typing import TYPE_CHECKING
 
 from ascender.clis.tests.tests_app import TestRunnerCLI
+from ascender.workspaces.provider import provideWorkspaces
 
 from .root_injector import RootInjector
 
@@ -13,21 +15,19 @@ if TYPE_CHECKING:
 def createInternalApplication():
     """
     Runs application in CLI mode
-    
+
     Args:
         config: An optional list of providers for root-level configuration.
-        
+
     Returns:
         An initialized Application instance.
     """
+    from ascender.clis.generator.generator_app import GeneratorCLI
     from ascender.clis.new.new_app import NewCLI
     from ascender.clis.run.run_app import RunCLI
     from ascender.clis.version.version_app import VersionCLI
-    from ascender.clis.generator.generator_app import GeneratorCLI
-    
     from ascender.core.cli_engine import CLIEngine, useCLI
-    
-    
+
     os.environ["ASC_MODE"] = "cli"
     # Initialize the root injector
     root_injector = RootInjector()
@@ -38,15 +38,20 @@ def createInternalApplication():
         useCLI(NewCLI),
         useCLI(RunCLI),
         useCLI(VersionCLI),
+        provideWorkspaces(),
         useCLI(TestRunnerCLI),
         {
             "provide": CLIEngine,
-            "use_factory": lambda commands: CLIEngine(commands, usage="ascender <command> [options]", description="🚀 Ascender Framework - Modern Python Web Framework"),
-            "deps": ["ASC_CLI_COMMAND"]
+            "use_factory": lambda commands: CLIEngine(
+                commands,
+                usage="ascender <command> [options]",
+                description="🚀 Ascender Framework - Modern Python Web Framework",
+            ),
+            "deps": ["ASC_CLI_COMMAND"],
         },
     ]
 
     # Configuration-based application creation
     root_injector.create(internal_providers)
 
-    return root_injector.get(CLIEngine) # type: ignore
+    return root_injector.get(CLIEngine)  # type: ignore
