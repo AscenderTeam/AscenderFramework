@@ -1,11 +1,15 @@
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from fastapi import FastAPI
+
 from ascender.core.database.dbcontext import AppDBContext
 from ascender.core.database.errors.wrong_orm import WrongORMException
 from ascender.core.database.orms.sqlalchemy import SQLAlchemyORM
 from ascender.core.database.orms.tortoise import TortoiseORM
 from ascender.core.database.types.orm_enum import ORMEnum
+
+if TYPE_CHECKING:
+    from ascender.core.applications.application import Application
 
 
 class DatabaseEngine:
@@ -21,27 +25,31 @@ class DatabaseEngine:
         """
         self.orm = orm
         self.configuration = configuration
-        self.engine = TortoiseORM(configuration) if orm == ORMEnum.TORTOISE else SQLAlchemyORM(configuration)
-    
+        self.engine = (
+            TortoiseORM(configuration)
+            if orm == ORMEnum.TORTOISE
+            else SQLAlchemyORM(configuration)
+        )
+
     def load_entity(self, *entity_modules):
         if not isinstance(self.engine, SQLAlchemyORM):
             raise WrongORMException("DatabaseEngine.load_entity(...)")
-        
+
         self.engine.load_entities(*entity_modules)
 
-    def run_database(self, app: FastAPI):
+    def run_database(self, app: "Application"):
         if isinstance(self.engine, SQLAlchemyORM):
             app.add_event_handler("startup", self.engine.run_database)
             app.add_event_handler("shutdown", self.engine.shutdown_database)
         else:
             self.engine.run_database(app)
-            
+
     async def run_database_manual(self):
         if isinstance(self.engine, SQLAlchemyORM):
             await self.engine.run_database()
         else:
             await self.engine.run_database_cli()
-    
+
     def generate_context(self):
         """
         Generate a database context for SQLAlchemy ORM.
