@@ -60,7 +60,7 @@ To use a service in a controller, follow these steps:
 Here’s how it might look like in `AscenderController`
 ```python title="ascender_controller.py" linenums="1"
 from ascender.core import Controller
-from ascender.decorators import Post
+from ascender.core import Post
 from .ascender_service import AscenderService
 from fastapi import Body
 

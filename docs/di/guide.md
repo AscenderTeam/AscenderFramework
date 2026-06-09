@@ -15,7 +15,7 @@ Let's imagine we have `DogService` that has some sort of useful functions that a
 Now first what we have to do is to add `@Injectable` decorator to mark this class as an injectable object and can be used by injector as a dependency.
 
 ```py hl_lines="1 3"
-from ascender.core import Injectable
+from ascender.common import Injectable
 
 @Injectable()
 class DogService:
@@ -30,7 +30,7 @@ You can provide a service at the root level of application by using `provided_in
 This makes your service available everywhere inside of your application's scope.
 
 ```py hl_lines="4"
-from ascender.core import Injectable
+from ascender.common import Injectable
 
 @Injectable(
     provided_in="root"
@@ -56,7 +56,7 @@ You can provide services at `@AscModule` level by using `providers` parameter fi
 class DogModule: ...
 ```
 
-Same thing can be applied to [`standalone` controllers](/controllers/controller-types/#standalone-controllers)
+Same thing can be applied to [`standalone` controllers](../controllers/controller-types.md#standalone-controllers)
 ```py
 @Controller(
     standalone=True,

@@ -37,7 +37,7 @@ There are two ways to invoke CLI in Ascender:
 - Global CLI (tooling):
   - Pattern: `ascender [command]`
   - Examples:
-    - `ascender new --name myapp --orm-mode tortoise`
+    - `ascender new --name myapp --orm tortoise`
     - `ascender serve`
 
 - Local project wrapper (short form):

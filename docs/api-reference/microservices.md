@@ -76,5 +76,5 @@ The Microservices API provides utilities for building distributed microservice a
 ## See Also
 
 - [Microservices Guide](../microservices/getting-started.md) - Getting started with microservices
-- [Message Patterns](../microservices/patterns.md) - Message pattern documentation
-- [Transport Layer](../microservices/transports.md) - Transport layer details
+- [Message Patterns](../microservices/getting-started.md) - Message pattern documentation
+- [Transport Layer](../microservices/overview.md) - Transport layer details

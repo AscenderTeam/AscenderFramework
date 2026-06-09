@@ -200,5 +200,5 @@ You can use either `ascender run tests run` or `pytest` directly to execute your
 ## See Also
 
 - [Testing Guide](../essentials/testing.md) - Comprehensive testing guide
-- [Test Client Documentation](../testing/test-client.md) - Detailed TestClient usage
+- [Test Client Documentation](../essentials/testing.md) - Detailed TestClient usage
 - [Dependency Injection](di.md) - DI system for testing

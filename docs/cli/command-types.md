@@ -89,7 +89,7 @@ class MyCommandGroup(GenericCLI):
         # First subcommand implementation
         pass
     
-    @Handler("subcommand2", description="Second subcommand", is_coroutine=True)
+    @Handler("subcommand2", description="Second subcommand")
     async def subcommand2(self, **kwargs: Any) -> None:
         # Async subcommand implementation
         pass
@@ -100,16 +100,15 @@ class MyCommandGroup(GenericCLI):
 GenericCLI subcommands **must** be decorated with the `@Handler` decorator to register them properly with the CLI engine. The Handler decorator:
 
 - **Registers subcommands**: Makes methods available as CLI subcommands
-- **Supports coroutines**: Can handle both sync and async methods with `is_coroutine=True`
+- **Supports coroutines**: Handles both sync and `async def` methods — async is detected automatically
 - **Parameter parsing**: Automatically parses method signatures for CLI arguments
 - **Metadata extraction**: Stores command metadata for help generation
 
 ```python
 @Handler(
-    "command_name",                    # Subcommand name
+    "command_name", "alias",           # One or more names for the subcommand
     description="Command description", # Help text
-    is_coroutine=False,               # Set to True for async methods
-    **kwargs                          # Additional options
+    **kwargs                           # Additional options
 )
 ```
 
@@ -139,7 +138,7 @@ class GenerateCommand(GenericCLI):
             print("Including interface definition")
         # Service generation logic here
     
-    @Handler("migrate", description="Run database migrations", is_coroutine=True)
+    @Handler("migrate", description="Run database migrations")
     async def migrate(self, rollback: bool = False, **kwargs: Any) -> None:
         """Async database migration handler."""
         if rollback:
@@ -186,7 +185,7 @@ For GenericCLI commands, the CLI engine discovers subcommands through the `@Hand
 
 1. **Handler Registration**: Only methods decorated with `@Handler` become subcommands
 2. **Metadata Parsing**: Handler extracts parameter information from method signatures
-3. **Coroutine Support**: Async methods are supported when `is_coroutine=True` is specified
+3. **Coroutine Support**: `async def` methods are detected and awaited automatically
 4. **Help Generation**: Handler descriptions and method docstrings generate help text
 5. **Parameter Validation**: Automatic type checking and argument validation
 
@@ -194,7 +193,7 @@ For GenericCLI commands, the CLI engine discovers subcommands through the `@Hand
     Unlike basic method discovery, GenericCLI subcommands **must** use the `@Handler` decorator. This ensures proper registration and metadata extraction.
 
 !!! info "Async Support"
-    The CLI engine fully supports async subcommands. Simply set `is_coroutine=True` in the Handler decorator and define your method as `async def`.
+    The CLI engine fully supports async subcommands. Simply define your method as `async def` — no extra configuration needed.
 
 !!! warning "Method Visibility"
     Only methods with the `@Handler` decorator are registered as subcommands. Public methods without this decorator will be ignored by the CLI engine.

@@ -87,7 +87,8 @@ As we described about static plain value injection using `value`, you might see 
 Here's the example of how to inject `"AppConfig"` into `ExampleService`:
 ```py title="src/examples/example_service.py"
 from typing import Annotated
-from ascender.core import Injectable, Inject
+from ascender.common import Injectable
+from ascender.core import Inject
 
 
 @Injectable()
