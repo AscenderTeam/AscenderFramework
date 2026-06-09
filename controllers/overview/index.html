@@ -525,7 +525,7 @@
         
   
   <span class="md-ellipsis">
-    Overview
+    What is the Ascender Framework?
   </span>
   
 
@@ -1000,7 +1000,7 @@
         
   
   <span class="md-ellipsis">
-    Overview
+    Dependency Injection Overview
   </span>
   
 
@@ -1935,7 +1935,7 @@
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="k">class</span> <span class="nc">HttpController</span><span class="p">:</span>
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="o">...</span>
 </span></code></pre></div>
-<p>Automatic router graph generation allows you to generate router graph's routes automatically based on your controllers' metadata, for more information please read <a href="/router/provide-from-controllers">Router Graph Guide</a>.</p>
+<p>Automatic router graph generation allows you to generate router graph's routes automatically based on your controllers' metadata, for more information please read <a href="../controller-routes/">Router Graph Guide</a>.</p>
 <h2 id="using-controllers">Using Controllers</h2>
 <p>To use your controller, you should have it to be loaded in Ascender Framework as an HTTP router.
 So each controller that should be loaded, should be tied to specific router node, you can create manually router node in <code>routes.py</code> or generate the router node based on your controller's <strong>metadata</strong>.</p>
@@ -1958,7 +1958,7 @@ So each controller that should be loaded, should be tied to specific router node
 </span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;routes&quot;</span><span class="p">]</span>
 </span></code></pre></div>
 <h3 id="automatically-generating-router-node-from-controllers">Automatically generating Router Node from Controllers</h3>
-<p>Ascender Framework allows you to generate router graph and uses it under the hood. Only what you need is an <a href="/asc-module/overview">AscModule</a> to gather them all in one place.
+<p>Ascender Framework allows you to generate router graph and uses it under the hood. Only what you need is an <a href="../../api-reference/modules/">AscModule</a> to gather them all in one place.
 <div class="language-py highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">controllers_module.py</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-3-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-3-3"> 3</a></span>

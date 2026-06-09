@@ -525,7 +525,7 @@
         
   
   <span class="md-ellipsis">
-    Overview
+    What is the Ascender Framework?
   </span>
   
 
@@ -924,7 +924,7 @@
         
   
   <span class="md-ellipsis">
-    Overview
+    Dependency Injection Overview
   </span>
   
 
@@ -2233,7 +2233,7 @@
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>        <span class="c1"># First subcommand implementation</span>
 </span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>        <span class="k">pass</span>
 </span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="nd">@Handler</span><span class="p">(</span><span class="s2">&quot;subcommand2&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Second subcommand&quot;</span><span class="p">,</span> <span class="n">is_coroutine</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="nd">@Handler</span><span class="p">(</span><span class="s2">&quot;subcommand2&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Second subcommand&quot;</span><span class="p">)</span>
 </span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">subcommand2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>        <span class="c1"># Async subcommand implementation</span>
 </span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>        <span class="k">pass</span>
@@ -2242,16 +2242,15 @@
 <p>GenericCLI subcommands <strong>must</strong> be decorated with the <code>@Handler</code> decorator to register them properly with the CLI engine. The Handler decorator:</p>
 <ul>
 <li><strong>Registers subcommands</strong>: Makes methods available as CLI subcommands</li>
-<li><strong>Supports coroutines</strong>: Can handle both sync and async methods with <code>is_coroutine=True</code></li>
+<li><strong>Supports coroutines</strong>: Handles both sync and <code>async def</code> methods — async is detected automatically</li>
 <li><strong>Parameter parsing</strong>: Automatically parses method signatures for CLI arguments</li>
 <li><strong>Metadata extraction</strong>: Stores command metadata for help generation</li>
 </ul>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nd">@Handler</span><span class="p">(</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="s2">&quot;command_name&quot;</span><span class="p">,</span>                    <span class="c1"># Subcommand name</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="s2">&quot;command_name&quot;</span><span class="p">,</span> <span class="s2">&quot;alias&quot;</span><span class="p">,</span>           <span class="c1"># One or more names for the subcommand</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Command description&quot;</span><span class="p">,</span> <span class="c1"># Help text</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">is_coroutine</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>               <span class="c1"># Set to True for async methods</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="o">**</span><span class="n">kwargs</span>                          <span class="c1"># Additional options</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">)</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="o">**</span><span class="n">kwargs</span>                           <span class="c1"># Additional options</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="command-pattern_1">Command Pattern</h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ascender<span class="w"> </span>&lt;group_name&gt;<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
@@ -2274,7 +2273,7 @@
 </span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Including interface definition&quot;</span><span class="p">)</span>
 </span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>        <span class="c1"># Service generation logic here</span>
 </span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>
-</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>    <span class="nd">@Handler</span><span class="p">(</span><span class="s2">&quot;migrate&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Run database migrations&quot;</span><span class="p">,</span> <span class="n">is_coroutine</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>    <span class="nd">@Handler</span><span class="p">(</span><span class="s2">&quot;migrate&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Run database migrations&quot;</span><span class="p">)</span>
 </span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">migrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rollback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Async database migration handler.&quot;&quot;&quot;</span>
 </span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>        <span class="k">if</span> <span class="n">rollback</span><span class="p">:</span>
@@ -2351,7 +2350,7 @@
 <ol>
 <li><strong>Handler Registration</strong>: Only methods decorated with <code>@Handler</code> become subcommands</li>
 <li><strong>Metadata Parsing</strong>: Handler extracts parameter information from method signatures</li>
-<li><strong>Coroutine Support</strong>: Async methods are supported when <code>is_coroutine=True</code> is specified</li>
+<li><strong>Coroutine Support</strong>: <code>async def</code> methods are detected and awaited automatically</li>
 <li><strong>Help Generation</strong>: Handler descriptions and method docstrings generate help text</li>
 <li><strong>Parameter Validation</strong>: Automatic type checking and argument validation</li>
 </ol>
@@ -2361,7 +2360,7 @@
 </div>
 <div class="admonition info">
 <p class="admonition-title">Async Support</p>
-<p>The CLI engine fully supports async subcommands. Simply set <code>is_coroutine=True</code> in the Handler decorator and define your method as <code>async def</code>.</p>
+<p>The CLI engine fully supports async subcommands. Simply define your method as <code>async def</code> — no extra configuration needed.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Method Visibility</p>

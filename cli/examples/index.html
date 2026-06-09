@@ -525,7 +525,7 @@
         
   
   <span class="md-ellipsis">
-    Overview
+    What is the Ascender Framework?
   </span>
   
 
@@ -924,7 +924,7 @@
         
   
   <span class="md-ellipsis">
-    Overview
+    Dependency Injection Overview
   </span>
   
 
@@ -1248,6 +1248,15 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#async-command-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Async Command Examples
+    </span>
+  </a>
   
 </li>
       
@@ -1951,6 +1960,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#async-command-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Async Command Examples
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2642,86 +2660,82 @@
 </span><span id="__span-6-190"><a id="__codelineno-6-190" name="__codelineno-6-190" href="#__codelineno-6-190"></a>        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 </span><span id="__span-6-191"><a id="__codelineno-6-191" name="__codelineno-6-191" href="#__codelineno-6-191"></a>
 </span><span id="__span-6-192"><a id="__codelineno-6-192" name="__codelineno-6-192" href="#__codelineno-6-192"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✓ Database reset completed&quot;</span><span class="p">)</span>
-</span><span id="__span-6-193"><a id="__codelineno-6-193" name="__codelineno-6-193" href="#__codelineno-6-193"></a>
-</span><span id="__span-6-194"><a id="__codelineno-6-194" name="__codelineno-6-194" href="#__codelineno-6-194"></a>
-</span><span id="__span-6-195"><a id="__codelineno-6-195" name="__codelineno-6-195" href="#__codelineno-6-195"></a><span class="c1">## Async Command Examples</span>
-</span><span id="__span-6-196"><a id="__codelineno-6-196" name="__codelineno-6-196" href="#__codelineno-6-196"></a>
-</span><span id="__span-6-197"><a id="__codelineno-6-197" name="__codelineno-6-197" href="#__codelineno-6-197"></a><span class="n">The</span> <span class="n">CLI</span> <span class="n">engine</span> <span class="n">supports</span> <span class="k">async</span> <span class="n">command</span> <span class="n">handlers</span> <span class="k">for</span> <span class="n">operations</span> <span class="n">that</span> <span class="n">require</span> <span class="n">asynchronous</span> <span class="n">processing</span><span class="p">:</span>
-</span><span id="__span-6-198"><a id="__codelineno-6-198" name="__codelineno-6-198" href="#__codelineno-6-198"></a>
-</span><span id="__span-6-199"><a id="__codelineno-6-199" name="__codelineno-6-199" href="#__codelineno-6-199"></a><span class="err">```</span><span class="n">python</span>
-</span><span id="__span-6-200"><a id="__codelineno-6-200" name="__codelineno-6-200" href="#__codelineno-6-200"></a><span class="kn">import</span> <span class="nn">asyncio</span>
-</span><span id="__span-6-201"><a id="__codelineno-6-201" name="__codelineno-6-201" href="#__codelineno-6-201"></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
-</span><span id="__span-6-202"><a id="__codelineno-6-202" name="__codelineno-6-202" href="#__codelineno-6-202"></a><span class="kn">from</span> <span class="nn">ascender.core.cli_engine</span> <span class="kn">import</span> <span class="n">Command</span><span class="p">,</span> <span class="n">Handler</span><span class="p">,</span> <span class="n">GenericCLI</span><span class="p">,</span> <span class="n">Parameter</span>
-</span><span id="__span-6-203"><a id="__codelineno-6-203" name="__codelineno-6-203" href="#__codelineno-6-203"></a>
-</span><span id="__span-6-204"><a id="__codelineno-6-204" name="__codelineno-6-204" href="#__codelineno-6-204"></a><span class="nd">@Command</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;deploy&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Deployment operations&quot;</span><span class="p">)</span>
-</span><span id="__span-6-205"><a id="__codelineno-6-205" name="__codelineno-6-205" href="#__codelineno-6-205"></a><span class="k">class</span> <span class="nc">DeployCommand</span><span class="p">(</span><span class="n">GenericCLI</span><span class="p">):</span>
-</span><span id="__span-6-206"><a id="__codelineno-6-206" name="__codelineno-6-206" href="#__codelineno-6-206"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Async deployment command examples.&quot;&quot;&quot;</span>
-</span><span id="__span-6-207"><a id="__codelineno-6-207" name="__codelineno-6-207" href="#__codelineno-6-207"></a>
-</span><span id="__span-6-208"><a id="__codelineno-6-208" name="__codelineno-6-208" href="#__codelineno-6-208"></a>    <span class="nd">@Handler</span><span class="p">(</span><span class="s2">&quot;upload&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Upload files to server&quot;</span><span class="p">,</span> <span class="n">is_coroutine</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-6-209"><a id="__codelineno-6-209" name="__codelineno-6-209" href="#__codelineno-6-209"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">upload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span id="__span-6-210"><a id="__codelineno-6-210" name="__codelineno-6-210" href="#__codelineno-6-210"></a>                    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="__span-6-211"><a id="__codelineno-6-211" name="__codelineno-6-211" href="#__codelineno-6-211"></a>                    <span class="n">destination</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span>
-</span><span id="__span-6-212"><a id="__codelineno-6-212" name="__codelineno-6-212" href="#__codelineno-6-212"></a>                        <span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-6-213"><a id="__codelineno-6-213" name="__codelineno-6-213" href="#__codelineno-6-213"></a>                        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Remote destination path&quot;</span><span class="p">,</span>
-</span><span id="__span-6-214"><a id="__codelineno-6-214" name="__codelineno-6-214" href="#__codelineno-6-214"></a>                        <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;--dest&quot;</span><span class="p">,</span> <span class="s2">&quot;-d&quot;</span><span class="p">],</span>
-</span><span id="__span-6-215"><a id="__codelineno-6-215" name="__codelineno-6-215" href="#__codelineno-6-215"></a>                        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;PATH&quot;</span>
-</span><span id="__span-6-216"><a id="__codelineno-6-216" name="__codelineno-6-216" href="#__codelineno-6-216"></a>                    <span class="p">),</span>
-</span><span id="__span-6-217"><a id="__codelineno-6-217" name="__codelineno-6-217" href="#__codelineno-6-217"></a>                    <span class="n">parallel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span>
-</span><span id="__span-6-218"><a id="__codelineno-6-218" name="__codelineno-6-218" href="#__codelineno-6-218"></a>                        <span class="mi">4</span><span class="p">,</span>
-</span><span id="__span-6-219"><a id="__codelineno-6-219" name="__codelineno-6-219" href="#__codelineno-6-219"></a>                        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Number of parallel uploads&quot;</span><span class="p">,</span>
-</span><span id="__span-6-220"><a id="__codelineno-6-220" name="__codelineno-6-220" href="#__codelineno-6-220"></a>                        <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;--parallel&quot;</span><span class="p">,</span> <span class="s2">&quot;-p&quot;</span><span class="p">],</span>
-</span><span id="__span-6-221"><a id="__codelineno-6-221" name="__codelineno-6-221" href="#__codelineno-6-221"></a>                        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;N&quot;</span>
-</span><span id="__span-6-222"><a id="__codelineno-6-222" name="__codelineno-6-222" href="#__codelineno-6-222"></a>                    <span class="p">),</span>
-</span><span id="__span-6-223"><a id="__codelineno-6-223" name="__codelineno-6-223" href="#__codelineno-6-223"></a>                    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="__span-6-224"><a id="__codelineno-6-224" name="__codelineno-6-224" href="#__codelineno-6-224"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Async file upload with parallel processing.&quot;&quot;&quot;</span>
-</span><span id="__span-6-225"><a id="__codelineno-6-225" name="__codelineno-6-225" href="#__codelineno-6-225"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Uploading </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="__span-6-226"><a id="__codelineno-6-226" name="__codelineno-6-226" href="#__codelineno-6-226"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using </span><span class="si">{</span><span class="n">parallel</span><span class="si">}</span><span class="s2"> parallel connections&quot;</span><span class="p">)</span>
-</span><span id="__span-6-227"><a id="__codelineno-6-227" name="__codelineno-6-227" href="#__codelineno-6-227"></a>
-</span><span id="__span-6-228"><a id="__codelineno-6-228" name="__codelineno-6-228" href="#__codelineno-6-228"></a>        <span class="c1"># Simulate async upload</span>
-</span><span id="__span-6-229"><a id="__codelineno-6-229" name="__codelineno-6-229" href="#__codelineno-6-229"></a>        <span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="__span-6-230"><a id="__codelineno-6-230" name="__codelineno-6-230" href="#__codelineno-6-230"></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">parallel</span><span class="p">):</span>
-</span><span id="__span-6-231"><a id="__codelineno-6-231" name="__codelineno-6-231" href="#__codelineno-6-231"></a>            <span class="n">task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_upload_chunk</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-</span><span id="__span-6-232"><a id="__codelineno-6-232" name="__codelineno-6-232" href="#__codelineno-6-232"></a>            <span class="n">tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
-</span><span id="__span-6-233"><a id="__codelineno-6-233" name="__codelineno-6-233" href="#__codelineno-6-233"></a>
-</span><span id="__span-6-234"><a id="__codelineno-6-234" name="__codelineno-6-234" href="#__codelineno-6-234"></a>        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">)</span>
-</span><span id="__span-6-235"><a id="__codelineno-6-235" name="__codelineno-6-235" href="#__codelineno-6-235"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✓ Upload completed&quot;</span><span class="p">)</span>
-</span><span id="__span-6-236"><a id="__codelineno-6-236" name="__codelineno-6-236" href="#__codelineno-6-236"></a>
-</span><span id="__span-6-237"><a id="__codelineno-6-237" name="__codelineno-6-237" href="#__codelineno-6-237"></a>    <span class="nd">@Handler</span><span class="p">(</span><span class="s2">&quot;backup&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Create remote backup&quot;</span><span class="p">,</span> <span class="n">is_coroutine</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-6-238"><a id="__codelineno-6-238" name="__codelineno-6-238" href="#__codelineno-6-238"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">backup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span id="__span-6-239"><a id="__codelineno-6-239" name="__codelineno-6-239" href="#__codelineno-6-239"></a>                    <span class="n">database</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span>
-</span><span id="__span-6-240"><a id="__codelineno-6-240" name="__codelineno-6-240" href="#__codelineno-6-240"></a>                    <span class="n">compress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span id="__span-6-241"><a id="__codelineno-6-241" name="__codelineno-6-241" href="#__codelineno-6-241"></a>                    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="__span-6-242"><a id="__codelineno-6-242" name="__codelineno-6-242" href="#__codelineno-6-242"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Async database backup.&quot;&quot;&quot;</span>
-</span><span id="__span-6-243"><a id="__codelineno-6-243" name="__codelineno-6-243" href="#__codelineno-6-243"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating backup of </span><span class="si">{</span><span class="n">database</span><span class="si">}</span><span class="s2"> database&quot;</span><span class="p">)</span>
-</span><span id="__span-6-244"><a id="__codelineno-6-244" name="__codelineno-6-244" href="#__codelineno-6-244"></a>
-</span><span id="__span-6-245"><a id="__codelineno-6-245" name="__codelineno-6-245" href="#__codelineno-6-245"></a>        <span class="k">if</span> <span class="n">compress</span><span class="p">:</span>
-</span><span id="__span-6-246"><a id="__codelineno-6-246" name="__codelineno-6-246" href="#__codelineno-6-246"></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Compression enabled&quot;</span><span class="p">)</span>
-</span><span id="__span-6-247"><a id="__codelineno-6-247" name="__codelineno-6-247" href="#__codelineno-6-247"></a>
-</span><span id="__span-6-248"><a id="__codelineno-6-248" name="__codelineno-6-248" href="#__codelineno-6-248"></a>        <span class="c1"># Simulate async backup process</span>
-</span><span id="__span-6-249"><a id="__codelineno-6-249" name="__codelineno-6-249" href="#__codelineno-6-249"></a>        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_backup</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">compress</span><span class="p">)</span>
-</span><span id="__span-6-250"><a id="__codelineno-6-250" name="__codelineno-6-250" href="#__codelineno-6-250"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✓ Backup created successfully&quot;</span><span class="p">)</span>
-</span><span id="__span-6-251"><a id="__codelineno-6-251" name="__codelineno-6-251" href="#__codelineno-6-251"></a>
-</span><span id="__span-6-252"><a id="__codelineno-6-252" name="__codelineno-6-252" href="#__codelineno-6-252"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">_upload_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="__span-6-253"><a id="__codelineno-6-253" name="__codelineno-6-253" href="#__codelineno-6-253"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper method for async upload simulation.&quot;&quot;&quot;</span>
-</span><span id="__span-6-254"><a id="__codelineno-6-254" name="__codelineno-6-254" href="#__codelineno-6-254"></a>        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># Simulate upload time</span>
-</span><span id="__span-6-255"><a id="__codelineno-6-255" name="__codelineno-6-255" href="#__codelineno-6-255"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Chunk </span><span class="si">{</span><span class="n">chunk_id</span><span class="si">}</span><span class="s2"> uploaded&quot;</span><span class="p">)</span>
-</span><span id="__span-6-256"><a id="__codelineno-6-256" name="__codelineno-6-256" href="#__codelineno-6-256"></a>
-</span><span id="__span-6-257"><a id="__codelineno-6-257" name="__codelineno-6-257" href="#__codelineno-6-257"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">_create_backup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">compress</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="__span-6-258"><a id="__codelineno-6-258" name="__codelineno-6-258" href="#__codelineno-6-258"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper method for async backup simulation.&quot;&quot;&quot;</span>
-</span><span id="__span-6-259"><a id="__codelineno-6-259" name="__codelineno-6-259" href="#__codelineno-6-259"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Connecting to database...&quot;</span><span class="p">)</span>
-</span><span id="__span-6-260"><a id="__codelineno-6-260" name="__codelineno-6-260" href="#__codelineno-6-260"></a>        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>
-</span><span id="__span-6-261"><a id="__codelineno-6-261" name="__codelineno-6-261" href="#__codelineno-6-261"></a>
-</span><span id="__span-6-262"><a id="__codelineno-6-262" name="__codelineno-6-262" href="#__codelineno-6-262"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Dumping data...&quot;</span><span class="p">)</span>
-</span><span id="__span-6-263"><a id="__codelineno-6-263" name="__codelineno-6-263" href="#__codelineno-6-263"></a>        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
-</span><span id="__span-6-264"><a id="__codelineno-6-264" name="__codelineno-6-264" href="#__codelineno-6-264"></a>
-</span><span id="__span-6-265"><a id="__codelineno-6-265" name="__codelineno-6-265" href="#__codelineno-6-265"></a>        <span class="k">if</span> <span class="n">compress</span><span class="p">:</span>
-</span><span id="__span-6-266"><a id="__codelineno-6-266" name="__codelineno-6-266" href="#__codelineno-6-266"></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Compressing backup...&quot;</span><span class="p">)</span>
-</span><span id="__span-6-267"><a id="__codelineno-6-267" name="__codelineno-6-267" href="#__codelineno-6-267"></a>            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="async-command-examples">Async Command Examples</h2>
+<p>The CLI engine supports async command handlers for operations that require asynchronous processing. Async handlers are detected automatically — just declare the method with <code>async def</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">import</span> <span class="nn">asyncio</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="kn">from</span> <span class="nn">ascender.core.cli_engine</span> <span class="kn">import</span> <span class="n">Command</span><span class="p">,</span> <span class="n">Handler</span><span class="p">,</span> <span class="n">GenericCLI</span><span class="p">,</span> <span class="n">Parameter</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="nd">@Command</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;deploy&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Deployment operations&quot;</span><span class="p">)</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="k">class</span> <span class="nc">DeployCommand</span><span class="p">(</span><span class="n">GenericCLI</span><span class="p">):</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Async deployment command examples.&quot;&quot;&quot;</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>    <span class="nd">@Handler</span><span class="p">(</span><span class="s2">&quot;upload&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Upload files to server&quot;</span><span class="p">)</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">upload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>                    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>                    <span class="n">destination</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>                        <span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>                        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Remote destination path&quot;</span><span class="p">,</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>                        <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;--dest&quot;</span><span class="p">,</span> <span class="s2">&quot;-d&quot;</span><span class="p">],</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>                        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;PATH&quot;</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>                    <span class="p">),</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>                    <span class="n">parallel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>                        <span class="mi">4</span><span class="p">,</span>
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>                        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Number of parallel uploads&quot;</span><span class="p">,</span>
+</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>                        <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;--parallel&quot;</span><span class="p">,</span> <span class="s2">&quot;-p&quot;</span><span class="p">],</span>
+</span><span id="__span-7-22"><a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>                        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;N&quot;</span>
+</span><span id="__span-7-23"><a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>                    <span class="p">),</span>
+</span><span id="__span-7-24"><a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a>                    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-7-25"><a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Async file upload with parallel processing.&quot;&quot;&quot;</span>
+</span><span id="__span-7-26"><a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Uploading </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-7-27"><a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using </span><span class="si">{</span><span class="n">parallel</span><span class="si">}</span><span class="s2"> parallel connections&quot;</span><span class="p">)</span>
+</span><span id="__span-7-28"><a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a>
+</span><span id="__span-7-29"><a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a>        <span class="c1"># Simulate async upload</span>
+</span><span id="__span-7-30"><a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a>        <span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="__span-7-31"><a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">parallel</span><span class="p">):</span>
+</span><span id="__span-7-32"><a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a>            <span class="n">task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_upload_chunk</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+</span><span id="__span-7-33"><a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a>            <span class="n">tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+</span><span id="__span-7-34"><a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a>
+</span><span id="__span-7-35"><a id="__codelineno-7-35" name="__codelineno-7-35" href="#__codelineno-7-35"></a>        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">)</span>
+</span><span id="__span-7-36"><a id="__codelineno-7-36" name="__codelineno-7-36" href="#__codelineno-7-36"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✓ Upload completed&quot;</span><span class="p">)</span>
+</span><span id="__span-7-37"><a id="__codelineno-7-37" name="__codelineno-7-37" href="#__codelineno-7-37"></a>
+</span><span id="__span-7-38"><a id="__codelineno-7-38" name="__codelineno-7-38" href="#__codelineno-7-38"></a>    <span class="nd">@Handler</span><span class="p">(</span><span class="s2">&quot;backup&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Create remote backup&quot;</span><span class="p">)</span>
+</span><span id="__span-7-39"><a id="__codelineno-7-39" name="__codelineno-7-39" href="#__codelineno-7-39"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">backup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+</span><span id="__span-7-40"><a id="__codelineno-7-40" name="__codelineno-7-40" href="#__codelineno-7-40"></a>                    <span class="n">database</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span>
+</span><span id="__span-7-41"><a id="__codelineno-7-41" name="__codelineno-7-41" href="#__codelineno-7-41"></a>                    <span class="n">compress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="__span-7-42"><a id="__codelineno-7-42" name="__codelineno-7-42" href="#__codelineno-7-42"></a>                    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-7-43"><a id="__codelineno-7-43" name="__codelineno-7-43" href="#__codelineno-7-43"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Async database backup.&quot;&quot;&quot;</span>
+</span><span id="__span-7-44"><a id="__codelineno-7-44" name="__codelineno-7-44" href="#__codelineno-7-44"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating backup of </span><span class="si">{</span><span class="n">database</span><span class="si">}</span><span class="s2"> database&quot;</span><span class="p">)</span>
+</span><span id="__span-7-45"><a id="__codelineno-7-45" name="__codelineno-7-45" href="#__codelineno-7-45"></a>
+</span><span id="__span-7-46"><a id="__codelineno-7-46" name="__codelineno-7-46" href="#__codelineno-7-46"></a>        <span class="k">if</span> <span class="n">compress</span><span class="p">:</span>
+</span><span id="__span-7-47"><a id="__codelineno-7-47" name="__codelineno-7-47" href="#__codelineno-7-47"></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Compression enabled&quot;</span><span class="p">)</span>
+</span><span id="__span-7-48"><a id="__codelineno-7-48" name="__codelineno-7-48" href="#__codelineno-7-48"></a>
+</span><span id="__span-7-49"><a id="__codelineno-7-49" name="__codelineno-7-49" href="#__codelineno-7-49"></a>        <span class="c1"># Simulate async backup process</span>
+</span><span id="__span-7-50"><a id="__codelineno-7-50" name="__codelineno-7-50" href="#__codelineno-7-50"></a>        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_backup</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">compress</span><span class="p">)</span>
+</span><span id="__span-7-51"><a id="__codelineno-7-51" name="__codelineno-7-51" href="#__codelineno-7-51"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✓ Backup created successfully&quot;</span><span class="p">)</span>
+</span><span id="__span-7-52"><a id="__codelineno-7-52" name="__codelineno-7-52" href="#__codelineno-7-52"></a>
+</span><span id="__span-7-53"><a id="__codelineno-7-53" name="__codelineno-7-53" href="#__codelineno-7-53"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">_upload_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-7-54"><a id="__codelineno-7-54" name="__codelineno-7-54" href="#__codelineno-7-54"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper method for async upload simulation.&quot;&quot;&quot;</span>
+</span><span id="__span-7-55"><a id="__codelineno-7-55" name="__codelineno-7-55" href="#__codelineno-7-55"></a>        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># Simulate upload time</span>
+</span><span id="__span-7-56"><a id="__codelineno-7-56" name="__codelineno-7-56" href="#__codelineno-7-56"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Chunk </span><span class="si">{</span><span class="n">chunk_id</span><span class="si">}</span><span class="s2"> uploaded&quot;</span><span class="p">)</span>
+</span><span id="__span-7-57"><a id="__codelineno-7-57" name="__codelineno-7-57" href="#__codelineno-7-57"></a>
+</span><span id="__span-7-58"><a id="__codelineno-7-58" name="__codelineno-7-58" href="#__codelineno-7-58"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">_create_backup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">compress</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-7-59"><a id="__codelineno-7-59" name="__codelineno-7-59" href="#__codelineno-7-59"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper method for async backup simulation.&quot;&quot;&quot;</span>
+</span><span id="__span-7-60"><a id="__codelineno-7-60" name="__codelineno-7-60" href="#__codelineno-7-60"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Connecting to database...&quot;</span><span class="p">)</span>
+</span><span id="__span-7-61"><a id="__codelineno-7-61" name="__codelineno-7-61" href="#__codelineno-7-61"></a>        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>
+</span><span id="__span-7-62"><a id="__codelineno-7-62" name="__codelineno-7-62" href="#__codelineno-7-62"></a>
+</span><span id="__span-7-63"><a id="__codelineno-7-63" name="__codelineno-7-63" href="#__codelineno-7-63"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Dumping data...&quot;</span><span class="p">)</span>
+</span><span id="__span-7-64"><a id="__codelineno-7-64" name="__codelineno-7-64" href="#__codelineno-7-64"></a>        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+</span><span id="__span-7-65"><a id="__codelineno-7-65" name="__codelineno-7-65" href="#__codelineno-7-65"></a>
+</span><span id="__span-7-66"><a id="__codelineno-7-66" name="__codelineno-7-66" href="#__codelineno-7-66"></a>        <span class="k">if</span> <span class="n">compress</span><span class="p">:</span>
+</span><span id="__span-7-67"><a id="__codelineno-7-67" name="__codelineno-7-67" href="#__codelineno-7-67"></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Compressing backup...&quot;</span><span class="p">)</span>
+</span><span id="__span-7-68"><a id="__codelineno-7-68" name="__codelineno-7-68" href="#__codelineno-7-68"></a>            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
 </span></code></pre></div>
 <p><strong>Usage</strong>:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Async commands work just like regular commands</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>ascender<span class="w"> </span>deploy<span class="w"> </span>upload<span class="w"> </span>./dist<span class="w"> </span>--dest<span class="w"> </span>/var/www/app<span class="w"> </span>--parallel<span class="w"> </span><span class="m">8</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>ascender<span class="w"> </span>deploy<span class="w"> </span>backup<span class="w"> </span>--database<span class="w"> </span>production<span class="w"> </span>--compress
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Async commands work just like regular commands</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>ascender<span class="w"> </span>deploy<span class="w"> </span>upload<span class="w"> </span>./dist<span class="w"> </span>--dest<span class="w"> </span>/var/www/app<span class="w"> </span>--parallel<span class="w"> </span><span class="m">8</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>ascender<span class="w"> </span>deploy<span class="w"> </span>backup<span class="w"> </span>--database<span class="w"> </span>production<span class="w"> </span>--compress
 </span></code></pre></div></p>
 
 

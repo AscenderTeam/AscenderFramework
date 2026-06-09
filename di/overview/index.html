@@ -20,7 +20,7 @@
     
     
       
-        <title>Overview - Ascender Framework</title>
+        <title>Dependency Injection Overview - Ascender Framework</title>
       
     
     
@@ -153,7 +153,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#overview" class="md-skip">
+        <a href="#dependency-injection-overview" class="md-skip">
           Skip to content
         </a>
       
@@ -186,7 +186,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Overview
+              Dependency Injection Overview
             
           </span>
         </div>
@@ -525,7 +525,7 @@
         
   
   <span class="md-ellipsis">
-    Overview
+    What is the Ascender Framework?
   </span>
   
 
@@ -936,7 +936,7 @@
           
   
   <span class="md-ellipsis">
-    Overview
+    Dependency Injection Overview
   </span>
   
 
@@ -947,7 +947,7 @@
         
   
   <span class="md-ellipsis">
-    Overview
+    Dependency Injection Overview
   </span>
   
 
@@ -969,18 +969,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#dependency-injection-overview" class="md-nav__link">
+  <a href="#learn-more" class="md-nav__link">
     <span class="md-ellipsis">
-      Dependency Injection Overview
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#learn-more-about-ascender-frameworks-dependency-injection" class="md-nav__link">
-    <span class="md-ellipsis">
-      Learn more about Ascender Framework's dependency injection
+      Learn more
     </span>
   </a>
   
@@ -1838,18 +1829,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#dependency-injection-overview" class="md-nav__link">
+  <a href="#learn-more" class="md-nav__link">
     <span class="md-ellipsis">
-      Dependency Injection Overview
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#learn-more-about-ascender-frameworks-dependency-injection" class="md-nav__link">
-    <span class="md-ellipsis">
-      Learn more about Ascender Framework's dependency injection
+      Learn more
     </span>
   </a>
   
@@ -1873,18 +1855,33 @@
   
 
 
-<h1 id="overview">Overview</h1>
-<hr />
-<h2 id="dependency-injection-overview">Dependency Injection Overview</h2>
-<p>Dependency Injection in Ascender Framework was inspired by <a href="https://angular.dev/guide/di">Angular's DI principles</a> and tailored for Python's syntax and ecosystem. It uses services, repositories, and other plain values (providers) as dependencies. The main purpose is to supply other parts of your application with necessary dependencies which may contain extra business logic, configuration, or other types of values.</p>
-<p>All these dependencies are managed by Ascender Framework's injector. It's responsible for resolving and storing dependencies while also managing their states seamlessly.</p>
-<p>Before application bootstrap, there's an application injector called <code>root</code> injector. It's created during application pre-initialization when you type <code>ascender</code> or <code>ascender run</code> command in CLI. It loads all modules starting from CLI modules and finishing with the application itself, which contains FastAPI, router graph, and other necessary parts of the framework.</p>
-<h2 id="learn-more-about-ascender-frameworks-dependency-injection">Learn more about Ascender Framework's dependency injection</h2>
+<h1 id="dependency-injection-overview">Dependency Injection Overview</h1>
+<p>Dependency Injection in the Ascender Framework was inspired by <a href="https://angular.dev/guide/di">Angular's DI principles</a> and tailored for Python's syntax and ecosystem. It uses services, repositories, and other plain values (providers) as dependencies. The main purpose is to supply other parts of your application with the dependencies they need — business logic, configuration, or any other kind of value.</p>
+<p>All these dependencies are managed by the framework's <strong>injector</strong>. It is responsible for resolving and storing dependencies while seamlessly managing their state.</p>
+<p>Before application bootstrap, there is an application-wide injector called the <strong>root injector</strong>. It is created during application pre-initialization when you run <code>ascender</code> or <code>ascender run</code> in the CLI. It loads all modules — starting from CLI modules and finishing with the application itself, which contains FastAPI, the router graph, and other necessary parts of the framework.</p>
+<h2 id="learn-more">Learn more</h2>
+<div class="grid cards">
 <ul>
-<li><a href="../injectables/">Injectables Guide</a></li>
-<li><a href="../dependency-providers/">Dependency Providers</a></li>
-<li><a href="../guide/">DI Advanced Guide</a></li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m11.15 15.18-1.42-1.41 1.42-1.42 1.41 1.42 1.41-1.42-1.41-1.41 1.41-1.41 1.42 1.41 1.41-1.41-2.83-2.83-7.07 7.07 2.83 2.83zM3.08 19l3.12-3.11-2.12-2.12 9.89-9.9L16.1 6l1.4-1.42-1.4-1.42 1.4-1.41L21.75 6l-1.41 1.4L18.92 6 17.5 7.4l2.13 2.13-9.9 9.89-2.12-2.12-4.53 4.54z"/></svg></span> <strong>Injectables Guide</strong></p>
+<hr />
+<p>Define services with <code>@Injectable</code> and let the framework scaffold them for you.</p>
+<p><a href="../injectables/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Injectables</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 10.96a.985.985 0 0 1-.37-1.37L3.13 7c.11-.2.28-.34.47-.42l7.83-4.4c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.19.1.35.26.44.46l1.45 2.52c.28.48.11 1.09-.36 1.36l-1 .58v4.96c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-5.54c-.3.17-.68.18-1 0m10-6.81v6.7l5.96-3.35zM5 15.91l6 3.38v-6.71L5 9.21zm14 0v-3.22l-5 2.9c-.33.18-.7.17-1 .01v3.69zm-5.15-2.55 6.28-3.63-.58-1.01-6.28 3.63z"/></svg></span> <strong>Dependency Providers</strong></p>
+<hr />
+<p>Value, class, and factory providers — injection tokens beyond plain classes.</p>
+<p><a href="../dependency-providers/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Providers</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.5 17c-.13 0-.26 0-.39.04l-1.61-3.25a2.5 2.5 0 0 0-1.75-4.29c-.13 0-.25 0-.39.04l-1.63-3.25c.48-.45.77-1.08.77-1.79a2.5 2.5 0 0 0-5 0c0 .71.29 1.34.76 1.79L8.64 9.54c-.14-.04-.26-.04-.39-.04a2.5 2.5 0 0 0-1.75 4.29l-1.61 3.25C4.76 17 4.63 17 4.5 17a2.5 2.5 0 0 0 0 5A2.5 2.5 0 0 0 7 19.5c0-.7-.29-1.34-.76-1.79l1.62-3.25c.14.04.26.04.39.04s.25 0 .39-.04l1.63 3.25c-.47.45-.77 1.09-.77 1.79a2.5 2.5 0 0 0 5 0A2.5 2.5 0 0 0 12 17c-.13 0-.26 0-.39.04L10 13.79c.46-.45.75-1.08.75-1.79s-.29-1.34-.75-1.79l1.61-3.25c.13.04.26.04.39.04s.26 0 .39-.04L14 10.21c-.45.45-.75 1.09-.75 1.79a2.5 2.5 0 0 0 2.5 2.5c.13 0 .25 0 .39-.04l1.63 3.25c-.47.45-.77 1.09-.77 1.79a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0-2.5-2.5"/></svg></span> <strong>Advanced DI Guide</strong></p>
+<hr />
+<p>Hierarchical injectors, scopes, and how resolution actually works.</p>
+<p><a href="../guide/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Deep dive</a></p>
+</li>
 </ul>
+</div>
 
 
 

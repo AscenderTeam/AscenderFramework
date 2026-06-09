@@ -525,7 +525,7 @@
         
   
   <span class="md-ellipsis">
-    Overview
+    What is the Ascender Framework?
   </span>
   
 
@@ -985,7 +985,7 @@
         
   
   <span class="md-ellipsis">
-    Overview
+    Dependency Injection Overview
   </span>
   
 
@@ -1875,9 +1875,9 @@
 
 <h1 id="controller-types">Controller Types</h1>
 <p>There are two types of controllers <code>standalone</code> and <code>non-standalone</code> controllers.
-The main difference between both of them that <code>standalone</code> controller is an independendent controller and does not require an <a href="/asc-module/overview">AscModule</a> to work and host HTTP endpoints.</p>
+The main difference between both of them that <code>standalone</code> controller is an independendent controller and does not require an <a href="../../api-reference/modules/">AscModule</a> to work and host HTTP endpoints.</p>
 <h2 id="standalone-controllers">Standalone Controllers</h2>
-<p>Standalone controllers don't require an <a href="/asc-module/overview">AscModule</a> to access dependency injection scope. You can directly import modules or define and use providers right in the controller itself by managing them in the <code>@Controller</code> decorator itself</p>
+<p>Standalone controllers don't require an <a href="../../api-reference/modules/">AscModule</a> to access dependency injection scope. You can directly import modules or define and use providers right in the controller itself by managing them in the <code>@Controller</code> decorator itself</p>
 <p>Here's the example with <code>SupplierController</code>:
 <div class="language-py highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">supplier_controller.py</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
@@ -1927,7 +1927,7 @@ The main difference between both of them that <code>standalone</code> controller
 </span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">supply_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 </span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a>        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_service</span><span class="o">.</span><span class="n">supply_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div></p>
-<p>As same as <a href="/asc-module/overview">AscModule</a> has parameters that manage it's dependency injection, a <code>standalone</code> controller has it too.</p>
+<p>As same as <a href="../../api-reference/modules/">AscModule</a> has parameters that manage it's dependency injection, a <code>standalone</code> controller has it too.</p>
 <ul>
 <li><code>imports</code> can contain other modules or controllers to import to, their <code>exports</code> will be imported and exposed to current controller's scope</li>
 <li><code>providers</code> defines providers that will be available only for this controller's dependency injection scope unless you won't explicitly export them by including them in <code>exports</code></li>
@@ -1935,10 +1935,10 @@ The main difference between both of them that <code>standalone</code> controller
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Read more about Dependency Injection in AscModules at the <a href="/asc-module/overview">AscModule Guide Page</a></p>
+<p>Read more about Dependency Injection in AscModules at the <a href="../../api-reference/modules/">AscModule Guide Page</a></p>
 </div>
 <h2 id="non-standalone-controllers">Non-Standalone Controllers</h2>
-<p>This type of controllers require a parent <a href="/asc-module/overview">AscModule</a> to define them as their declaration. As a non-standalone controller will be defined in <code>declarations</code> of an <a href="/asc-module/overview"><code>AscModule</code></a> it becomes the controller of that module which declared it in their <code>declarations</code>. It also becomes consumer of the module as it can access it's dependency injection scope and import available dependencies to that module</p>
+<p>This type of controllers require a parent <a href="../../api-reference/modules/">AscModule</a> to define them as their declaration. As a non-standalone controller will be defined in <code>declarations</code> of an <a href="../../api-reference/modules/"><code>AscModule</code></a> it becomes the controller of that module which declared it in their <code>declarations</code>. It also becomes consumer of the module as it can access it's dependency injection scope and import available dependencies to that module</p>
 <p>Here's the example with non-standalone <code>SupplierController</code>:
 <div class="language-py highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">supplier_controller.py</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
@@ -2010,7 +2010,7 @@ The main difference between both of them that <code>standalone</code> controller
 </span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13"></a><span class="p">)</span>
 </span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14"></a><span class="k">class</span> <span class="nc">SupplierModule</span><span class="p">:</span> <span class="o">...</span>
 </span></code></pre></div></td></tr></table></div>
-<p>Now, <code>SupplierController</code> is controller and subject of an <a href="/asc-module/overview">AscModule</a> <code>SupplierModule</code>. <code>SupplierController</code> can access DI scope of <code>SupplierModule</code> and use it's defined and imported providers</p>
+<p>Now, <code>SupplierController</code> is controller and subject of an <a href="../../api-reference/modules/">AscModule</a> <code>SupplierModule</code>. <code>SupplierController</code> can access DI scope of <code>SupplierModule</code> and use it's defined and imported providers</p>
 <ul>
 <li><code>imports</code> can contain other modules or controllers to import to, their <code>exports</code> will be imported and exposed to current controller's scope</li>
 <li><code>providers</code> defines providers that will be available only for this controller's dependency injection scope unless you won't export them by including them in <code>exports</code></li>
@@ -2018,7 +2018,7 @@ The main difference between both of them that <code>standalone</code> controller
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Read more about Dependency Injection in AscModules at the <a href="/asc-module/overview">AscModule Guide Page</a></p>
+<p>Read more about Dependency Injection in AscModules at the <a href="../../api-reference/modules/">AscModule Guide Page</a></p>
 </div>
 
 
