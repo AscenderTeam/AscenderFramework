@@ -33,4 +33,3 @@ The Database API provides utilities for database connections, ORM integration, a
 
 - [SQLAlchemy Documentation](https://docs.sqlalchemy.org/) - Official SQLAlchemy docs
 - [Alembic Documentation](https://alembic.sqlalchemy.org/) - Database migrations
-- [Repository Pattern](../database/repositories.md) - Repository pattern guide

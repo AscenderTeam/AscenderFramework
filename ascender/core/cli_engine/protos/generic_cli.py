@@ -9,6 +9,6 @@ class GenericCLI:
     
     Generic CLI can have multiple subcommands defined as methods that are wrapped by `@Handler(...)` decorator.
 
-    For more details please refer to [GenericCLI Overview Documentation](/cli/overview#genericcli-commands) and [GenericCLI Examples](/cli/examples#genericcli-examples).
+    For more details please refer to [GenericCLI Overview Documentation](../cli/overview.md#genericcli-commands) and [GenericCLI Examples](../cli/examples.md#genericcli-examples).
     """
     __asc_command__: GenericMetadata_

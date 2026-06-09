@@ -163,6 +163,6 @@ Providers that should be available to modules that import this module.
 
 ## See Also
 
-- [Module Documentation](../modules/overview.md) - Comprehensive module guide
+- [Module Documentation](../di/overview.md) - Comprehensive module guide
 - [Dependency Injection](di.md) - DI system used by modules
 - [Application](application.md) - Creating applications from modules

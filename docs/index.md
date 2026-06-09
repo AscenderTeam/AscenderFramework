@@ -1,16 +1,11 @@
 ---
 template: home.html
+title: Ascender Framework
 ---
 
-- Initialize a basic testing setup (planned scaffold):
+# Ascender Framework
 
-```bash
-ascender run tests init   # generates src/tests/ samples and pytest.ini
-```
+A modern, high-performance Python web framework built on FastAPI — with Angular/NestJS-inspired architecture: hierarchical dependency injection, modules, decorated controllers, guards, and a powerful CLI.
 
-## Project Structure
-
-- `src/bootstrap.py`: Framework and server configuration.
-- `src/controllers/`: Controller classes defining endpoints.
-- `start.py`: Application initialization entry point.
-
+[Get started](introduction/installation.md){ .md-button .md-button--primary }
+[Why Ascender?](introduction/overview.md){ .md-button }

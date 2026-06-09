@@ -50,6 +50,6 @@ The HTTP API provides utilities for making HTTP requests and handling HTTP-relat
 
 ## See Also
 
-- [HTTP Client Guide](../http/client.md) - Comprehensive HTTP client guide
+- [HTTP Client Guide](../essentials/http-client.md) - Comprehensive HTTP client guide
 - [Controllers](controllers.md) - Controller request/response handling
 - [HTTPX Documentation](https://www.python-httpx.org/) - Underlying HTTP library (for http exception handling and advanced usage)

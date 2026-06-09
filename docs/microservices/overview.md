@@ -14,7 +14,7 @@ Microservices in Ascender Framework can be deployed independently, communicate t
 
 With this module, developers can create highly maintainable, event-driven architectures while leveraging the power of Ascender Framework’s dependency injection and modular structure.
 
-In addition, data serialization and conversion of [DTO](/essentials/data-validation#defining-dtos), [Response](/essentials/data-validation#defining-responses) models will be handled on Ascender Framework's Microservice module's side.
+In addition, data serialization and conversion of [DTO](../essentials/data-validation.md#defining-dtos), [Response](../essentials/data-validation.md#defining-responses) models will be handled on Ascender Framework's Microservice module's side.
 
 ## Core Components
 
@@ -26,5 +26,5 @@ The microservices package is composed of several helper classes that work togeth
 These pieces allow services to communicate through a transport‑agnostic layer while staying fully integrated with Ascender's dependency injection.
 
 ## Learn more about Ascender Framework's dependency injection
-The microservice module relies on dependency injection. See the [Dependency Injection overview](/di/overview) for details.
+The microservice module relies on dependency injection. See the [Dependency Injection overview](../di/overview.md) for details.
 

@@ -696,11 +696,11 @@ class DatabaseCommand(GenericCLI):
         time.sleep(2)
         
         print("✓ Database reset completed")
-
+```
 
 ## Async Command Examples
 
-The CLI engine supports async command handlers for operations that require asynchronous processing:
+The CLI engine supports async command handlers for operations that require asynchronous processing. Async handlers are detected automatically — just declare the method with `async def`:
 
 ```python
 import asyncio
@@ -711,7 +711,7 @@ from ascender.core.cli_engine import Command, Handler, GenericCLI, Parameter
 class DeployCommand(GenericCLI):
     """Async deployment command examples."""
     
-    @Handler("upload", description="Upload files to server", is_coroutine=True)
+    @Handler("upload", description="Upload files to server")
     async def upload(self,
                     source: str,
                     destination: str = Parameter(
@@ -740,7 +740,7 @@ class DeployCommand(GenericCLI):
         await asyncio.gather(*tasks)
         print("✓ Upload completed")
     
-    @Handler("backup", description="Create remote backup", is_coroutine=True)
+    @Handler("backup", description="Create remote backup")
     async def backup(self,
                     database: str = "main",
                     compress: bool = True,

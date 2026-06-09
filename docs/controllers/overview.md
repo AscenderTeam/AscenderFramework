@@ -33,7 +33,7 @@ class HttpController:
     ...
 ```
 
-Automatic router graph generation allows you to generate router graph's routes automatically based on your controllers' metadata, for more information please read [Router Graph Guide](/router/provide-from-controllers).
+Automatic router graph generation allows you to generate router graph's routes automatically based on your controllers' metadata, for more information please read [Router Graph Guide](controller-routes.md).
 
 
 ## Using Controllers
@@ -65,7 +65,7 @@ __all__ = ["routes"]
 
 ### Automatically generating Router Node from Controllers
 
-Ascender Framework allows you to generate router graph and uses it under the hood. Only what you need is an [AscModule](/asc-module/overview) to gather them all in one place.
+Ascender Framework allows you to generate router graph and uses it under the hood. Only what you need is an [AscModule](../api-reference/modules.md) to gather them all in one place.
 ```py title="controllers_module.py" linenums="1"
 @AscModule(
     imports=[

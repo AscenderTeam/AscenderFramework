@@ -158,7 +158,7 @@ class DatabaseCommand(GenericCLI):
             print("Seeding with default data...")
         # Seeding logic here
     
-    @Handler("backup", description="Backup database", is_coroutine=True)
+    @Handler("backup", description="Backup database")
     async def backup(self, output: str = "backup.sql", **kwargs: Any) -> None:
         """Async database backup."""
         print(f"Creating backup to {output}...")
@@ -238,7 +238,7 @@ For long-running or I/O-bound operations, use async handlers:
 @Command(name="network", description="Network operations")
 class NetworkCommand(GenericCLI):
     
-    @Handler("download", description="Download files", is_coroutine=True)
+    @Handler("download", description="Download files")
     async def download_files(self, 
                            url: str,
                            output: str = "./downloads",
@@ -252,7 +252,7 @@ class NetworkCommand(GenericCLI):
         
         print(f"Downloaded to {output}")
     
-    @Handler("sync", description="Sync remote data", is_coroutine=True)
+    @Handler("sync", description="Sync remote data")
     async def sync_data(self, **kwargs: Any) -> None:
         """Async data synchronization."""
         print("Starting data sync...")
@@ -268,10 +268,9 @@ class NetworkCommand(GenericCLI):
 
 ```python
 @Handler(
-    "command_name",                    # Subcommand name (required)
+    "command_name", "alias",           # One or more names (first is primary, rest are aliases)
     description="Command description", # Help text
-    is_coroutine=False,               # Set True for async methods
-    **kwargs                          # Additional metadata
+    **kwargs                           # Additional metadata
 )
 ```
 

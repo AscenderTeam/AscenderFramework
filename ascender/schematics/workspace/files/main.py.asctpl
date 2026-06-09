@@ -1,0 +1,6 @@
+from ascender.workspaces import Workspace
+
+workspace = Workspace(configs="workspace.json")
+
+if __name__ == "__main__":
+    workspace.run()
