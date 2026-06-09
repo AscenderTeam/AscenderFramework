@@ -65,6 +65,12 @@ theme:
 extra:
   generator: false
 
+# Internal notes that live in docs/ but must not ship to the site
+exclude_docs: |
+  README.md
+  cli-engine-structure.md
+  cli-engine-complete-structure.md
+
 plugins:
   - search
   - awesome-pages
