@@ -7,7 +7,7 @@ class BasicCLI:
     """
     A base proxy class for defining basic CLI commands.
 
-    For more details please refer to [BasicCLI Overview Documentation](/cli/overview#basiccli-commands) and [BasicCLI Examples](/cli/examples#basiccli-examples).
+    For more details please refer to [BasicCLI Overview Documentation](../cli/overview.md#basiccli-commands) and [BasicCLI Examples](../cli/examples.md#basiccli-examples).
     """
     __asc_command__: BasicMetadata_
     
