@@ -67,6 +67,11 @@ class Application:
 
         self.events = defaultdict(list)
 
+        # Guards the one-time boot pipeline (see `bootstrap`). The uvicorn
+        # `factory=True` entrypoint may invoke us more than once across workers/
+        # imports; the routes and lifecycle must only be wired up once.
+        self._booted = False
+
         self.__handle_application_settings()
         configure_staticfile_serving(self.app)
 
@@ -139,13 +144,37 @@ class Application:
         # self.router_graph.create_router_graph(self)
         return self.app
 
-    def __call__(self):
-        # # Enviornment configuration
+    def bootstrap(self) -> FastAPI:
+        """
+        The explicit, ordered server boot pipeline — the single place that reads
+        top-to-bottom as "what happens at startup".
+
+        Idempotent: the first call wires everything up, subsequent calls are a
+        no-op and just return the built ASGI app. This used to live (unnamed and
+        unguarded) inside `__call__`, where mounting the routes was a hidden side
+        effect of uvicorn invoking the factory.
+
+        Sequence:
+            1. Resolve environment + configure logging.
+            2. Register lifecycle (startup/shutdown) handlers.
+            3. Mount the router graph onto FastAPI.
+        """
+        if self._booted:
+            return self.app
+
+        # 1. Environment + logging
         environment = _AscenderConfig().get_environment()
         self.start_lifecycle()
-        # # Configure logger
         logger = configure_logger(_AscenderConfig().config.logging)
         logger.setLevel(environment.logging.upper())
 
+        # 2. Mount the route graph onto FastAPI
         self.router_graph.create_router_graph(self)
+
+        self._booted = True
         return self.app
+
+    def __call__(self) -> FastAPI:
+        # Uvicorn `factory=True` entrypoint — delegates to the explicit, idempotent
+        # boot pipeline rather than carrying the startup logic itself.
+        return self.bootstrap()
