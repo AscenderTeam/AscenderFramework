@@ -14,5 +14,4 @@ def build(app: Application, config: dict[str, Any]):
     host = os.getenv("ASC_HOST", "127.0.0.1")
     port = os.getenv("ASC_PORT", "8000")
     
-    app.start_lifecycle()
     run(app, host=host, port=int(port), **config)
