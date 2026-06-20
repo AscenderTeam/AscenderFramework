@@ -17,13 +17,15 @@ def is_forward_ref(token: Any) -> bool:
     return isinstance(token, (str, ForwardRef))
 
 
-def resolve_dep_forward_ref(token: str | ForwardRef, records: list[type[Any]]) -> type[Any]:
+def resolve_dep_forward_ref(token: str | ForwardRef, records: list[type[Any]] | dict[str, type[Any]]) -> type[Any]:
     """
     Resolves dependency forward reference using Dependency records of `AscenderInjector`
 
     Args:
         token (str | ForwardRef): Token which required by dependency
-        records (list[type[Any]]): Dependency records of `AscenderInjector`
+        records (list[type[Any]] | dict[str, type[Any]]): Dependency type records.
+            Either a list of types (a name->type map is built here) or, on the hot
+            path, a prebuilt name->type map used directly for O(1) lookup.
 
     Raises:
         TypeError: If token was not found in records, in AscenderInjector it should cause `NoneInjector` (NullInjector) error
@@ -32,7 +34,7 @@ def resolve_dep_forward_ref(token: str | ForwardRef, records: list[type[Any]]) -
     Returns:
         type[Any]: Type object of dependency
     """
-    records_map = {record.__name__: record for record in records}
+    records_map = records if isinstance(records, dict) else {record.__name__: record for record in records}
 
     if isinstance(token, ForwardRef):
         resolved_name = token.__forward_arg__

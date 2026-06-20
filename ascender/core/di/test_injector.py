@@ -39,6 +39,7 @@ class TestInjector(AscenderInjector):
         self._overrode = []
         
         self.dependencies[TestInjector].add(ProviderRecord(self))
+        self._index_token(TestInjector)
     
     def mock(self, providers: Sequence[Provider] | None = None) -> InjectionOverriderContext:
         """
@@ -68,6 +69,7 @@ class TestInjector(AscenderInjector):
         """
         # Resolves token of the provider
         provider_token = provider if isinstance(provider, type) else provider.get("provide")
+        self._index_token(provider_token)
 
         # Generate provider record
         provider_record = self.__provide_to_record(provider)
