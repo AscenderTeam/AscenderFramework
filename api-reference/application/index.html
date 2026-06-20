@@ -1464,6 +1464,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#ascender.core.Application.bootstrap" class="md-nav__link">
+    <span class="md-ellipsis">
+      bootstrap
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1949,6 +1958,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#ascender.core.Application.bootstrap" class="md-nav__link">
+    <span class="md-ellipsis">
+      bootstrap
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2172,6 +2190,40 @@
 
         <p>Launches application in server-mode and builds up fastapi enforcing Uvicorn to handle server part</p>
 
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="ascender.core.Application.bootstrap" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">bootstrap</span>
+
+
+</h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">bootstrap</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">FastAPI</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>The explicit, ordered server boot pipeline — the single place that reads
+top-to-bottom as "what happens at startup".</p>
+<p>Idempotent: the first call wires everything up, subsequent calls are a
+no-op and just return the built ASGI app. This used to live (unnamed and
+unguarded) inside <code>__call__</code>, where mounting the routes was a hidden side
+effect of uvicorn invoking the factory.</p>
+
+
+<details class="sequence" open>
+  <summary>Sequence</summary>
+  <ol>
+<li>Resolve environment + configure logging.</li>
+<li>Register lifecycle (startup/shutdown) handlers.</li>
+<li>Mount the router graph onto FastAPI.</li>
+</ol>
+</details>
 
     </div>
 
