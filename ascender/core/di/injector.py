@@ -38,17 +38,33 @@ class AscenderInjector(Injector):
         parent: AscenderInjector | None = None
     ):
         self.dependencies = defaultdict(set)
-        
+
+        # Incrementally-maintained name -> type index for O(1) forward-ref
+        # resolution. Mirrors the type-valued keys of `dependencies`, so we never
+        # rebuild `[d for d in dependencies if isinstance(d, type)]` on the hot path.
+        self._type_index: dict[str, type[Any]] = {}
+
         self.providers = providers
         self.__parent = parent
 
         # Make sure to add this injector into injectable records
         self.dependencies[Injector] = set([ProviderRecord(self)])
+        self._index_token(Injector)
 
         # Handle all specified providers now
         for_each_provider(self.providers, lambda p: self.__process_provider(p))
-        
+
         self.configs = _AscenderConfig()
+
+        # Cache the DI runtime config once. It does not mutate at runtime, so we
+        # avoid walking `get_environment().dependency_injection` on every supply().
+        self._di_configs = self.configs.get_environment().dependency_injection
+
+    """:internal:"""
+    def _index_token(self, token: type[Any] | str | Any):
+        """Register a token in `_type_index` if it is a type. No-op otherwise."""
+        if isinstance(token, type):
+            self._type_index[token.__name__] = token
 
     def get(
         self,
@@ -71,6 +87,7 @@ class AscenderInjector(Injector):
         """
         # Resolves token of the provider
         provider_token = provider if isinstance(provider, type) else provider.get("provide")
+        self._index_token(provider_token)
 
         # Generate provider record
         provider_record = self.__provide_to_record(provider)
@@ -107,7 +124,7 @@ class AscenderInjector(Injector):
 
         if is_type_provider(provider):
             if isinstance(provider, ForwardRef):
-                _resolved = resolve_dep_forward_ref(provider, [d for d in self.dependencies.keys() if isinstance(d, type)])
+                _resolved = resolve_dep_forward_ref(provider, self._type_index)
                 return self.inject_factory_def(_resolved)
             
             return self.inject_factory_def(provider) # type: ignore
@@ -172,16 +189,19 @@ class AscenderInjector(Injector):
         Args:
             reference (type[Any]): Reference object, usually class
         """
+        target = reference.__init__ if isclass(reference) else reference
+        cached: dict[str, Any] = {}
+
         def factory_def():
-            if isclass(reference):
-                _deps = injection_def(reference.__init__)
-                
-                return reference(**self.__inject_kargs(_deps))
-            
-            # If object is function or callable
-            _deps = injection_def(reference)
+            # Compute the injection signature once on first build, then reuse it.
+            # Kept lazy (not at registration) so token-resolution errors still
+            # surface at first resolution exactly as before.
+            _deps = cached.get("deps")
+            if _deps is None:
+                _deps = cached["deps"] = injection_def(target)
+
             return reference(**self.__inject_kargs(_deps))
-        
+
         return factory_def
 
     """:internal:"""
@@ -194,7 +214,7 @@ class AscenderInjector(Injector):
         """
         Supplies Injector output with required providers by `token`
         """
-        di_configs = self.configs.get_environment().dependency_injection
+        di_configs = self._di_configs
         _deps = self.get_factory_def(token, options.get("only_self", False), options.get("skip_self", False))
 
         if _deps is None:
@@ -261,13 +281,12 @@ class AscenderInjector(Injector):
         Returns:
             Sequence[Any]: Array of supplied dependencies
         """
-        type_records = [d for d in self.dependencies.keys() if isinstance(d, type)]
         dependencies: MutableSequence[Any] = []
 
         for token in tokens:
             if is_forward_ref(token):
                 try:
-                    token = resolve_dep_forward_ref(cast(ForwardRef | str, token), type_records)
+                    token = resolve_dep_forward_ref(cast(ForwardRef | str, token), self._type_index)
                 except TypeError:
                     pass
             # Supplies injector and current def with injected providers
@@ -286,12 +305,11 @@ class AscenderInjector(Injector):
         Returns:
             Mapping[str, Any]: Mapping of output value name: supplied-dependency
         """
-        type_records = [d for d in self.dependencies.keys() if isinstance(d, type)]
         dependencies: MutableMapping = {}
         for name, token in tokens.items():
             if is_forward_ref(token):
                 try:
-                    token = resolve_dep_forward_ref(cast(ForwardRef | str, token), type_records)
+                    token = resolve_dep_forward_ref(cast(ForwardRef | str, token), self._type_index)
                 except TypeError:
                     pass
             

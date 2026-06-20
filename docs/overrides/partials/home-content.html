@@ -1,54 +1,80 @@
 <div class="ascender-home">
-    <div id="particles-bg" class="particles-bg"></div>
-    <div class="bg-animated"></div>
+    <div class="asc-aurora" aria-hidden="true">
+        <span class="asc-aurora__blob asc-aurora__blob--1"></span>
+        <span class="asc-aurora__blob asc-aurora__blob--2"></span>
+        <span class="asc-aurora__blob asc-aurora__blob--3"></span>
+        <span class="asc-aurora__blob asc-aurora__blob--4"></span>
+    </div>
+    <div id="particles-bg" class="particles-bg" aria-hidden="true"></div>
 
     <section class="hero">
         <div class="container">
-            <div class="hero-badge">
-                <span>✨ The Modern Python API Framework</span>
+            <div class="hero-badge" data-aos="fade-down">
+                <span class="dot"></span>
+                <span>The Modern Python API Framework</span>
             </div>
-            <h1 class="hero-title">Build Powerful APIs<br>At Lightning Speed</h1>
-            <p class="hero-subtitle">
-                Ascender Framework combines the simplicity of Python with the robust architecture of modern web frameworks.
-                Inspired by NestJS, powered by FastAPI.
+            <h1 class="hero-title" data-aos="fade-up" data-aos-delay="60">
+                Build Powerful APIs<br><span class="grad">At Lightning Speed</span>
+            </h1>
+            <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="120">
+                Ascender combines the simplicity of Python with the robust architecture of modern web
+                frameworks. Inspired by NestJS, powered by FastAPI.
             </p>
-            <div class="hero-cta">
-                <a href="{{ 'introduction/installation/' | url }}" class="btn btn-primary">Get Started</a>
+
+            <div class="hero-install" data-aos="fade-up" data-aos-delay="160">
+                <span class="hi-prompt">$</span>
+                <code id="install-cmd">pip install ascender-framework</code>
+                <button type="button" class="hi-copy" data-copy="pip install ascender-framework" aria-label="Copy install command">⧉</button>
+            </div>
+
+            <div class="hero-cta" data-aos="fade-up" data-aos-delay="200">
+                <a href="{{ 'introduction/installation/' | url }}" class="btn btn-primary">Get Started →</a>
                 <a href="{{ 'introduction/overview/' | url }}" class="btn btn-secondary">View Documentation</a>
+            </div>
+
+            <div class="hero-stats" data-aos="fade-up" data-aos-delay="260">
+                <div class="hero-stat"><b>3.11+</b><span>Python</span></div>
+                <div class="hero-stat"><b>FastAPI</b><span>Powered by</span></div>
+                <div class="hero-stat"><b>NestJS</b><span>Inspired by</span></div>
+                <div class="hero-stat"><b>MIT</b><span>Licensed</span></div>
             </div>
         </div>
     </section>
 
     <section id="features" class="features">
         <div class="container">
-            <h2 class="section-title" data-aos="fade-up">Core Features</h2>
+            <div class="section-head" data-aos="fade-up">
+                <span class="section-eyebrow">Everything you need</span>
+                <h2 class="section-title">Core Features</h2>
+                <p class="section-sub">A batteries-included toolkit for building structured, scalable APIs without the boilerplate.</p>
+            </div>
             <div class="features-grid">
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="60">
                     <div class="feature-icon">🚀</div>
                     <h3>Lightning Fast Development</h3>
                     <p>Built on FastAPI for exceptional performance. Write less boilerplate, focus on building features that matter.</p>
                 </div>
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="120">
                     <div class="feature-icon">💉</div>
                     <h3>Powerful Dependency Injection</h3>
-                    <p>Enterprise-grade DI system inspired by NestJS. Build scalable, testable, and maintainable applications.</p>
+                    <p>Enterprise-grade DI inspired by NestJS. Build scalable, testable, and maintainable applications with ease.</p>
                 </div>
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="180">
                     <div class="feature-icon">🎯</div>
-                    <h3>Type-Safe & Validated</h3>
+                    <h3>Type-Safe &amp; Validated</h3>
                     <p>Full type safety with Pydantic validation. Catch errors early and ship with confidence.</p>
                 </div>
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="60">
                     <div class="feature-icon">🛠️</div>
                     <h3>Comprehensive CLI</h3>
-                    <p>Powerful CLI tools for scaffolding, development, and testing. Generate boilerplate in seconds.</p>
+                    <p>Powerful CLI tooling for scaffolding, development, and testing. Generate boilerplate in seconds.</p>
                 </div>
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="120">
                     <div class="feature-icon">🔌</div>
                     <h3>ORM Integration</h3>
-                    <p>Seamless integration with Tortoise ORM and SQLAlchemy. Choose your favorite ORM.</p>
+                    <p>Seamless integration with Tortoise ORM and SQLAlchemy. Bring your favorite database layer.</p>
                 </div>
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="180">
                     <div class="feature-icon">🧪</div>
                     <h3>Testing Made Easy</h3>
                     <p>Built-in testing utilities and mocking support. Write tests that actually make sense.</p>
@@ -59,31 +85,34 @@
 
     <section id="advantages" class="advantages">
         <div class="container">
-            <h2 class="section-title" data-aos="fade-up">Why Choose Ascender?</h2>
+            <div class="section-head" data-aos="fade-up">
+                <span class="section-eyebrow">Why Ascender</span>
+                <h2 class="section-title">Architecture You Can Trust</h2>
+            </div>
             <div class="advantages-content">
                 <div class="advantages-list">
-                    <div class="advantage-item" data-aos="fade-right" data-aos-delay="100">
+                    <div class="advantage-item" data-aos="fade-right" data-aos-delay="60">
                         <div class="advantage-number">01</div>
                         <div class="advantage-content">
                             <h4>Modular Architecture</h4>
                             <p>Organize your code into reusable modules. Scale your application without chaos.</p>
                         </div>
                     </div>
-                    <div class="advantage-item" data-aos="fade-right" data-aos-delay="200">
+                    <div class="advantage-item" data-aos="fade-right" data-aos-delay="120">
                         <div class="advantage-number">02</div>
                         <div class="advantage-content">
                             <h4>Developer Experience First</h4>
                             <p>Intuitive APIs, excellent documentation, and helpful CLI tools make development a joy.</p>
                         </div>
                     </div>
-                    <div class="advantage-item" data-aos="fade-right" data-aos-delay="300">
+                    <div class="advantage-item" data-aos="fade-right" data-aos-delay="180">
                         <div class="advantage-number">03</div>
                         <div class="advantage-content">
                             <h4>Production Ready</h4>
                             <p>Battle-tested patterns, comprehensive error handling, and performance optimizations out of the box.</p>
                         </div>
                     </div>
-                    <div class="advantage-item" data-aos="fade-right" data-aos-delay="400">
+                    <div class="advantage-item" data-aos="fade-right" data-aos-delay="240">
                         <div class="advantage-number">04</div>
                         <div class="advantage-content">
                             <h4>Microservices Support</h4>
@@ -91,23 +120,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="advantages-visual" data-aos="fade-left" data-aos-delay="200">
-                    <div class="code-snippet">
-<span class="code-line"><span class="code-decorator">@Controller</span>(<span class="code-string">"/users"</span>)</span>
-<span class="code-line"><span class="code-keyword">class</span> <span class="code-function">UserController</span>:</span>
-<span class="code-line">    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(self, service: UserService):</span>
-<span class="code-line">        self.service = service</span>
-<span class="code-line"></span>
-<span class="code-line">    <span class="code-decorator">@Get</span>(<span class="code-string">"/"</span>)</span>
-<span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">get_users</span>(self):</span>
-<span class="code-line">        <span class="code-keyword">return</span> <span class="code-keyword">await</span> self.service.find_all()</span>
-<span class="code-line"></span>
-<span class="code-line">    <span class="code-decorator">@Post</span>(<span class="code-string">"/"</span>)</span>
-<span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">create_user</span>(self, dto: CreateUserDto):</span>
-<span class="code-line">        <span class="code-keyword">return</span> <span class="code-keyword">await</span> self.service.create(dto)</span>
-<span class="code-line"></span>
-<span class="code-line"><span class="code-comment"># Clean, intuitive, powerful</span></span>
-                    </div>
+                <div class="code-window" data-aos="fade-left" data-aos-delay="120">
+                    <div class="cw-bar"><i></i><i></i><i></i><em>users/controller.py</em></div>
+                    <pre class="code-snippet"><span class="code-line"><span class="code-decorator">@Controller</span>(<span class="code-string">"/users"</span>)</span><span class="code-line"><span class="code-keyword">class</span> <span class="code-function">UserController</span>:</span><span class="code-line">    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(self, service: UserService):</span><span class="code-line">        self.service = service</span><span class="code-line"></span><span class="code-line">    <span class="code-decorator">@Get</span>(<span class="code-string">"/"</span>)</span><span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">get_users</span>(self):</span><span class="code-line">        <span class="code-keyword">return await</span> self.service.find_all()</span><span class="code-line"></span><span class="code-line">    <span class="code-decorator">@Post</span>(<span class="code-string">"/"</span>)</span><span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">create_user</span>(self, dto: CreateUserDto):</span><span class="code-line">        <span class="code-keyword">return await</span> self.service.create(dto)</span><span class="code-line"></span><span class="code-line"><span class="code-comment"># Clean, intuitive, powerful.</span></span></pre>
                 </div>
             </div>
         </div>
@@ -115,40 +130,64 @@
 
     <section id="docs" class="quick-links">
         <div class="container">
-            <h2 class="section-title" data-aos="fade-up">Explore Documentation</h2>
+            <div class="section-head" data-aos="fade-up">
+                <span class="section-eyebrow">Documentation</span>
+                <h2 class="section-title">Explore the Docs</h2>
+            </div>
             <div class="links-grid">
-                <a href="{{ 'introduction/overview/' | url }}" class="link-card" data-aos="zoom-in" data-aos-delay="100">
+                <a href="{{ 'introduction/overview/' | url }}" class="link-card" data-aos="fade-up" data-aos-delay="60">
                     <h4>Getting Started</h4>
-                    <p>Learn the basics and set up your first project</p>
+                    <p>Learn the basics and set up your first project.</p>
+                    <span class="arrow">→</span>
                 </a>
-                <a href="{{ 'controllers/overview/' | url }}" class="link-card" data-aos="zoom-in" data-aos-delay="150">
+                <a href="{{ 'controllers/overview/' | url }}" class="link-card" data-aos="fade-up" data-aos-delay="100">
                     <h4>Controllers</h4>
-                    <p>Handle HTTP requests and define your API routes</p>
+                    <p>Handle HTTP requests and define your API routes.</p>
+                    <span class="arrow">→</span>
                 </a>
-                <a href="{{ 'di/overview/' | url }}" class="link-card" data-aos="zoom-in" data-aos-delay="200">
+                <a href="{{ 'di/overview/' | url }}" class="link-card" data-aos="fade-up" data-aos-delay="140">
                     <h4>Dependency Injection</h4>
-                    <p>Master the powerful DI system</p>
+                    <p>Master the powerful DI system.</p>
+                    <span class="arrow">→</span>
                 </a>
-                <a href="{{ 'essentials/data-validation/' | url }}" class="link-card" data-aos="zoom-in" data-aos-delay="250">
+                <a href="{{ 'essentials/data-validation/' | url }}" class="link-card" data-aos="fade-up" data-aos-delay="180">
                     <h4>Validation</h4>
-                    <p>Validate and transform incoming data</p>
+                    <p>Validate and transform incoming data.</p>
+                    <span class="arrow">→</span>
                 </a>
-                <a href="{{ 'cli/overview/' | url }}" class="link-card" data-aos="zoom-in" data-aos-delay="300">
+                <a href="{{ 'cli/overview/' | url }}" class="link-card" data-aos="fade-up" data-aos-delay="220">
                     <h4>CLI Tools</h4>
-                    <p>Use the command-line interface effectively</p>
+                    <p>Use the command-line interface effectively.</p>
+                    <span class="arrow">→</span>
                 </a>
-                <a href="{{ 'api-reference/index/' | url }}" class="link-card" data-aos="zoom-in" data-aos-delay="350">
+                <a href="{{ 'api-reference/index/' | url }}" class="link-card" data-aos="fade-up" data-aos-delay="260">
                     <h4>API Reference</h4>
-                    <p>Complete API documentation and examples</p>
+                    <p>Complete API documentation and examples.</p>
+                    <span class="arrow">→</span>
                 </a>
-                <a href="{{ 'api-reference/testing/' | url }}" class="link-card" data-aos="zoom-in" data-aos-delay="400">
+                <a href="{{ 'api-reference/testing/' | url }}" class="link-card" data-aos="fade-up" data-aos-delay="300">
                     <h4>Testing</h4>
-                    <p>Write comprehensive tests for your application</p>
+                    <p>Write comprehensive tests for your application.</p>
+                    <span class="arrow">→</span>
                 </a>
-                <a href="{{ 'api-reference/database/' | url }}" class="link-card" data-aos="zoom-in" data-aos-delay="450">
+                <a href="{{ 'api-reference/database/' | url }}" class="link-card" data-aos="fade-up" data-aos-delay="340">
                     <h4>Database</h4>
-                    <p>Work with databases using ORM integrations</p>
+                    <p>Work with databases using ORM integrations.</p>
+                    <span class="arrow">→</span>
                 </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-banner">
+        <div class="container">
+            <div class="cta-inner" data-aos="zoom-in">
+                <h2>Ready to <span class="grad">build something great?</span></h2>
+                <p>Scaffold your first Ascender project in under a minute.</p>
+                <div class="hero-cta" style="margin-bottom:0;">
+                    <a href="{{ 'introduction/installation/' | url }}" class="btn btn-primary">Get Started →</a>
+                    <a href="https://github.com/ascenderteam/ascenderframework" target="_blank" rel="noopener" class="btn btn-secondary">Star on GitHub</a>
+                </div>
             </div>
         </div>
     </section>
