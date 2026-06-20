@@ -1,11 +1,7 @@
 from logging import getLogger
 
 from ascender.clis.builder.build_app import BuildCLI
-from ascender.clis.generator.generator_app import GeneratorCLI
-from ascender.clis.new.new_app import NewCLI
-from ascender.clis.run.run_app import RunCLI
 from ascender.clis.serve.serve_app import ServeCLI
-from ascender.clis.tests.tests_app import TestRunnerCLI
 from ascender.common.api_docs import DefineAPIDocs
 from ascender.core.cli.provider import provideCLI
 from ascender.core.cli_engine.provider import useCLI
@@ -16,6 +12,7 @@ from ascender.core.router.graph import RouterGraph
 from ascender.core.struct.module_ref import AscModuleRef
 from ascender.core.types import IBootstrap
 
+from ._core_providers import provideCoreCLIs
 from .application import Application
 from .root_injector import RootInjector
 
@@ -41,12 +38,10 @@ def createApplication(
 
     # Internal providers necessary for Application creation
     internal_providers: list[Provider] = [
+        *provideCoreCLIs(),
+        # App-only commands
         useCLI(BuildCLI),
-        useCLI(GeneratorCLI),
-        # useCLI(NewCLI),
-        # useCLI(RunCLI),
         useCLI(ServeCLI),
-        useCLI(TestRunnerCLI),
         {
             "provide": Application,
             "use_factory": lambda graph, cli, docs, injector: Application(

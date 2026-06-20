@@ -38,7 +38,7 @@ class TestRunnerCLI(GenericCLI):
         self.pytest_interop.console.print("[bold green]✅ Testing environment initialized successfully![/bold green]")
         self.pytest_interop.console.print("[cyan]🛠️ To customize testing configuration, please edit pytest.ini in root of your project. [/cyan]")
         self.pytest_interop.console.print(f"[bold blue] 🧪 Your pytest fixtures and conftests are located at {os.path.abspath(path)}. [/bold blue]")
-        self.pytest_interop.console.print("[yellow]💡 Tip: You can run tests using 'ascender tests run' command. [/yellow]")
+        self.pytest_interop.console.print("[yellow]💡 Tip: You can run tests using the 'ascender test' command. [/yellow]")
 
     @Handler("run", description="Run tests in the current project.")
     def run_tests(

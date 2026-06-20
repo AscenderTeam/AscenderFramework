@@ -3,9 +3,9 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING
 
-from ascender.clis.tests.tests_app import TestRunnerCLI
 from ascender.workspaces.provider import provideWorkspaces
 
+from ._core_providers import provideCoreCLIs
 from .root_injector import RootInjector
 
 if TYPE_CHECKING:
@@ -34,12 +34,13 @@ def createInternalApplication():
 
     # Internal providers necessary for Application creation
     internal_providers: list["Provider"] = [
+        *provideCoreCLIs(),
+        # Launcher-only commands (project scaffolding / process management)
         useCLI(GeneratorCLI),
         useCLI(NewCLI),
         useCLI(RunCLI),
         useCLI(VersionCLI),
         provideWorkspaces(),
-        useCLI(TestRunnerCLI),
         {
             "provide": CLIEngine,
             "use_factory": lambda commands: CLIEngine(
